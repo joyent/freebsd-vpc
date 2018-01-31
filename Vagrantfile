@@ -48,6 +48,10 @@ def configureFreeBSDProvisioners(vmCfg)
 		privileged: true
 
 	vmCfg.vm.provision "shell",
+		path: './scripts/vagrant-freebsd-priv-avahi.sh',
+		privileged: true
+
+	vmCfg.vm.provision "shell",
 		path: './scripts/vagrant-freebsd-priv-bhyve.sh',
 		privileged: true
 
