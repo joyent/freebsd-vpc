@@ -159,7 +159,53 @@ CREATE TABLE IF NOT EXISTS subnet_ip (
   PRIMARY KEY(vpc_id, subnet_id, ip),
   UNIQUE(ip, subnet_id),
   UNIQUE(vpc_id, ip),
+  UNIQUE(id),
+  CONSTRAINT vpc_id_fk FOREIGN KEY(vpc_id) REFERENCES vpc(id),
+  CONSTRAINT subnet_id_fk FOREIGN KEY(subnet_id) REFERENCES subnet(id)
 ) INTERLEAVE IN PARENT subnet(vpc_id, subnet_id);
+
+-- Router describes a router instance.  A router instance can be connected to
+-- one or more subnets via subnet interfaces.
+CREATE TABLE IF NOT EXISTS router (
+  id UUID NOT NULL DEFAULT gen_random_uuid(),
+  vpc_id UUID NOT NULL,
+  ip_id UUID NOT NULL,
+  PRIMARY KEY(id),
+  UNIQUE(vpc_id, id),
+  UNIQUE(vpc_id, ip_id),
+  CONSTRAINT vpc_id_fk FOREIGN KEY(vpc_id) REFERENCES vpc(id),
+  CONSTRAINT ip_id_fk FOREIGN KEY(ip_id) REFERENCES subnet_ip(id)
+);
+
+-- Router Subnet Interface connects a Router Interface to a given subnet.
+CREATE TABLE IF NOT EXISTS router_subnet_interface (
+  id UUID NOT NULL DEFAULT gen_random_uuid(),
+  router_id UUID NOT NULL,
+  subnet_id UUID NOT NULL,
+  ip_id UUID NOT NULL,
+  mac_id UUID NOT NULL,
+  PRIMARY KEY(router_id, subnet_id),
+  UNIQUE(id),
+  UNIQUE(ip_id),
+  CONSTRAINT router_id_fk FOREIGN KEY(router_id) REFERENCES router(id),
+  CONSTRAINT ip_id_fk FOREIGN KEY(ip_id) REFERENCES subnet_ip(id),
+  CONSTRAINT mac_id_fk FOREIGN KEY(mac_id, subnet_id) REFERENCES vpc_macs(id, subnet_id)
+) INTERLEAVE IN PARENT router(router_id);
+
+-- Router subnet route creates an association between two subnets in a VPC and
+-- allows packets to symmetrically flow between two subnets.
+CREATE TABLE IF NOT EXISTS router_subnet_route (
+  id UUID NOT NULL DEFAULT gen_random_uuid(),
+  router_id UUID NOT NULL,
+  PRIMARY KEY(router_id, id),
+  UNIQUE(id),
+  src_subnet_intf_id UUID NOT NULL,
+  dst_subnet_intf_id UUID NOT NULL,
+  UNIQUE(src_subnet_intf_id, dst_subnet_intf_id),
+  UNIQUE(dst_subnet_intf_id, src_subnet_intf_id),
+  CONSTRAINT src_subnet_intf_id_fk FOREIGN KEY(src_subnet_intf_id) REFERENCES router_subnet_interface(id),
+  CONSTRAINT dst_subnet_intf_id_fk FOREIGN KEY(dst_subnet_intf_id) REFERENCES router_subnet_interface(id)
+) INTERLEAVE IN PARENT router(router_id);
 
 -- Subnet VNI VLAN maps a subnet to its VNI and VLAN for a given facility.
 CREATE TABLE IF NOT EXISTS subnet_vni_vlan (
