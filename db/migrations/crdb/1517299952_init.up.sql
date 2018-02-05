@@ -132,6 +132,25 @@ CREATE TABLE IF NOT EXISTS subnet (
   UNIQUE(vpc_id, network)
 ) INTERLEAVE IN PARENT vpc(vpc_id);
 
+-- VPC MAC is a unique mapping of MAC addresses within a VPC
+CREATE TABLE IF NOT EXISTS vpc_macs (
+  id UUID NOT NULL DEFAULT gen_random_uuid(),
+  vpc_id UUID NOT NULL,
+  mac TEXT NOT NULL,
+  subnet_id UUID, -- May be NULL once a MAC has been expired from the VPC.
+
+  -- expired_at is used as a tombstone for MAC addresses in order to prevent
+  -- their reuse before the state of the system converges.
+  expired_at TIMESTAMP WITH TIME ZONE,
+  expire_after INTERVAL NOT NULL DEFAULT '90 days',
+  PRIMARY KEY(vpc_id, mac),
+  UNIQUE(mac, vpc_id),
+  UNIQUE(id, subnet_id),
+  UNIQUE(subnet_id, mac), -- Redundant constraint, but useful lookup
+  CONSTRAINT vpc_id_fk FOREIGN KEY(vpc_id) REFERENCES vpc(id),
+  CONSTRAINT subnet_id_fk FOREIGN KEY(subnet_id) REFERENCES subnet(id)
+); -- INTERLEAVE IN PARENT subnet(vpc_id, subnet_id);
+
 CREATE TABLE IF NOT EXISTS subnet_ip (
   id UUID NOT NULL DEFAULT gen_random_uuid(),
   vpc_id UUID NOT NULL,
@@ -190,24 +209,16 @@ CREATE TABLE IF NOT EXISTS vnic (
   vm_id UUID NOT NULL,
   subnet_id UUID NOT NULL,
   vpc_id UUID NOT NULL,
-  mac TEXT NOT NULL,
+  mac_id UUID NOT NULL,
   PRIMARY KEY(vm_id, subnet_id, id),
   UNIQUE(id),
-  UNIQUE(vpc_id, mac),
-  UNIQUE(vm_id, subnet_id),
-  CONSTRAINT subnet_id_fk FOREIGN KEY(subnet_id) REFERENCES subnet(id),
-  CONSTRAINT vm_id_fk FOREIGN KEY(vm_id) REFERENCES vm(id),
-  CONSTRAINT vpc_id_fk FOREIGN KEY(vpc_id) REFERENCES vpc(id)
-);
 
--- Expired MACs is a recently expired MAC that should not be reissued to VMs.
-CREATE TABLE IF NOT EXISTS expired_macs (
-  vpc_id UUID NOT NULL,
-  mac TEXT NOT NULL,
-  expired_at TIMESTAMP WITH TIME ZONE NOT NULL,
-  expire_after INTERVAL NOT NULL DEFAULT '90 days',
-  UNIQUE(vpc_id, mac),
-  CONSTRAINT vpc_id_fk FOREIGN KEY(vpc_id) REFERENCES vpc(id)
+  -- TODO(seanc@): we may relax this in the future if necessary.  We need to add
+  -- an ordering or priority attribute.
+  UNIQUE(vm_id, subnet_id),
+  CONSTRAINT vm_id_fk FOREIGN KEY(vm_id) REFERENCES vm(id),
+  CONSTRAINT vpc_id_fk FOREIGN KEY(vpc_id) REFERENCES vpc(id),
+  CONSTRAINT mac_id_fk FOREIGN KEY(mac_id, subnet_id) REFERENCES vpc_macs(id, subnet_id)
 );
 
 -- VNIC IP maps an IP onto a VNIC.
