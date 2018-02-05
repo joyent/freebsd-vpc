@@ -132,6 +132,16 @@ CREATE TABLE IF NOT EXISTS subnet (
   UNIQUE(vpc_id, network)
 ) INTERLEAVE IN PARENT vpc(vpc_id);
 
+CREATE TABLE IF NOT EXISTS subnet_ip (
+  id UUID DEFAULT gen_random_uuid(),
+  vpc_id UUID NOT NULL,
+  subnet_id UUID NOT NULL,
+  ip TEXT NOT NULL,
+  PRIMARY KEY(vpc_id, subnet_id, ip),
+  UNIQUE(ip, subnet_id),
+  UNIQUE(vpc_id, ip),
+) INTERLEAVE IN PARENT subnet(vpc_id, subnet_id);
+
 -- Subnet VNI VLAN maps a subnet to its VNI and VLAN for a given facility.
 CREATE TABLE IF NOT EXISTS subnet_vni_vlan (
   facility_id UUID NOT NULL,
@@ -200,10 +210,10 @@ CREATE TABLE IF NOT EXISTS expired_macs (
 -- forwarder interface?
 CREATE TABLE IF NOT EXISTS vnic_ip (
   vnic_id UUID NOT NULL,
-  ip TEXT NOT NULL,
+  ip_id UUID NOT NULL,
   subnet_id UUID NOT NULL,
   PRIMARY KEY(vnic_id, subnet_id),
-  UNIQUE(subnet_id, ip),
   CONSTRAINT vnic_id_fk FOREIGN KEY(vnic_id) REFERENCES vnic(id),
-  CONSTRAINT subnet_id_fk FOREIGN KEY(subnet_id) REFERENCES subnet(id)
+  CONSTRAINT subnet_id_fk FOREIGN KEY(subnet_id) REFERENCES subnet(id),
+  CONSTRAINT subnet_ip_id_fk FOREIGN KEY(ip_id) REFERENCES subnet_ip(id)
 );
