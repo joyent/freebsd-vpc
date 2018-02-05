@@ -125,7 +125,7 @@ CREATE TABLE IF NOT EXISTS subnet (
   vpc_id UUID NOT NULL,
   address_type TEXT NOT NULL CHECK (address_type IN('IPv4','IPv6')),
   network TEXT NOT NULL,
-  bitmask INT NOT NULL CHECK (bitmask > 0 AND ((address_type = 'IPv4' AND bitmask <= 32) OR (address_type = 'IPv6' AND bitmask <= 128))),
+  prefix_len INT NOT NULL CHECK (prefix_len > 0 AND ((address_type = 'IPv4' AND prefix_len <= 32) OR (address_type = 'IPv6' AND prefix_len <= 128))),
   CONSTRAINT vpc_id_fk FOREIGN KEY(vpc_id) REFERENCES vpc(id),
   PRIMARY KEY(vpc_id, id),
   UNIQUE(id),
