@@ -157,11 +157,18 @@ CREATE TABLE IF NOT EXISTS subnet_vni_vlan (
 -- Compute Node ("CN") is the physical server responsible for hosting VMs.
 CREATE TABLE IF NOT EXISTS cn (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  underlay_ip TEXT NOT NULL,
   facility_id UUID NOT NULL,
-  UNIQUE(underlay_ip),
   CONSTRAINT facility_id_fk FOREIGN KEY(facility_id) REFERENCES facility(id)
 );
+
+-- CN Underlay IP maps the underlay IP(s) assigned to a CN.
+CREATE TABLE IF NOT EXISTS cn_underlay_ip (
+  cn_id UUID  NOT NULL,
+  underlay_ip TEXT NOT NULL,
+  PRIMARY KEY(cn_id, underlay_ip),
+  UNIQUE(underlay_ip),
+  CONSTRAINT cn_id_fk FOREIGN KEY(cn_id) REFERENCES cn(id)
+) INTERLEAVE IN PARENT cn(cn_id);
 
 -- VM is an instance
 CREATE TABLE IF NOT EXISTS vm (
