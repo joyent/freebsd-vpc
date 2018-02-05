@@ -4,23 +4,23 @@
 -- * Control Plane (customer of the VPC)
 -- * Data Plane (users of a deployed service)
 
--- Master Account is an administrative construct.  A master account is not
+-- Organization ("Org") is an administrative construct.  An organization is not
 -- referenceable by any control or data plane entity.
-CREATE TABLE IF NOT EXISTS master_account (
+CREATE TABLE IF NOT EXISTS org (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid()
 );
 
 -- Accounts are the primary unit of granularity for VPC objects.  An Account is
--- created by a Master Account.  An Account is the primary object owner for
+-- created by an Organization.  An Account is the primary object owner for
 -- control plane entities.
 CREATE TABLE IF NOT EXISTS account (
   id UUID NOT NULL DEFAULT gen_random_uuid(),
-  master_account_id UUID NOT NULL,
-  INDEX(master_account_id),
-  PRIMARY KEY(master_account_id, id),
+  org_id UUID NOT NULL,
+  INDEX(org_id),
+  PRIMARY KEY(org_id, id),
   UNIQUE(id),
-  CONSTRAINT master_account_id_fk FOREIGN KEY(master_account_id) REFERENCES master_account(id)
-) INTERLEAVE IN PARENT master_account(master_account_id);
+  CONSTRAINT org_id_fk FOREIGN KEY(org_id) REFERENCES org(id)
+) INTERLEAVE IN PARENT org(org_id);
 
 -- VPC is a collection of subnets and services.  The mapping of VPCs to subnets
 -- is handled by VXLAN IDs and VLANs, respectively.
