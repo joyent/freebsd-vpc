@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS master_account (
 -- created by a Master Account.  An Account is the primary object owner for
 -- control plane entities.
 CREATE TABLE IF NOT EXISTS account (
-  id UUID DEFAULT gen_random_uuid(),
+  id UUID NOT NULL DEFAULT gen_random_uuid(),
   master_account_id UUID NOT NULL,
   INDEX(master_account_id),
   PRIMARY KEY(master_account_id, id),
@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS region (
 -- availability, you should deploy your applications across multiple zones in a
 -- region to help protect against unexpected failures.
 CREATE TABLE IF NOT EXISTS facility (
-  id UUID DEFAULT gen_random_uuid(),
+  id UUID NOT NULL DEFAULT gen_random_uuid(),
   name TEXT NOT NULL,
   region_id TEXT NOT NULL,
   PRIMARY KEY(region_id, name),
@@ -82,7 +82,7 @@ CREATE TABLE IF NOT EXISTS facility_network_transit (
 -- Availability Zone ("AZ") is the customer designation of a cloud provider
 -- designated "facility" or failure domain.
 CREATE TABLE IF NOT EXISTS az (
-  id UUID DEFAULT gen_random_uuid(),
+  id UUID NOT NULL DEFAULT gen_random_uuid(),
   region_id TEXT NOT NULL,
   name STRING(1) NOT NULL CHECK (name IN ('a','b','c','d','e','f','g','h','i')),
   PRIMARY KEY(region_id, name),
@@ -121,7 +121,7 @@ CREATE TABLE IF NOT EXISTS vnis (
 -- and range operations.  TL;DR: PostgreSQL's CIDR data type would be nice to
 -- have right about now.
 CREATE TABLE IF NOT EXISTS subnet (
-  id UUID DEFAULT gen_random_uuid(),
+  id UUID NOT NULL DEFAULT gen_random_uuid(),
   vpc_id UUID NOT NULL,
   address_type TEXT NOT NULL CHECK (address_type IN('IPv4','IPv6')),
   network TEXT NOT NULL,
@@ -133,7 +133,7 @@ CREATE TABLE IF NOT EXISTS subnet (
 ) INTERLEAVE IN PARENT vpc(vpc_id);
 
 CREATE TABLE IF NOT EXISTS subnet_ip (
-  id UUID DEFAULT gen_random_uuid(),
+  id UUID NOT NULL DEFAULT gen_random_uuid(),
   vpc_id UUID NOT NULL,
   subnet_id UUID NOT NULL,
   ip TEXT NOT NULL,
@@ -172,7 +172,7 @@ CREATE TABLE IF NOT EXISTS cn_underlay_ip (
 
 -- VM is an instance
 CREATE TABLE IF NOT EXISTS vm (
-  id UUID DEFAULT gen_random_uuid(),
+  id UUID NOT NULL DEFAULT gen_random_uuid(),
   cn_id UUID NOT NULL,
   vpc_id UUID NOT NULL,
   vm_type TEXT NOT NULL CHECK (vm_type IN('bhyve','kvm','jail','zone')),
@@ -186,7 +186,7 @@ CREATE TABLE IF NOT EXISTS vm (
 --
 -- NOTE: mac MUST be unique to a given VPC.
 CREATE TABLE IF NOT EXISTS vnic (
-  id UUID DEFAULT gen_random_uuid(),
+  id UUID NOT NULL DEFAULT gen_random_uuid(),
   vm_id UUID NOT NULL,
   subnet_id UUID NOT NULL,
   vpc_id UUID NOT NULL,
