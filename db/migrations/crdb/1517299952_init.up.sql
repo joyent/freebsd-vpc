@@ -247,6 +247,16 @@ CREATE TABLE IF NOT EXISTS vm (
   CONSTRAINT cn_id_fk FOREIGN KEY(cn_id) REFERENCES cn(id)
 ) INTERLEAVE IN PARENT cn(cn_id);
 
+-- Object Type is a list of all of the supported object types in the schema.  As
+-- new features are added, new object types need to be added.
+CREATE TABLE IF NOT EXISTS obj_type (
+  id UUID PRIMARY KEY NOT NULL DEFAULT gen_random_uuid(),
+  name TEXT NOT NULL,
+  UNIQUE(name)
+);
+INSERT INTO obj_type (name) VALUES ('vm');
+INSERT INTO obj_type (name) VALUES ('router');
+
 -- VNIC is a virtual NIC assigned to a VM.
 --
 -- NOTE: mac MUST be unique to a given VPC.
