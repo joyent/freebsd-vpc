@@ -104,8 +104,15 @@ CREATE TABLE IF NOT EXISTS vnis (
   facility_id UUID NOT NULL,
   vni INT NOT NULL CHECK (vni > 0 AND vni < 2 ^ 24),
 
-  -- vpc_id is the VPC using a given VNI in an AZ
+  -- When vpc_id IS NOT NULL, the vpc_id is the current owner of a given VNI in
+  -- an AZ.  When vpc_id IS NULL, this VNI is available for reuse.
   vpc_id UUID,
+
+  -- expired_at is used as a tombstone for a VNI addresses in order to prevent
+  -- a VNIs reuse before the state of the system converges.
+  expired_at TIMESTAMP WITH TIME ZONE,
+  expire_after INTERVAL NOT NULL DEFAULT '90 days',
+
   PRIMARY KEY(facility_id, vni),
   UNIQUE(vni, facility_id),
   INDEX(vpc_id),
@@ -132,64 +139,122 @@ CREATE TABLE IF NOT EXISTS subnet (
   UNIQUE(vpc_id, network)
 ) INTERLEAVE IN PARENT vpc(vpc_id);
 
--- VPC MAC is a unique mapping of MAC addresses within a VPC
-CREATE TABLE IF NOT EXISTS vpc_macs (
+-- Account MAC is a unique mapping of MAC addresses within an Account.  MAC
+-- addresses are unique to an Account, not a VPC, because a VNIC may be moved
+-- between VPCs within a given Account.  When an IP moves (i.e. a VNIC is moved
+-- to a new device) the old MAC address stays on the old host is converted from
+-- an interface to a forwarding interface in the VPC bridge.  The forwarding
+-- interface forwards all packets destined to the old MAC address to the new MAC
+-- address.  Packets destined to the old MAC address also receive a gratiutious
+-- ARP ("GARP") back from the forwarding interface informing the sender of the
+-- new MAC address.  Forwarding interfaces self-expire after 4hrs of inactivity
+-- and have a hard expiration of 8hrs.  The 4hrs value was chosen by convention
+-- as that is a common ARP cache TTL, and the 8hrs by fiat as it's 2x the
+-- conventional 4hr TTL.  One consequence of this is we explicitly do not
+-- support static ARP entries.  Static ARP will work until a VNIC or IP moves,
+-- at which point static arp will break 4-8hrs in the future.
+CREATE TABLE IF NOT EXISTS account_macs (
   id UUID NOT NULL DEFAULT gen_random_uuid(),
-  vpc_id UUID NOT NULL,
+  account_id UUID NOT NULL,
   mac TEXT NOT NULL,
-  subnet_id UUID, -- May be NULL once a MAC has been expired from the VPC.
+  vpc_id UUID NOT NULL,
+  subnet_id UUID NOT NULL,
 
-  -- expired_at is used as a tombstone for MAC addresses in order to prevent
-  -- their reuse before the state of the system converges.
+  -- expired_at is used as a tombstone for MAC addresses in order to allow for
+  -- MAC address.
   expired_at TIMESTAMP WITH TIME ZONE,
   expire_after INTERVAL NOT NULL DEFAULT '90 days',
-  PRIMARY KEY(vpc_id, mac),
-  UNIQUE(mac, vpc_id),
+  PRIMARY KEY(account_id, mac),
+  UNIQUE(mac, account_id),
   UNIQUE(id, subnet_id),
-  UNIQUE(subnet_id, mac), -- Redundant constraint, but useful lookup
-  CONSTRAINT vpc_id_fk FOREIGN KEY(vpc_id) REFERENCES vpc(id),
-  CONSTRAINT subnet_id_fk FOREIGN KEY(subnet_id) REFERENCES subnet(id)
-); -- INTERLEAVE IN PARENT subnet(vpc_id, subnet_id);
+  CONSTRAINT account_id_fk FOREIGN KEY(account_id) REFERENCES account(id),
+  CONSTRAINT vpc_subnet_id_fk FOREIGN KEY(vpc_id, subnet_id) REFERENCES subnet(vpc_id, id)
+);
 
+-- Subnet IP is the whitelist of IPs contained within a given subnet.
 CREATE TABLE IF NOT EXISTS subnet_ip (
   id UUID NOT NULL DEFAULT gen_random_uuid(),
   vpc_id UUID NOT NULL,
   subnet_id UUID NOT NULL,
   ip TEXT NOT NULL,
   PRIMARY KEY(vpc_id, subnet_id, ip),
-  UNIQUE(ip, subnet_id),
+  UNIQUE(subnet_id, ip),
   UNIQUE(vpc_id, ip),
   UNIQUE(id),
-  CONSTRAINT vpc_id_fk FOREIGN KEY(vpc_id) REFERENCES vpc(id),
-  CONSTRAINT subnet_id_fk FOREIGN KEY(subnet_id) REFERENCES subnet(id)
+  CONSTRAINT vpc_subnet_id_fk FOREIGN KEY(vpc_id, subnet_id) REFERENCES subnet(vpc_id, id)
 ) INTERLEAVE IN PARENT subnet(vpc_id, subnet_id);
 
 -- Router describes a router instance.  A router instance can be connected to
--- one or more subnets via subnet interfaces.
+-- one or more subnets (in the same or different VPCs) via subnet interfaces.
 CREATE TABLE IF NOT EXISTS router (
   id UUID NOT NULL DEFAULT gen_random_uuid(),
   vpc_id UUID NOT NULL,
-  ip_id UUID NOT NULL,
+
   PRIMARY KEY(id),
   UNIQUE(vpc_id, id),
-  UNIQUE(vpc_id, ip_id),
-  CONSTRAINT vpc_id_fk FOREIGN KEY(vpc_id) REFERENCES vpc(id),
-  CONSTRAINT ip_id_fk FOREIGN KEY(ip_id) REFERENCES subnet_ip(id)
+  CONSTRAINT vpc_id_fk FOREIGN KEY(vpc_id) REFERENCES vpc(id)
 );
 
--- Router Subnet Interface connects a Router Interface to a given subnet.
+-- Object Type is a list of all of the supported object types in the schema.  As
+-- new features are added, new object types need to be added.
+CREATE TABLE IF NOT EXISTS obj_type (
+  id UUID PRIMARY KEY NOT NULL DEFAULT gen_random_uuid(),
+  name TEXT NOT NULL,
+  UNIQUE(name)
+);
+INSERT INTO obj_type (name) VALUES ('vm');
+INSERT INTO obj_type (name) VALUES ('router');
+
+-- VNIC is a virtual NIC.  A VNIC can be assigned to a router, VM, or service
+-- within a VPC.  The MAC address for a VNIC is assigned to the interface of the
+-- object receiving the VNIC.  A VNIC may also be disconnected from an object.
+--
+-- NOTE: mac MUST be unique to a given Account.
+CREATE TABLE IF NOT EXISTS vnic (
+  id UUID PRIMARY KEY NOT NULL DEFAULT gen_random_uuid(),
+  account_id UUID NOT NULL,
+
+  -- obj_id is the UUID of the object currently using a VNIC and obj_type is the
+  -- type.
+  --
+  -- NOTE(seanc@): At present we do not have any integrity checks from vnic to
+  -- the various object types.  In the future we could use additional null
+  -- columns to do that, however we would need to measure the expense of such a
+  -- schema first (i.e. vm_id UUID, router_id UUID, CHECK(vm_id IS NOT NULL AND
+  -- router_id IS NULL...).
+  obj_id UUID,
+  obj_type UUID,
+
+  UNIQUE(id, obj_id),
+
+  CONSTRAINT account_id_fk FOREIGN KEY(account_id) REFERENCES account(id),
+  CONSTRAINT obj_type_fk FOREIGN KEY(obj_type) REFERENCES obj_type(id)
+);
+
+-- VNIC IP maps one or more IPs onto a VNIC.
+CREATE TABLE IF NOT EXISTS vnic_ip (
+  vnic_id UUID NOT NULL,
+  ip_id UUID NOT NULL,
+  ip_index INT NOT NULL DEFAULT 0,
+  PRIMARY KEY(vnic_id, ip_id),
+  UNIQUE(vnic_id, ip_index),
+  CONSTRAINT vnic_id_fk FOREIGN KEY(vnic_id) REFERENCES vnic(id),
+  CONSTRAINT subnet_ip_id_fk FOREIGN KEY(ip_id) REFERENCES subnet_ip(id)
+) INTERLEAVE IN PARENT vnic(vnic_id);
+
+-- Router Subnet Interface maps VNICs to a router object.
 CREATE TABLE IF NOT EXISTS router_subnet_interface (
   id UUID NOT NULL DEFAULT gen_random_uuid(),
   router_id UUID NOT NULL,
   subnet_id UUID NOT NULL,
-  ip_id UUID NOT NULL,
   mac_id UUID NOT NULL,
+  vnic_id UUID NOT NULL,
   PRIMARY KEY(router_id, subnet_id),
+  UNIQUE(mac_id, subnet_id),
   UNIQUE(id),
-  UNIQUE(ip_id),
   CONSTRAINT router_id_fk FOREIGN KEY(router_id) REFERENCES router(id),
-  CONSTRAINT ip_id_fk FOREIGN KEY(ip_id) REFERENCES subnet_ip(id),
-  CONSTRAINT mac_id_fk FOREIGN KEY(mac_id, subnet_id) REFERENCES vpc_macs(id, subnet_id)
+  CONSTRAINT mac_id_fk FOREIGN KEY(mac_id, subnet_id) REFERENCES account_macs(id, subnet_id),
+  CONSTRAINT vnic_id_fk FOREIGN KEY(vnic_id) REFERENCES vnic(id)
 ) INTERLEAVE IN PARENT router(router_id);
 
 -- Router subnet route creates an association between two subnets in a VPC and
@@ -239,55 +304,10 @@ CREATE TABLE IF NOT EXISTS cn_underlay_ip (
 CREATE TABLE IF NOT EXISTS vm (
   id UUID NOT NULL DEFAULT gen_random_uuid(),
   cn_id UUID NOT NULL,
-  vpc_id UUID NOT NULL,
+  account_id UUID NOT NULL,
   vm_type TEXT NOT NULL CHECK (vm_type IN('bhyve','kvm','jail','zone')),
   PRIMARY KEY(cn_id, id),
   UNIQUE(id),
-  CONSTRAINT vpc_id_fk FOREIGN KEY(vpc_id) REFERENCES vpc(id),
+  CONSTRAINT account_id_fk FOREIGN KEY(account_id) REFERENCES account(id),
   CONSTRAINT cn_id_fk FOREIGN KEY(cn_id) REFERENCES cn(id)
 ) INTERLEAVE IN PARENT cn(cn_id);
-
--- Object Type is a list of all of the supported object types in the schema.  As
--- new features are added, new object types need to be added.
-CREATE TABLE IF NOT EXISTS obj_type (
-  id UUID PRIMARY KEY NOT NULL DEFAULT gen_random_uuid(),
-  name TEXT NOT NULL,
-  UNIQUE(name)
-);
-INSERT INTO obj_type (name) VALUES ('vm');
-INSERT INTO obj_type (name) VALUES ('router');
-
--- VNIC is a virtual NIC assigned to a VM.
---
--- NOTE: mac MUST be unique to a given VPC.
-CREATE TABLE IF NOT EXISTS vnic (
-  id UUID NOT NULL DEFAULT gen_random_uuid(),
-  vm_id UUID NOT NULL,
-  subnet_id UUID NOT NULL,
-  vpc_id UUID NOT NULL,
-  mac_id UUID NOT NULL,
-  PRIMARY KEY(vm_id, subnet_id, id),
-  UNIQUE(id),
-
-  -- TODO(seanc@): we may relax this in the future if necessary.  We need to add
-  -- an ordering or priority attribute.
-  UNIQUE(vm_id, subnet_id),
-  CONSTRAINT vm_id_fk FOREIGN KEY(vm_id) REFERENCES vm(id),
-  CONSTRAINT vpc_id_fk FOREIGN KEY(vpc_id) REFERENCES vpc(id),
-  CONSTRAINT mac_id_fk FOREIGN KEY(mac_id, subnet_id) REFERENCES vpc_macs(id, subnet_id)
-);
-
--- VNIC IP maps an IP onto a VNIC.
---
--- TODO(seanc@): Confirm that when an IP on a VNIC is removed the MAC address of
--- the VNIC must also change.  Or the loosing CN needs to install a transient
--- forwarder interface?
-CREATE TABLE IF NOT EXISTS vnic_ip (
-  vnic_id UUID NOT NULL,
-  ip_id UUID NOT NULL,
-  subnet_id UUID NOT NULL,
-  PRIMARY KEY(vnic_id, subnet_id),
-  CONSTRAINT vnic_id_fk FOREIGN KEY(vnic_id) REFERENCES vnic(id),
-  CONSTRAINT subnet_id_fk FOREIGN KEY(subnet_id) REFERENCES subnet(id),
-  CONSTRAINT subnet_ip_id_fk FOREIGN KEY(ip_id) REFERENCES subnet_ip(id)
-);
