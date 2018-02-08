@@ -12,9 +12,9 @@ import (
 	"github.com/jackc/pgx/stdlib"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
-	"github.com/sean-/vpc/agent/logger"
-	"github.com/sean-/vpc/buildtime"
 	"github.com/sean-/vpc/config"
+	"github.com/sean-/vpc/internal/buildtime"
+	"github.com/sean-/vpc/internal/logger"
 )
 
 type Pool struct {

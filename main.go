@@ -1,16 +1,16 @@
 package main
 
 import (
+	"os"
+
 	"github.com/rs/zerolog/log"
-	"github.com/sean-/vpc/buildtime"
-	"github.com/sean-/vpc/cmd/migrate"
-	"github.com/sean-/vpc/cmd/run"
-	"github.com/sean-/vpc/cmd/version"
-	"github.com/spf13/cobra"
+	"github.com/sean-/vpc/cmd"
+	"github.com/sean-/vpc/internal/buildtime"
+	"github.com/sean-/vpc/internal/conswriter"
 )
 
 var (
-	// These fields are populated by govvv
+	// Variables populated by govvv(1).
 	Version    = "dev"
 	BuildDate  string
 	GitCommit  string
@@ -19,29 +19,18 @@ var (
 	GitSummary string
 )
 
-var rootCmd = &cobra.Command{
-	Use:   buildtime.PROGNAME,
-	Short: buildtime.PROGNAME + " configures and manages VPCs",
-}
-
 func main() {
 	exportBuildtimeConsts()
 
-	addCommands()
+	defer func() {
+		p := conswriter.GetTerminal()
+		p.Wait()
+	}()
 
-	if err := rootCmd.Execute(); err != nil {
+	if err := cmd.Execute(); err != nil {
 		log.Error().Err(err).Msg("unable to run")
+		os.Exit(1)
 	}
-}
-
-func addCommands() {
-	addCommand(run.Cmd)
-	addCommand(migrate.Cmd)
-	addCommand(version.Cmd)
-}
-
-func addCommand(cmd *cobra.Command) {
-	rootCmd.AddCommand(cmd)
 }
 
 func exportBuildtimeConsts() {

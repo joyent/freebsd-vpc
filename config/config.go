@@ -11,8 +11,8 @@ import (
 	"github.com/jackc/pgx"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
-	"github.com/sean-/vpc/agent/logger"
-	"github.com/sean-/vpc/buildtime"
+	"github.com/sean-/vpc/internal/buildtime"
+	"github.com/sean-/vpc/internal/logger"
 )
 
 const DefaultConnTimeout = 10 * time.Second
