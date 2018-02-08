@@ -305,6 +305,7 @@ CREATE TABLE IF NOT EXISTS vm (
   id UUID NOT NULL DEFAULT gen_random_uuid(),
   cn_id UUID NOT NULL,
   account_id UUID NOT NULL,
+  termination_protection BOOL NOT NULL DEFAULT FALSE,
   vm_type TEXT NOT NULL CHECK (vm_type IN('bhyve','kvm','jail','zone')),
   PRIMARY KEY(cn_id, id),
   UNIQUE(id),
