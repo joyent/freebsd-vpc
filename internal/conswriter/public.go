@@ -6,7 +6,7 @@ import (
 	"sync"
 
 	"github.com/rs/zerolog"
-	"github.com/sean-/vpc/internal/pager"
+	"github.com/sean-/pager"
 )
 
 type ConsoleWriter interface {

@@ -19,6 +19,10 @@
 
 [[constraint]]
   branch = "master"
+  name = "github.com/sean-/pager"
+
+[[constraint]]
+  branch = "master"
   name = "github.com/jackc/pgx"
 
 [[constraint]]
