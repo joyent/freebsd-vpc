@@ -2,6 +2,7 @@ package doc
 
 import (
 	"github.com/sean-/vpc/cmd/doc/man"
+	"github.com/sean-/vpc/cmd/doc/md"
 	"github.com/sean-/vpc/internal/buildtime"
 	"github.com/sean-/vpc/internal/command"
 	"github.com/spf13/cobra"
@@ -17,6 +18,7 @@ var Cmd = &command.Command{
 	Setup: func(parent *command.Command) error {
 		cmds := []*command.Command{
 			man.Cmd,
+			md.Cmd,
 		}
 
 		for _, cmd := range cmds {
