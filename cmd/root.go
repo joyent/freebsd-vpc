@@ -132,7 +132,6 @@ func Execute() error {
 	if err := agent.Listen(&agent.Options{}); err != nil {
 		log.Fatal().Err(err).Msg("unable to start gops agent")
 	}
-	defer agent.Close()
 
 	for _, cmd := range subCommands {
 		rootCmd.Cobra.AddCommand(cmd.Cobra)
