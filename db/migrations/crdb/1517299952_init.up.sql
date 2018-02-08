@@ -7,7 +7,8 @@
 -- Organization ("Org") is an administrative construct.  An organization is not
 -- referenceable by any control or data plane entity.
 CREATE TABLE IF NOT EXISTS org (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid()
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name TEXT
 );
 
 -- Accounts are the primary unit of granularity for VPC objects.  An Account is
@@ -16,6 +17,7 @@ CREATE TABLE IF NOT EXISTS org (
 CREATE TABLE IF NOT EXISTS account (
   id UUID NOT NULL DEFAULT gen_random_uuid(),
   org_id UUID NOT NULL,
+  name TEXT,
   INDEX(org_id),
   PRIMARY KEY(org_id, id),
   UNIQUE(id),
@@ -27,6 +29,7 @@ CREATE TABLE IF NOT EXISTS account (
 CREATE TABLE IF NOT EXISTS vpc (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   account_id UUID NOT NULL,
+  name TEXT,
   CONSTRAINT account_id_fk FOREIGN KEY(id) REFERENCES account(id),
   INDEX(account_id)
 );
@@ -72,7 +75,7 @@ CREATE TABLE IF NOT EXISTS facility (
 CREATE TABLE IF NOT EXISTS facility_network_transit (
   src_facility_id UUID NOT NULL,
   dst_facility_id UUID NOT NULL,
-  transport TEXT NOT NULL CHECK (transport IN ('plain','IPsec')),
+  transport TEXT NOT NULL CHECK (transport IN('plain','IPsec')),
   PRIMARY KEY(src_facility_id, dst_facility_id),
   UNIQUE(dst_facility_id, src_facility_id),
   CONSTRAINT src_facility_id_fk FOREIGN KEY(src_facility_id) REFERENCES facility(id),
@@ -84,12 +87,12 @@ CREATE TABLE IF NOT EXISTS facility_network_transit (
 CREATE TABLE IF NOT EXISTS az (
   id UUID NOT NULL DEFAULT gen_random_uuid(),
   region_id TEXT NOT NULL,
-  name STRING(1) NOT NULL CHECK (name IN ('a','b','c','d','e','f','g','h','i')),
+  name STRING(1) NOT NULL CHECK (name IN('a','b','c','d','e','f','g','h','i')),
   PRIMARY KEY(region_id, name),
   UNIQUE(id),
   CONSTRAINT region_id_fk FOREIGN KEY(region_id) REFERENCES region(id),
   UNIQUE(region_id, name)
-) INTERLEAVE IN PARENT region (region_id);
+) INTERLEAVE IN PARENT region(region_id);
 
 -- vnis (VXLAN IDs) is a master table of all VNIs in use in a facility.  VNIs
 -- are populated on demand for a given facility.  Ideally it would be possible
@@ -240,6 +243,83 @@ CREATE TABLE IF NOT EXISTS vnic_ip (
   UNIQUE(vnic_id, ip_index),
   CONSTRAINT vnic_id_fk FOREIGN KEY(vnic_id) REFERENCES vnic(id),
   CONSTRAINT subnet_ip_id_fk FOREIGN KEY(ip_id) REFERENCES subnet_ip(id)
+) INTERLEAVE IN PARENT vnic(vnic_id);
+
+-- Security Groups represent a set of network filters.  Security Groups are
+-- applied to VNICs.  A Security Group is evaluated in context and then has its
+-- rules pushed out to matching VNICs.  At the edge individual devices can
+-- decide what rules match a given VNIC.
+CREATE TABLE IF NOT EXISTS security_group (
+  id UUID NOT NULL DEFAULT gen_random_uuid(),
+  name TEXT,
+  description TEXT,
+  account_id UUID NOT NULL,
+  CONSTRAINT account_id_fk FOREIGN KEY(account_id) REFERENCES account(id),
+  PRIMARY KEY(id)
+);
+
+-- Security Group Rules.  Security Groups are exclusively permissive and
+-- stateful.
+CREATE TABLE IF NOT EXISTS security_group_rule (
+  id UUID NOT NULL DEFAULT gen_random_uuid(),
+  security_group_id UUID NOT NULL,
+
+  direction TEXT NOT NULL DEFAULT 'in' CHECK(direction IN('in','out')),
+
+  -- Protocol Number (See /etc/protocols)
+  -- Port range
+  -- ICMP type and code
+  -- Source or destination addresses (CIDR notation)
+  -- Security Group
+  -- VPC
+  -- Subnet
+  -- Facility
+  protocol INT CHECK(protocol IS NULL OR protocol >= 0),
+
+  src_port_start INT, -- Reused as the ICMP type when protocol is 1 (ICMP)
+  src_port_end INT,   -- Reused as the ICMP code when protocol is 1 (ICMP)
+  dst_port_start INT,
+  dst_port_end INT,
+
+  src_cidr TEXT,
+  dst_cidr TEXT,
+
+  -- Hosts w/ VNICs in a Security Group that are allowed to match this rule.
+  src_security_group_id UUID,
+  dst_security_group_id UUID,
+
+  -- VPCs matching this rule (i.e. routers that span VPCs) and leak traffic this
+  -- way if they have the necessary routes.
+  src_vpc_id UUID,
+  dst_vpc_id UUID,
+
+  -- Subnets matching this rule
+  src_subnet_id UUID,
+  dst_subnet_id UUID,
+
+  -- AZs matching this rule
+  src_az_id UUID,
+  dst_az_id UUID,
+
+  PRIMARY KEY(security_group_id, id),
+  CONSTRAINT security_group_id_fk FOREIGN KEY(security_group_id) REFERENCES security_group(id),
+  CONSTRAINT src_security_group_id_fk FOREIGN KEY(src_security_group_id) REFERENCES security_group(id),
+  CONSTRAINT dst_security_group_id_fk FOREIGN KEY(dst_security_group_id) REFERENCES security_group(id),
+  CONSTRAINT src_vpc_id_fk FOREIGN KEY(src_vpc_id) REFERENCES vpc(id),
+  CONSTRAINT dst_vpc_id_fk FOREIGN KEY(dst_vpc_id) REFERENCES vpc(id),
+  CONSTRAINT src_subnet_id_fk FOREIGN KEY(src_subnet_id) REFERENCES subnet(id),
+  CONSTRAINT dst_subnet_id_fk FOREIGN KEY(dst_subnet_id) REFERENCES subnet(id),
+  CONSTRAINT src_az_id_fk FOREIGN KEY(src_az_id) REFERENCES az(id),
+  CONSTRAINT dst_az_id_fk FOREIGN KEY(dst_az_id) REFERENCES az(id)
+) INTERLEAVE IN PARENT security_group(security_group_id);
+
+-- Security Group VNIC maps the available security groups assigned to a given
+-- VNIC.
+CREATE TABLE IF NOT EXISTS security_group_vnic (
+  vnic_id UUID NOT NULL,
+  id UUID NOT NULL DEFAULT gen_random_uuid(),
+  PRIMARY KEY(vnic_id, id),
+  UNIQUE(id, vnic_id)
 ) INTERLEAVE IN PARENT vnic(vnic_id);
 
 -- Router Subnet Interface maps VNICs to a router object.
