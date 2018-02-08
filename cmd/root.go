@@ -11,6 +11,7 @@ import (
 	"github.com/sean-/conswriter"
 	"github.com/sean-/vpc/cmd/db"
 	"github.com/sean-/vpc/cmd/run"
+	"github.com/sean-/vpc/cmd/utilities"
 	"github.com/sean-/vpc/cmd/version"
 	"github.com/sean-/vpc/internal/buildtime"
 	"github.com/sean-/vpc/internal/command"
@@ -24,6 +25,7 @@ var subCommands = []*command.Command{
 	run.Cmd,
 	db.Cmd,
 	version.Cmd,
+	utilities.InstallManCommand,
 }
 
 var rootCmd = &command.Command{
@@ -112,6 +114,19 @@ var rootCmd = &command.Command{
 			flags.BoolP(longName, shortName, defaultValue, description)
 			viper.BindPFlag(key, flags.Lookup(longName))
 			viper.SetDefault(key, defaultValue)
+		}
+
+		{
+			const (
+				key          = config.KeyManPageDirectory
+				longName     = "dir"
+				defaultValue = ""
+				description  = "the directory to write the man pages"
+			)
+
+			flags := parent.Cobra.PersistentFlags()
+			flags.String(longName, defaultValue, description)
+			viper.BindPFlag(key, flags.Lookup(longName))
 		}
 
 		return nil
