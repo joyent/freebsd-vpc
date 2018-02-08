@@ -35,7 +35,7 @@ func (t DBScheme) String() string {
 	case DBSchemeCRDB:
 		return "cockroachdb"
 	default:
-		panic(fmt.Sprintf("unknown type: %v", t))
+		panic(fmt.Sprintf("unknown type: %#v", t))
 	}
 }
 
