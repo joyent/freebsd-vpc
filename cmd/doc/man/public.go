@@ -21,8 +21,7 @@ var Cmd = &command.Command{
 	Cobra: &cobra.Command{
 		Use:   "man",
 		Short: "Generates and install " + buildtime.PROGNAME + " man(1) pages",
-		Long: `
-This command automatically generates up-to-date man(1) pages of ` + buildtime.PROGNAME + fmt.Sprintf("(%d)", config.ManSect) + `
+		Long: `This command automatically generates up-to-date man(1) pages of ` + buildtime.PROGNAME + fmt.Sprintf("(%d)", config.ManSect) + `
 command-line interface.  By default, it creates the man page files
 in the "docs/man" directory under the current directory.`,
 
