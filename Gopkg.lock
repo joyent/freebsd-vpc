@@ -124,13 +124,13 @@
   branch = "master"
   name = "github.com/sean-/conswriter"
   packages = ["."]
-  revision = "092648331ad3652cd09996ac5cd25e54fb8ddbb8"
+  revision = "f5ae3917a627f1aab86eedaac41b153e4097e4e8"
 
 [[projects]]
   branch = "master"
   name = "github.com/sean-/pager"
   packages = ["."]
-  revision = "7cb6e5d2fa84003da0bd487e1028c7e5c110a709"
+  revision = "666be9bf53b5257ca07b4a16227df91e104c0519"
 
 [[projects]]
   branch = "master"

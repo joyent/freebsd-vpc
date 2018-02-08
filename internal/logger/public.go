@@ -58,7 +58,7 @@ func Setup() error {
 	if isatty.IsTerminal(os.Stdout.Fd()) || isatty.IsCygwinTerminal(os.Stdout.Fd()) {
 		logWriter = conswriter.GetTerminal()
 	} else {
-		logWriter = os.Stdout
+		logWriter = os.Stderr
 	}
 
 	logFmt, err := getLogFormat()
@@ -86,7 +86,7 @@ func Setup() error {
 		}
 		zlog = zerolog.New(w).With().Timestamp().Logger()
 	default:
-		return fmt.Errorf("unsupported log format: %q")
+		return fmt.Errorf("unsupported log format: %q", logFmt)
 	}
 
 	log.Logger = zlog
