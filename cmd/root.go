@@ -10,6 +10,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/sean-/conswriter"
 	"github.com/sean-/vpc/cmd/db"
+	"github.com/sean-/vpc/cmd/doc"
 	"github.com/sean-/vpc/cmd/run"
 	"github.com/sean-/vpc/cmd/version"
 	"github.com/sean-/vpc/internal/buildtime"
@@ -21,8 +22,9 @@ import (
 )
 
 var subCommands = []*command.Command{
-	run.Cmd,
 	db.Cmd,
+	doc.Cmd,
+	run.Cmd,
 	version.Cmd,
 }
 

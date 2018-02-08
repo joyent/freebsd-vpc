@@ -1,8 +1,14 @@
 package config
 
 const (
-	KeyUsePager = "general.use-pager"
-	KeyUseUTC   = "general.utc"
+	DefaultManDir = "./docs/man"
+	ManSect       = 8
+
+	KeyDocManDir = "doc.mandir"
+
+	KeyUsePager         = "general.use-pager"
+	KeyUseUTC           = "general.utc"
+	KeyManPageDirectory = "general.dir"
 
 	KeyLogFormat    = "log.format"
 	KeyLogLevel     = "log.level"
