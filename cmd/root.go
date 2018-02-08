@@ -116,19 +116,6 @@ var rootCmd = &command.Command{
 			viper.SetDefault(key, defaultValue)
 		}
 
-		{
-			const (
-				key          = config.KeyManPageDirectory
-				longName     = "dir"
-				defaultValue = ""
-				description  = "the directory to write the man pages"
-			)
-
-			flags := parent.Cobra.PersistentFlags()
-			flags.String(longName, defaultValue, description)
-			viper.BindPFlag(key, flags.Lookup(longName))
-		}
-
 		return nil
 	},
 }
