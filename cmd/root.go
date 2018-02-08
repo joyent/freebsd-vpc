@@ -12,6 +12,7 @@ import (
 	"github.com/sean-/vpc/cmd/db"
 	"github.com/sean-/vpc/cmd/doc"
 	"github.com/sean-/vpc/cmd/run"
+	"github.com/sean-/vpc/cmd/shell"
 	"github.com/sean-/vpc/cmd/version"
 	"github.com/sean-/vpc/internal/buildtime"
 	"github.com/sean-/vpc/internal/command"
@@ -26,6 +27,7 @@ var subCommands = []*command.Command{
 	doc.Cmd,
 	run.Cmd,
 	version.Cmd,
+	shell.Cmd,
 }
 
 var rootCmd = &command.Command{

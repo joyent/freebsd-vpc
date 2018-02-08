@@ -8,6 +8,8 @@ const (
 	KeyDocManDir = "doc.mandir"
 	KeyDocMdDir  = "doc.mddir"
 
+	KeyBashAutoCompletionTarget = "shell.autocomplete.bash.target"
+
 	KeyUsePager = "general.use-pager"
 	KeyUseUTC   = "general.utc"
 
