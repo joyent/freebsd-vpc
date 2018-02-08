@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/rs/zerolog/log"
+	"github.com/sean-/conswriter"
 	"github.com/sean-/vpc/internal/command"
-	"github.com/sean-/vpc/internal/conswriter"
 	"github.com/spf13/cobra"
 )
 

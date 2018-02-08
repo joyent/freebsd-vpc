@@ -4,9 +4,9 @@ import (
 	"os"
 
 	"github.com/rs/zerolog/log"
+	"github.com/sean-/conswriter"
 	"github.com/sean-/vpc/cmd"
 	"github.com/sean-/vpc/internal/buildtime"
-	"github.com/sean-/vpc/internal/conswriter"
 )
 
 var (

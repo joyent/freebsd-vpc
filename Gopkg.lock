@@ -122,6 +122,12 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/sean-/conswriter"
+  packages = ["."]
+  revision = "092648331ad3652cd09996ac5cd25e54fb8ddbb8"
+
+[[projects]]
+  branch = "master"
   name = "github.com/sean-/pager"
   packages = ["."]
   revision = "7cb6e5d2fa84003da0bd487e1028c7e5c110a709"
@@ -199,6 +205,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "21a3b08ad93eac72f5a8588ea8493edb39ae0eae73a6785c3caa431f80f9efeb"
+  inputs-digest = "4cf7c36331ca73c8322683cfe2ffbcbf515241b47852c08eeea01c15bec83390"
   solver-name = "gps-cdcl"
   solver-version = 1

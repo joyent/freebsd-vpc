@@ -12,8 +12,8 @@ import (
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+	"github.com/sean-/conswriter"
 	"github.com/sean-/vpc/internal/config"
-	"github.com/sean-/vpc/internal/conswriter"
 	"github.com/spf13/viper"
 )
 

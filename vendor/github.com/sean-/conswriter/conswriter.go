@@ -106,12 +106,12 @@ func init() {
 	mtx.Lock()
 	defer mtx.Unlock()
 
-	// we need to keep copy of StdOut
 	globalTerm = &terminal{
 		stdout: zerolog.SyncWriter(os.Stdout),
 		stderr: zerolog.SyncWriter(os.Stderr),
 	}
 
+	// keep a copy of Stdout/Stderr
 	origStdout = os.Stdout
 	origStderr = os.Stderr
 }
