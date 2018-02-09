@@ -22,4 +22,5 @@ guest_disks/
 vpc
 crdb/
 docs/man/
+docs/md/
 .idea/

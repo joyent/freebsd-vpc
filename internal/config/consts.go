@@ -1,12 +1,15 @@
 package config
 
 const (
-	DefaultMdDir  = "./docs/md"
 	DefaultManDir = "./docs/man"
 	ManSect       = 8
 
-	KeyDocManDir = "doc.mandir"
-	KeyDocMdDir  = "doc.mddir"
+	DefaultMarkdownDir       = "./docs/md"
+	DefaultMarkdownURLPrefix = "/command"
+
+	KeyDocManDir            = "doc.mandir"
+	KeyDocMarkdownDir       = "doc.markdown-dir"
+	KeyDocMarkdownURLPrefix = "doc.markdown-url-prefix"
 
 	KeyBashAutoCompletionTarget = "shell.autocomplete.bash.target"
 
