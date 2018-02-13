@@ -13,6 +13,7 @@
 
 build: generate
 	govvv build
+	./vpc shell autocomplete bash -d docs/bash.d/
 
 install:
 	govvv install
