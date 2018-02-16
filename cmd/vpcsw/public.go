@@ -1,29 +1,28 @@
-package db
+package vpcsw
 
 import (
-	"github.com/sean-/vpc/cmd/db/migrate"
-	"github.com/sean-/vpc/cmd/db/ping"
+	"github.com/sean-/vpc/cmd/vpcsw/create"
 	"github.com/sean-/vpc/internal/command"
 	"github.com/spf13/cobra"
 )
 
 var Cmd = &command.Command{
-	ValidArgs: []string{"db"},
+	ValidArgs: []string{"switch", "sw"},
 	Cobra: &cobra.Command{
-		Use:     "db",
-		Aliases: []string{"database"},
-		Short:   "Interaction with the VPC database",
+		Use:     "switch",
+		Aliases: []string{"sw"},
+		Short:   "VPC switch management",
 	},
 
 	Setup: func(parent *command.Command) error {
 		cmds := []*command.Command{
-			migrate.Cmd,
-			ping.Cmd,
+			create.Cmd,
+			// list.Cmd,
 		}
 
 		for _, cmd := range cmds {
-			cmd.Setup(cmd)
 			parent.Cobra.AddCommand(cmd.Cobra)
+			cmd.Setup(cmd)
 		}
 
 		return nil

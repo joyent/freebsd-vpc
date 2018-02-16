@@ -1,24 +1,21 @@
-package db
+package intf
 
 import (
-	"github.com/sean-/vpc/cmd/db/migrate"
-	"github.com/sean-/vpc/cmd/db/ping"
+	"github.com/sean-/vpc/cmd/intf/list"
 	"github.com/sean-/vpc/internal/command"
 	"github.com/spf13/cobra"
 )
 
 var Cmd = &command.Command{
-	ValidArgs: []string{"db"},
 	Cobra: &cobra.Command{
-		Use:     "db",
-		Aliases: []string{"database"},
-		Short:   "Interaction with the VPC database",
+		Use:     "interface",
+		Aliases: []string{"int", "intf"},
+		Short:   "VPC interface management",
 	},
 
 	Setup: func(parent *command.Command) error {
 		cmds := []*command.Command{
-			migrate.Cmd,
-			ping.Cmd,
+			list.Cmd,
 		}
 
 		for _, cmd := range cmds {

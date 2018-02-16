@@ -9,11 +9,14 @@ import (
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"github.com/sean-/conswriter"
+	"github.com/sean-/seed"
 	"github.com/sean-/vpc/cmd/db"
 	"github.com/sean-/vpc/cmd/doc"
+	"github.com/sean-/vpc/cmd/intf"
 	"github.com/sean-/vpc/cmd/run"
 	"github.com/sean-/vpc/cmd/shell"
 	"github.com/sean-/vpc/cmd/version"
+	"github.com/sean-/vpc/cmd/vpcsw"
 	"github.com/sean-/vpc/internal/buildtime"
 	"github.com/sean-/vpc/internal/command"
 	"github.com/sean-/vpc/internal/config"
@@ -22,18 +25,22 @@ import (
 	"github.com/spf13/viper"
 )
 
-var subCommands = []*command.Command{
+var subCommands = command.Commands{
 	db.Cmd,
 	doc.Cmd,
+	intf.Cmd,
 	run.Cmd,
 	version.Cmd,
 	shell.Cmd,
+	vpcsw.Cmd,
 }
 
 var rootCmd = &command.Command{
 	Cobra: &cobra.Command{
 		Use:   buildtime.PROGNAME,
 		Short: buildtime.PROGNAME + " configures and manages VPCs",
+		//ValidArgs:  subCommands.ValidArgs(),
+		//ArgAliases: subCommands.ArgAliases(),
 	},
 
 	Setup: func(parent *command.Command) error {
@@ -135,6 +142,10 @@ func Execute() error {
 	// TODO(seanc@): add if viper.GetBool("debug.enable-agent") {
 	if err := agent.Listen(&agent.Options{}); err != nil {
 		log.Fatal().Err(err).Msg("unable to start gops agent")
+	}
+
+	if secure, err := seed.Init(); !secure {
+		log.Fatal().Err(err).Msg("unable to securely seed RNG")
 	}
 
 	for _, cmd := range subCommands {

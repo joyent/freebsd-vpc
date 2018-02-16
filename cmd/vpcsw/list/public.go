@@ -1,21 +1,14 @@
-package ping
+package list
 
 import (
-	"time"
-
-	"github.com/pkg/errors"
-	"github.com/rs/zerolog/log"
-	"github.com/sean-/vpc/agent"
-	"github.com/sean-/vpc/config"
-	"github.com/sean-/vpc/internal/buildtime"
 	"github.com/sean-/vpc/internal/command"
 	"github.com/spf13/cobra"
 )
 
 var Cmd = &command.Command{
 	Cobra: &cobra.Command{
-		Use:          "ping",
-		Short:        "ping the database to ensure connectivity",
+		Use:          "list",
+		Short:        "list interfaces",
 		SilenceUsage: true,
 		Args:         cobra.NoArgs,
 		PreRunE: func(cmd *cobra.Command, args []string) error {
@@ -23,31 +16,14 @@ var Cmd = &command.Command{
 		},
 
 		RunE: func(cmd *cobra.Command, args []string) error {
-			log.Info().Str("command", "ping").Msg("")
+			// mib := []int{unix.CTL_KERN, unix.KERN_OSTYPE}
+			// buf := [256]byte{}
+			// n := unsafe.Sizeof(buf)
+			// if err := unix.SysctlRaw("kern.hostname", mib, &uname.Sysname[0], &n, nil, 0); err != nil {
+			// 	return err
+			// }
 
-			// 1. Parse config
-			cfg, err := config.New()
-			if err != nil {
-				return errors.Wrap(err, "unable to load configuration")
-			}
-
-			if err := cfg.Load(); err != nil {
-				return errors.Wrapf(err, "unable to load %s config", buildtime.PROGNAME)
-			}
-
-			// 2. Run agent
-			a, err := agent.New(cfg)
-			if err != nil {
-				return errors.Wrapf(err, "unable to create a new %s agent", buildtime.PROGNAME)
-			}
-
-			// 3. Connect to the database to verify database credentials
-			start := time.Now()
-			if err := a.Pool().Ping(); err != nil {
-				return errors.Wrap(err, "unable to ping database")
-			}
-			elapsed := time.Now().Sub(start)
-			log.Info().Str("duration", elapsed.String()).Msg("ping")
+			// log.Info().Str("hostname", h).Msg("list")
 
 			return nil
 			// tritonClientConfig, err := api.InitConfig()

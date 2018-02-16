@@ -11,7 +11,9 @@ const (
 	KeyDocMarkdownDir       = "doc.markdown-dir"
 	KeyDocMarkdownURLPrefix = "doc.markdown-url-prefix"
 
-	KeyBashAutoCompletionTarget = "shell.autocomplete.bash.target"
+	KeyShellAutoCompBashDir = "shell.autocomplete.bash-dir"
+
+	KeySWVNI = "switch.vni"
 
 	KeyUsePager = "general.use-pager"
 	KeyUseUTC   = "general.utc"

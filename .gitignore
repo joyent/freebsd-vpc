@@ -21,6 +21,7 @@ guest_disks/
 .DS_Store
 vpc
 crdb/
+docs/bash.d/
 docs/man/
 docs/md/
 .idea/

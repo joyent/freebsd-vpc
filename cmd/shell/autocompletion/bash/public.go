@@ -2,8 +2,7 @@ package bash
 
 import (
 	"os"
-
-	"fmt"
+	"path"
 
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
@@ -20,12 +19,12 @@ var Cmd = &command.Command{
 		Short: "Generates and install " + buildtime.PROGNAME + " bash autocompletion script",
 		Long: `Generates a bash autocompletion script for ` + buildtime.PROGNAME + `
 
-By default, the file is written directly to /etc/bash_completion.d
+By default, the file is written directly to ` + config.DefaultBashAutoCompletionDir + `
 for convenience, and the command may need superuser rights, e.g.:
 
 	$ sudo vpc shell autocomplete bash
 
-Add ` + "`--bash-autocomplete-dir=/path/to/file`" + `. The default file name 
+Add ` + "`--bash-autocomplete-dir=/path/to/file`" + `. The default file name
 is ` + buildtime.PROGNAME + `.sh.
 
 Logout and in again to reload the completion scripts,
@@ -38,17 +37,17 @@ or just source them in directly:
 		},
 
 		RunE: func(cmd *cobra.Command, args []string) error {
-
-			target := viper.GetString(config.KeyBashAutoCompletionTarget)
-			if _, err := os.Stat(target); os.IsNotExist(err) {
-				if err := os.MkdirAll(target, 0777); err != nil {
-					return errors.Wrapf(err, "unable to make bash-autocomplete-target %q", target)
+			bashDir := viper.GetString(config.KeyShellAutoCompBashDir)
+			if _, err := os.Stat(bashDir); os.IsNotExist(err) {
+				if err := os.MkdirAll(bashDir, 0777); err != nil {
+					return errors.Wrapf(err, "unable to create bash autocomplete directory %q", bashDir)
 				}
 			}
-			bashFile := fmt.Sprintf("%s/%s.sh", target, buildtime.PROGNAME)
+
+			bashFile := path.Join(bashDir, buildtime.PROGNAME+".sh")
 			err := cmd.Root().GenBashCompletionFile(bashFile)
 			if err != nil {
-				return err
+				return errors.Wrap(err, "unable to generate bash completion")
 			}
 
 			log.Info().Msg("Installation completed successfully.")
@@ -60,15 +59,15 @@ or just source them in directly:
 	Setup: func(parent *command.Command) error {
 		{
 			const (
-				key          = config.KeyBashAutoCompletionTarget
-				longName     = "bash-autocomplete-dir"
-				defaultValue = "/etc/bash_completion.d"
-				description  = "autocompletion directory"
+				key               = config.KeyShellAutoCompBashDir
+				shortOpt, longOpt = "d", "dir"
+				defaultValue      = config.DefaultBashAutoCompletionDir
+				description       = "autocompletion directory"
 			)
 
-			flags := parent.Cobra.PersistentFlags()
-			flags.String(longName, defaultValue, description)
-			viper.BindPFlag(key, flags.Lookup(longName))
+			flags := parent.Cobra.Flags()
+			flags.StringP(longOpt, shortOpt, defaultValue, description)
+			viper.BindPFlag(key, flags.Lookup(longOpt))
 		}
 
 		return nil
