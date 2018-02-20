@@ -1,28 +1,32 @@
 package vpcsw
 
 import (
+	"github.com/pkg/errors"
 	"github.com/sean-/vpc/cmd/vpcsw/create"
+	"github.com/sean-/vpc/cmd/vpcsw/destroy"
 	"github.com/sean-/vpc/internal/command"
 	"github.com/spf13/cobra"
 )
 
+const _CmdName = "switch"
+
 var Cmd = &command.Command{
-	ValidArgs: []string{"switch", "sw"},
+	Name: _CmdName,
+
 	Cobra: &cobra.Command{
-		Use:     "switch",
+		Use:     _CmdName,
 		Aliases: []string{"sw"},
 		Short:   "VPC switch management",
 	},
 
-	Setup: func(parent *command.Command) error {
-		cmds := []*command.Command{
+	Setup: func(self *command.Command) error {
+		subCommands := command.Commands{
 			create.Cmd,
-			// list.Cmd,
+			destroy.Cmd,
 		}
 
-		for _, cmd := range cmds {
-			parent.Cobra.AddCommand(cmd.Cobra)
-			cmd.Setup(cmd)
+		if err := self.Register(subCommands); err != nil {
+			return errors.Wrapf(err, "unable to register sub-commands under %s", _CmdName)
 		}
 
 		return nil

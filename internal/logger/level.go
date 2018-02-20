@@ -57,8 +57,8 @@ func logLevelsStr() []string {
 	return levels
 }
 
-func setLogLevel() (logLevel Level, err error) {
-	switch strLevel := strings.ToLower(viper.GetString(config.KeyLogLevel)); strLevel {
+func setLogLevel(v *viper.Viper) (logLevel Level, err error) {
+	switch strLevel := strings.ToLower(v.GetString(config.KeyLogLevel)); strLevel {
 	case "debug":
 		zerolog.SetGlobalLevel(zerolog.DebugLevel)
 		logLevel = LevelDebug

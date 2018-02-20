@@ -13,7 +13,9 @@ const (
 
 	KeyShellAutoCompBashDir = "shell.autocomplete.bash-dir"
 
-	KeySWVNI = "switch.vni"
+	KeySWCreateID  = "switch.create.id"
+	KeySWCreateVNI = "switch.create.vni"
+	KeySWDestroyID = "switch.destroy.id"
 
 	KeyUsePager = "general.use-pager"
 	KeyUseUTC   = "general.utc"

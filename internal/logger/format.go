@@ -29,8 +29,8 @@ func (f Format) String() string {
 	}
 }
 
-func getLogFormat() (Format, error) {
-	switch logFormat := strings.ToLower(viper.GetString(config.KeyLogFormat)); logFormat {
+func getLogFormat(v *viper.Viper) (Format, error) {
+	switch logFormat := strings.ToLower(v.GetString(config.KeyLogFormat)); logFormat {
 	case "auto":
 		return FormatAuto, nil
 	case "json", "zerolog":

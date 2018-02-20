@@ -48,8 +48,8 @@ func init() {
 	stdlog.SetOutput(zlog)
 }
 
-func Setup() error {
-	logLevel, err := setLogLevel()
+func Setup(v *viper.Viper) error {
+	logLevel, err := setLogLevel(v)
 	if err != nil {
 		return errors.Wrap(err, "unable to set log level")
 	}
@@ -61,7 +61,7 @@ func Setup() error {
 		logWriter = os.Stderr
 	}
 
-	logFmt, err := getLogFormat()
+	logFmt, err := getLogFormat(v)
 	if err != nil {
 		return errors.Wrap(err, "unable to parse log format")
 	}
@@ -79,7 +79,7 @@ func Setup() error {
 	case FormatZerolog:
 		zlog = zerolog.New(logWriter).With().Timestamp().Logger()
 	case FormatHuman:
-		useColor := viper.GetBool(config.KeyLogTermColor)
+		useColor := v.GetBool(config.KeyLogTermColor)
 		w := zerolog.ConsoleWriter{
 			Out:     logWriter,
 			NoColor: !useColor,
