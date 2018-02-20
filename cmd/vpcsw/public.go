@@ -4,6 +4,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sean-/vpc/cmd/vpcsw/create"
 	"github.com/sean-/vpc/cmd/vpcsw/destroy"
+	"github.com/sean-/vpc/cmd/vpcsw/list"
 	"github.com/sean-/vpc/internal/command"
 	"github.com/spf13/cobra"
 )
@@ -23,6 +24,7 @@ var Cmd = &command.Command{
 		subCommands := command.Commands{
 			create.Cmd,
 			destroy.Cmd,
+			list.Cmd,
 		}
 
 		if err := self.Register(subCommands); err != nil {

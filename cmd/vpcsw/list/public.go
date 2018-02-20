@@ -1,13 +1,26 @@
 package list
 
 import (
+	"strconv"
+	"strings"
+
+	"github.com/olekukonko/tablewriter"
+	"github.com/pkg/errors"
+	"github.com/sean-/conswriter"
 	"github.com/sean-/vpc/internal/command"
 	"github.com/spf13/cobra"
+	"go.freebsd.org/sys/vpc/vpctest"
+)
+
+const (
+	_CmdName = "list"
 )
 
 var Cmd = &command.Command{
+	Name: _CmdName,
+
 	Cobra: &cobra.Command{
-		Use:          "list",
+		Use:          _CmdName,
 		Short:        "list interfaces",
 		SilenceUsage: true,
 		Args:         cobra.NoArgs,
@@ -16,51 +29,45 @@ var Cmd = &command.Command{
 		},
 
 		RunE: func(cmd *cobra.Command, args []string) error {
-			// mib := []int{unix.CTL_KERN, unix.KERN_OSTYPE}
-			// buf := [256]byte{}
-			// n := unsafe.Sizeof(buf)
-			// if err := unix.SysctlRaw("kern.hostname", mib, &uname.Sysname[0], &n, nil, 0); err != nil {
-			// 	return err
-			// }
+			cons := conswriter.GetTerminal()
 
-			// log.Info().Str("hostname", h).Msg("list")
+			existingIfaces, err := vpctest.GetAllInterfaces()
+			if err != nil {
+				return errors.Wrapf(err, "unable to get all interfaces")
+			}
 
-			return nil
-			// tritonClientConfig, err := api.InitConfig()
-			// if err != nil {
-			// 	return err
-			// }
+			table := tablewriter.NewWriter(cons)
+			table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
+			table.SetHeaderLine(false)
+			table.SetAutoFormatHeaders(true)
 
-			// client, err := tritonClientConfig.GetComputeClient()
-			// if err != nil {
-			// 	return err
-			// }
+			table.SetColumnAlignment([]int{tablewriter.ALIGN_LEFT, tablewriter.ALIGN_RIGHT, tablewriter.ALIGN_RIGHT})
+			table.SetBorders(tablewriter.Border{Left: true, Top: false, Right: true, Bottom: false})
+			table.SetCenterSeparator("")
+			table.SetColumnSeparator("")
+			table.SetRowSeparator("")
 
-			// instances, err := client.Instances().List(context.Background(), &compute.ListInstancesInput{})
-			// if err != nil {
-			// 	return err
-			// }
+			table.SetHeader([]string{"name", "index", "mtu", "mac", "flags"})
 
-			// table := tablewriter.NewWriter(cons)
-			// table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
-			// table.SetHeaderLine(false)
-			// table.SetAutoFormatHeaders(true)
+			var numInterfaces int64
+			for _, iface := range existingIfaces {
+				if !strings.HasPrefix(iface.Name, "vpcsw") {
+					continue
+				}
 
-			// table.SetColumnAlignment([]int{tablewriter.ALIGN_LEFT, tablewriter.ALIGN_RIGHT, tablewriter.ALIGN_RIGHT})
-			// table.SetBorders(tablewriter.Border{Left: true, Top: false, Right: true, Bottom: false})
-			// table.SetCenterSeparator("")
-			// table.SetColumnSeparator("")
-			// table.SetRowSeparator("")
+				table.Append([]string{
+					iface.Name,
+					strconv.FormatInt(int64(iface.Index), 10),
+					strconv.FormatInt(int64(iface.MTU), 10),
+					iface.HardwareAddr.String(),
+					iface.Flags.String(),
+				})
+				numInterfaces++
+			}
 
-			// table.SetHeader([]string{"id", "name", "image", "package"})
+			table.SetFooter([]string{"total", strconv.FormatInt(numInterfaces, 10), "", "", ""})
 
-			// var numInstances uint
-			// for _, instance := range instances {
-			// 	table.Append([]string{instance.ID, instance.Name, instance.Image, instance.Package})
-			// 	numInstances++
-			// }
-
-			// table.Render()
+			table.Render()
 
 			return nil
 		},
