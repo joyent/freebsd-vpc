@@ -14,9 +14,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const _CmdName = "migrate"
+
 var Cmd = &command.Command{
+	Name: _CmdName,
 	Cobra: &cobra.Command{
-		Use:          "migrate",
+		Use:          _CmdName,
 		Short:        "Migrate " + buildtime.PROGNAME + " schema",
 		SilenceUsage: true,
 
@@ -25,7 +28,7 @@ var Cmd = &command.Command{
 		},
 
 		RunE: func(cmd *cobra.Command, args []string) error {
-			log.Info().Str("command", "migrate").Msg("")
+			log.Info().Str("cmd", _CmdName).Msg("")
 
 			cfg, err := config.New()
 			if err != nil {
@@ -89,7 +92,7 @@ var Cmd = &command.Command{
 		},
 	},
 
-	Setup: func(parent *command.Command) error {
+	Setup: func(self *command.Command) error {
 		return nil
 	},
 }

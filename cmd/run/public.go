@@ -10,9 +10,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const _CmdName = "run"
+
 var Cmd = &command.Command{
+	Name: _CmdName,
+
 	Cobra: &cobra.Command{
-		Use:          "run",
+		Use:          _CmdName,
 		Short:        "Run " + buildtime.PROGNAME,
 		SilenceUsage: true,
 
@@ -58,7 +62,7 @@ var Cmd = &command.Command{
 		},
 	},
 
-	Setup: func(parent *command.Command) error {
+	Setup: func(self *command.Command) error {
 		return nil
 	},
 }

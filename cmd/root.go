@@ -25,6 +25,8 @@ import (
 	"github.com/spf13/viper"
 )
 
+const _CmdName = "root"
+
 var subCommands = command.Commands{
 	db.Cmd,
 	doc.Cmd,
@@ -36,6 +38,8 @@ var subCommands = command.Commands{
 }
 
 var rootCmd = &command.Command{
+	Name: _CmdName,
+
 	Cobra: &cobra.Command{
 		Use:   buildtime.PROGNAME,
 		Short: buildtime.PROGNAME + " configures and manages VPCs",
@@ -43,7 +47,7 @@ var rootCmd = &command.Command{
 		//ArgAliases: subCommands.ArgAliases(),
 	},
 
-	Setup: func(parent *command.Command) error {
+	Setup: func(self *command.Command) error {
 		{
 			const (
 				key         = config.KeyUsePager
@@ -56,7 +60,7 @@ var rootCmd = &command.Command{
 				defaultValue = true
 			}
 
-			flags := parent.Cobra.PersistentFlags()
+			flags := self.Cobra.PersistentFlags()
 			flags.BoolP(longName, shortName, defaultValue, description)
 			viper.BindPFlag(key, flags.Lookup(longName))
 			viper.SetDefault(key, defaultValue)
@@ -71,7 +75,7 @@ var rootCmd = &command.Command{
 				description  = "Change the log level being sent to stdout"
 			)
 
-			flags := parent.Cobra.PersistentFlags()
+			flags := self.Cobra.PersistentFlags()
 			flags.StringP(longOpt, shortOpt, defaultValue, description)
 			viper.BindPFlag(key, flags.Lookup(longOpt))
 			viper.SetDefault(key, defaultValue)
@@ -86,7 +90,7 @@ var rootCmd = &command.Command{
 			)
 			defaultValue := logger.FormatAuto.String()
 
-			flags := parent.Cobra.PersistentFlags()
+			flags := self.Cobra.PersistentFlags()
 			flags.StringP(longOpt, shortOpt, defaultValue, description)
 			viper.BindPFlag(key, flags.Lookup(longOpt))
 			viper.SetDefault(key, defaultValue)
@@ -104,7 +108,7 @@ var rootCmd = &command.Command{
 				defaultValue = true
 			}
 
-			flags := parent.Cobra.PersistentFlags()
+			flags := self.Cobra.PersistentFlags()
 			flags.BoolP(longOpt, shortOpt, defaultValue, description)
 			viper.BindPFlag(key, flags.Lookup(longOpt))
 			viper.SetDefault(key, defaultValue)
@@ -119,7 +123,7 @@ var rootCmd = &command.Command{
 				description  = "Display times in UTC"
 			)
 
-			flags := parent.Cobra.PersistentFlags()
+			flags := self.Cobra.PersistentFlags()
 			flags.BoolP(longName, shortName, defaultValue, description)
 			viper.BindPFlag(key, flags.Lookup(longName))
 			viper.SetDefault(key, defaultValue)
@@ -133,7 +137,7 @@ func Execute() error {
 	rootCmd.Setup(rootCmd)
 	conswriter.UsePager(viper.GetBool(config.KeyUsePager))
 
-	if err := logger.Setup(); err != nil {
+	if err := logger.Setup(viper.GetViper()); err != nil {
 		return err
 	}
 
@@ -148,9 +152,8 @@ func Execute() error {
 		log.Fatal().Err(err).Msg("unable to securely seed RNG")
 	}
 
-	for _, cmd := range subCommands {
-		rootCmd.Cobra.AddCommand(cmd.Cobra)
-		cmd.Setup(cmd)
+	if err := rootCmd.Register(subCommands); err != nil {
+		log.Fatal().Err(err).Str("cmd", _CmdName).Msg("unable to register sub-commands")
 	}
 
 	if err := rootCmd.Cobra.Execute(); err != nil {

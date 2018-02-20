@@ -17,9 +17,12 @@ import (
 	"github.com/spf13/viper"
 )
 
+const _CmdName = "man"
+
 var Cmd = &command.Command{
+	Name: _CmdName,
 	Cobra: &cobra.Command{
-		Use:   "man",
+		Use:   _CmdName,
 		Short: "Generates and install " + buildtime.PROGNAME + " man(1) pages",
 		Long: `This command automatically generates up-to-date man(1) pages of ` + buildtime.PROGNAME + fmt.Sprintf("(%d)", config.ManSect) + `
 command-line interface.  By default, it creates the man page files
@@ -59,7 +62,7 @@ in the "docs/man" directory under the current directory.`,
 		},
 	},
 
-	Setup: func(parent *command.Command) error {
+	Setup: func(self *command.Command) error {
 		{
 			const (
 				key          = config.KeyDocManDir
@@ -69,7 +72,7 @@ in the "docs/man" directory under the current directory.`,
 				defaultValue = config.DefaultManDir
 			)
 
-			flags := parent.Cobra.PersistentFlags()
+			flags := self.Cobra.PersistentFlags()
 			flags.StringP(longName, shortName, defaultValue, description)
 			viper.BindPFlag(key, flags.Lookup(longName))
 			viper.BindEnv(key, "MANDIR")

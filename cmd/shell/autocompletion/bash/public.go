@@ -13,9 +13,13 @@ import (
 	"github.com/spf13/viper"
 )
 
+const _CmdName = "bash"
+
 var Cmd = &command.Command{
+	Name: _CmdName,
+
 	Cobra: &cobra.Command{
-		Use:   "bash",
+		Use: _CmdName,
 		Short: "Generates and install " + buildtime.PROGNAME + " bash autocompletion script",
 		Long: `Generates a bash autocompletion script for ` + buildtime.PROGNAME + `
 
@@ -56,7 +60,7 @@ or just source them in directly:
 		},
 	},
 
-	Setup: func(parent *command.Command) error {
+	Setup: func(self *command.Command) error {
 		{
 			const (
 				key               = config.KeyShellAutoCompBashDir
@@ -65,7 +69,7 @@ or just source them in directly:
 				description       = "autocompletion directory"
 			)
 
-			flags := parent.Cobra.Flags()
+			flags := self.Cobra.Flags()
 			flags.StringP(longOpt, shortOpt, defaultValue, description)
 			viper.BindPFlag(key, flags.Lookup(longOpt))
 		}

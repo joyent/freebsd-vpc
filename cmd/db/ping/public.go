@@ -12,9 +12,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const _CmdName = "ping"
+
 var Cmd = &command.Command{
+	Name: _CmdName,
 	Cobra: &cobra.Command{
-		Use:          "ping",
+		Use:          _CmdName,
 		Short:        "ping the database to ensure connectivity",
 		SilenceUsage: true,
 		Args:         cobra.NoArgs,
@@ -90,7 +93,7 @@ var Cmd = &command.Command{
 		},
 	},
 
-	Setup: func(parent *command.Command) error {
+	Setup: func(self *command.Command) error {
 		return nil
 	},
 }

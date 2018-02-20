@@ -1,29 +1,31 @@
 package db
 
 import (
+	"github.com/rs/zerolog/log"
 	"github.com/sean-/vpc/cmd/db/migrate"
 	"github.com/sean-/vpc/cmd/db/ping"
 	"github.com/sean-/vpc/internal/command"
 	"github.com/spf13/cobra"
 )
 
+const _CmdName = "db"
+
 var Cmd = &command.Command{
-	ValidArgs: []string{"db"},
+	Name: _CmdName,
 	Cobra: &cobra.Command{
-		Use:     "db",
+		Use:     _CmdName,
 		Aliases: []string{"database"},
 		Short:   "Interaction with the VPC database",
 	},
 
-	Setup: func(parent *command.Command) error {
-		cmds := []*command.Command{
+	Setup: func(self *command.Command) error {
+		subCommands := []*command.Command{
 			migrate.Cmd,
 			ping.Cmd,
 		}
 
-		for _, cmd := range cmds {
-			cmd.Setup(cmd)
-			parent.Cobra.AddCommand(cmd.Cobra)
+		if err := self.Register(subCommands); err != nil {
+			log.Fatal().Err(err).Str("cmd", _CmdName).Msg("unable to register sub-commands")
 		}
 
 		return nil

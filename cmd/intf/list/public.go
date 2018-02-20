@@ -5,9 +5,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const _CmdName = "list"
+
 var Cmd = &command.Command{
+	Name: _CmdName,
 	Cobra: &cobra.Command{
-		Use:          "list",
+		Use:          _CmdName,
 		Short:        "list interfaces",
 		SilenceUsage: true,
 		Args:         cobra.NoArgs,
@@ -66,7 +69,7 @@ var Cmd = &command.Command{
 		},
 	},
 
-	Setup: func(parent *command.Command) error {
+	Setup: func(self *command.Command) error {
 		return nil
 	},
 }

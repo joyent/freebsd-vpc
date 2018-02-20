@@ -66,7 +66,7 @@ var Cmd = &command.Command{
 		},
 	},
 
-	Setup: func(parent *command.Command) error {
+	Setup: func(self *command.Command) error {
 		return nil
 	},
 }

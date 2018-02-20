@@ -18,17 +18,23 @@ import (
 	"github.com/spf13/viper"
 )
 
-const template = `---
+const (
+	_CmdName = "md"
+
+	template = `---
 date: %s
 title: "%s"
 slug: %s
 url: %s
 ---
 `
+)
 
 var Cmd = &command.Command{
+	Name: _CmdName,
+
 	Cobra: &cobra.Command{
-		Use:   "md",
+		Use:   _CmdName,
 		Short: "Generates and install " + buildtime.PROGNAME + " markdown pages",
 		Long: `Generate Markdown documentation for the ` + buildtime.PROGNAME + ` (one
 Markdown file per command`,
@@ -70,7 +76,7 @@ Markdown file per command`,
 		},
 	},
 
-	Setup: func(parent *command.Command) error {
+	Setup: func(self *command.Command) error {
 		{
 			const (
 				key          = config.KeyDocMarkdownDir
@@ -80,7 +86,7 @@ Markdown file per command`,
 				defaultValue = config.DefaultMarkdownDir
 			)
 
-			flags := parent.Cobra.Flags()
+			flags := self.Cobra.Flags()
 			flags.StringP(longName, shortName, defaultValue, description)
 			viper.BindPFlag(key, flags.Lookup(longName))
 			viper.SetDefault(key, defaultValue)
@@ -95,7 +101,7 @@ Markdown file per command`,
 				defaultValue = config.DefaultMarkdownURLPrefix
 			)
 
-			flags := parent.Cobra.Flags()
+			flags := self.Cobra.Flags()
 			flags.String(longName, defaultValue, description)
 			viper.BindPFlag(key, flags.Lookup(longName))
 			viper.SetDefault(key, defaultValue)
