@@ -77,8 +77,8 @@
 [[projects]]
   name = "github.com/magiconair/properties"
   packages = ["."]
-  revision = "d419a98cdbed11a922bf76f257b7c4be79b50e73"
-  version = "v1.7.4"
+  revision = "c3beff4c2358b44d0493c7dda585e7db7ff28ae6"
+  version = "v1.7.6"
 
 [[projects]]
   name = "github.com/mattes/migrate"
@@ -117,14 +117,14 @@
   version = "v0.8.0"
 
 [[projects]]
+  branch = "master"
   name = "github.com/rs/zerolog"
   packages = [
     ".",
     "internal/json",
     "log"
   ]
-  revision = "b53826c57a6a1d8833443ebeacf1cfb62b229c64"
-  version = "v1.4.0"
+  revision = "8c1c6a0cd7c081326ce0743ea905b1d85a89e63d"
 
 [[projects]]
   name = "github.com/russross/blackfriday"
@@ -146,9 +146,9 @@
 
 [[projects]]
   branch = "master"
-  name = "github.com/sean-/smallz"
-  packages = ["buildtime"]
-  revision = "493d344db35bfadbfa43cc6f6c100fe4a2273063"
+  name = "github.com/sean-/seed"
+  packages = ["."]
+  revision = "e2103e2c35297fb7e17febb81e49b312087a2372"
 
 [[projects]]
   name = "github.com/spf13/afero"
@@ -162,8 +162,8 @@
 [[projects]]
   name = "github.com/spf13/cast"
   packages = ["."]
-  revision = "acbeb36b902d72a7a4c18e8f3241075e7ab763e4"
-  version = "v1.1.0"
+  revision = "8965335b8c7107321228e3e3702cab9832751bac"
+  version = "v1.2.0"
 
 [[projects]]
   name = "github.com/spf13/cobra"
@@ -220,6 +220,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "af95bfd2daf3b35e6262a20d6c4924e389b3f86ccd73d50889f2ded807788d11"
+  inputs-digest = "70a63f00b4f844e7218efffec2ba0e0fdb3a5dccf2aec8baa0c450c1da3cd5f5"
   solver-name = "gps-cdcl"
   solver-version = 1
