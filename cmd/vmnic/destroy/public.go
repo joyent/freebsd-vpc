@@ -11,12 +11,12 @@ import (
 	"github.com/sean-/vpc/internal/config"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"go.freebsd.org/sys/vpc/vpcsw"
+	"go.freebsd.org/sys/vpc/vmnic"
 )
 
 const (
 	_CmdName = "destroy"
-	_KeyID   = config.KeySWDestroyID
+	_KeyID   = config.KeyVMNICDestroyID
 )
 
 var Cmd = &command.Command{
@@ -25,7 +25,7 @@ var Cmd = &command.Command{
 		Use:              _CmdName,
 		Aliases:          []string{"rm", "del", "delete"},
 		TraverseChildren: true,
-		Short:            "destroy a VPC switch",
+		Short:            "destroy a VM NIC",
 		SilenceUsage:     true,
 		Args:             cobra.NoArgs,
 
@@ -48,27 +48,28 @@ var Cmd = &command.Command{
 func runE(cmd *cobra.Command, args []string) error {
 	cons := conswriter.GetTerminal()
 
-	cons.Write([]byte(fmt.Sprintf("Destroying VPC Switch...")))
+	cons.Write([]byte(fmt.Sprintf("Destroying VM NIC...")))
 
 	id, err := flag.GetID(viper.GetViper(), _KeyID)
 	if err != nil {
 		return errors.Wrap(err, "unable to get VPC ID")
 	}
 
-	switchCfg := vpcsw.Config{
+	vmnicCfg := vmnic.Config{
 		ID: id,
 	}
 
-	log.Info().Object("cfg", switchCfg).Str("op", "destroy").Msg("vpc_ctl")
+	// TODO(seanc@): Go back and add vmnic/vpcsw to other commands
+	log.Info().Object("cfg", vmnicCfg).Str("op", "destroy").Msg("vpc_ctl")
 
-	vpcSwitch, err := vpcsw.Open(switchCfg)
+	vmNIC, err := vmnic.Open(vmnicCfg)
 	if err != nil {
-		return errors.Wrap(err, "unable to open VPC Switch")
+		return errors.Wrap(err, "unable to open VM NIC")
 	}
-	defer vpcSwitch.Close()
+	defer vmNIC.Close()
 
-	if err := vpcSwitch.Destroy(); err != nil {
-		return errors.Wrap(err, "unable to destroy VPC Switch")
+	if err := vmNIC.Destroy(); err != nil {
+		return errors.Wrap(err, "unable to destroy VM NIC")
 	}
 
 	cons.Write([]byte("done.\n"))

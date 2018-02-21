@@ -12,15 +12,14 @@ import (
 	"github.com/sean-/vpc/internal/config"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"go.freebsd.org/sys/vpc"
-	"go.freebsd.org/sys/vpc/vpcsw"
+	"go.freebsd.org/sys/vpc/vmnic"
 	"go.freebsd.org/sys/vpc/vpctest"
 )
 
 const (
 	_CmdName = "create"
-	_KeyID   = config.KeySWCreateID
-	_KeyMAC  = config.KeySWCreateMAC
+	_KeyID   = config.KeyVMNICCreateID
+	_KeyMAC  = config.KeyVMNICCreateMAC
 )
 
 var Cmd = &command.Command{
@@ -28,8 +27,9 @@ var Cmd = &command.Command{
 
 	Cobra: &cobra.Command{
 		Use:          _CmdName,
-		Short:        "create a VPC switch",
+		Short:        "create a VM NIC",
 		SilenceUsage: true,
+		// TraverseChildren: true,
 		Args: cobra.NoArgs,
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			return nil
@@ -43,7 +43,7 @@ var Cmd = &command.Command{
 				return errors.Wrapf(err, "unable to get all interfaces")
 			}
 
-			cons.Write([]byte(fmt.Sprintf("Creating VPC Switch...")))
+			cons.Write([]byte(fmt.Sprintf("Creating VM NIC...")))
 
 			id, err := flag.GetID(viper.GetViper(), _KeyID)
 			if err != nil {
@@ -55,27 +55,26 @@ var Cmd = &command.Command{
 				return errors.Wrap(err, "unable to get MAC address")
 			}
 
-			switchCfg := vpcsw.Config{
+			vmnicCfg := vmnic.Config{
 				ID:  id,
 				MAC: mac,
-				VNI: vpc.VNI(viper.GetInt(config.KeySWCreateVNI)),
 			}
 
-			vpcSwitch, err := vpcsw.Create(switchCfg)
+			vmNIC, err := vmnic.Create(vmnicCfg)
 			if err != nil {
-				log.Error().Err(err).Str("id", id.String()).Msg("vpcsw create failed")
-				return errors.Wrap(err, "unable to create VPC Switch")
+				log.Error().Err(err).Str("id", id.String()).Msg("vmnic create failed")
+				return errors.Wrap(err, "unable to create VM NIC")
 			}
-			defer vpcSwitch.Close()
+			defer vmNIC.Close()
 
-			if err := vpcSwitch.Commit(); err != nil {
-				log.Error().Err(err).Str("id", id.String()).Msg("vpcsw commit failed")
-				return errors.Wrap(err, "unable to commit VPC Switch")
+			if err := vmNIC.Commit(); err != nil {
+				log.Error().Err(err).Str("id", id.String()).Msg("VM NIC commit failed")
+				return errors.Wrap(err, "unable to commit VM NIC")
 			}
 
 			cons.Write([]byte("done.\n"))
 
-			var newSwitch net.Interface
+			var newVMNIC net.Interface
 			{ // Get the before/after
 				ifacesAfterCreate, err := vpctest.GetAllInterfaces()
 				if err != nil {
@@ -83,14 +82,14 @@ var Cmd = &command.Command{
 				}
 				_, newIfaces, _ := existingIfaces.Difference(ifacesAfterCreate)
 
-				var newSwitchMAC net.HardwareAddr = id.Node[:]
-				newSwitch, err = newIfaces.FindMAC(newSwitchMAC)
+				var newVMNICMAC net.HardwareAddr = id.Node[:]
+				newVMNIC, err = newIfaces.FindMAC(newVMNICMAC)
 				if err != nil {
-					return errors.Wrapf(err, "unable to find new VPC Switch with MAC %q", id.Node)
+					return errors.Wrapf(err, "unable to find new VM NIC with MAC %q", id.Node)
 				}
 			}
 
-			log.Info().Str("id", id.String()).Str("mac", newSwitch.HardwareAddr.String()).Str("name", newSwitch.Name).Msg("vpcsw created")
+			log.Info().Str("id", id.String()).Str("mac", newVMNIC.HardwareAddr.String()).Str("name", newVMNIC.Name).Msg("VM NIC created")
 
 			return nil
 		},
@@ -98,15 +97,11 @@ var Cmd = &command.Command{
 
 	Setup: func(self *command.Command) error {
 		if err := flag.AddID(self, _KeyID, false); err != nil {
-			return errors.Wrap(err, "unable to register ID flag on VPC Switch create")
+			return errors.Wrap(err, "unable to register ID flag on VM NIC create")
 		}
 
 		if err := flag.AddMAC(self, _KeyMAC, false); err != nil {
-			return errors.Wrap(err, "unable to register MAC flag on VPC Switch create")
-		}
-
-		if err := flag.AddVNI(self, flag.VNICfg{Name: config.KeySWCreateVNI, Required: true}); err != nil {
-			return errors.Wrap(err, "unable to register VNI flag on VPC Switch create")
+			return errors.Wrap(err, "unable to register MAC flag on VM NIC create")
 		}
 
 		return nil

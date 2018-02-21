@@ -11,17 +11,22 @@ const (
 	KeyDocMarkdownDir       = "doc.markdown-dir"
 	KeyDocMarkdownURLPrefix = "doc.markdown-url-prefix"
 
+	KeyLogFormat    = "log.format"
+	KeyLogLevel     = "log.level"
+	KeyLogStats     = "log.stats"
+	KeyLogTermColor = "log.use-color"
+
 	KeyShellAutoCompBashDir = "shell.autocomplete.bash-dir"
 
 	KeySWCreateID  = "switch.create.id"
+	KeySWCreateMAC = "switch.create.mac"
 	KeySWCreateVNI = "switch.create.vni"
 	KeySWDestroyID = "switch.destroy.id"
 
 	KeyUsePager = "general.use-pager"
 	KeyUseUTC   = "general.utc"
 
-	KeyLogFormat    = "log.format"
-	KeyLogLevel     = "log.level"
-	KeyLogStats     = "log.stats"
-	KeyLogTermColor = "log.use-color"
+	KeyVMNICCreateID  = "vmnic.create.id"
+	KeyVMNICCreateMAC = "vmnic.create.mac"
+	KeyVMNICDestroyID = "vmnic.destroy.id"
 )
