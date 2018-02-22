@@ -19,7 +19,7 @@ guest_disks/
 
 # System related items
 .DS_Store
-vpc
+/vpc
 crdb/
 docs/bash.d/
 docs/man/
