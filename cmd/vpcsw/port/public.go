@@ -1,16 +1,13 @@
-package vpcsw
+package port
 
 import (
 	"github.com/pkg/errors"
-	"github.com/sean-/vpc/cmd/vpcsw/create"
-	"github.com/sean-/vpc/cmd/vpcsw/destroy"
-	"github.com/sean-/vpc/cmd/vpcsw/list"
-	"github.com/sean-/vpc/cmd/vpcsw/port"
+	"github.com/sean-/vpc/cmd/vpcsw/port/add"
 	"github.com/sean-/vpc/internal/command"
 	"github.com/spf13/cobra"
 )
 
-const _CmdName = "switch"
+const _CmdName = "port"
 
 var Cmd = &command.Command{
 	Name: _CmdName,
@@ -23,10 +20,9 @@ var Cmd = &command.Command{
 
 	Setup: func(self *command.Command) error {
 		subCommands := command.Commands{
-			create.Cmd,
-			destroy.Cmd,
-			list.Cmd,
-			port.Cmd,
+			add.Cmd,
+			//destroy.Cmd,
+			//list.Cmd,
 		}
 
 		if err := self.Register(subCommands); err != nil {

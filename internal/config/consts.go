@@ -16,6 +16,10 @@ const (
 	KeyLogStats     = "log.stats"
 	KeyLogTermColor = "log.use-color"
 
+	KeySWPortAddID       = "switch.port.add.id"
+	KeySWPortAddMAC      = "switch.port.add.mac"
+	KeySWPortAddSwitchID = "switch.port.add.switch-id"
+
 	KeyShellAutoCompBashDir = "shell.autocomplete.bash-dir"
 
 	KeySWCreateID  = "switch.create.id"

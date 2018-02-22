@@ -61,6 +61,28 @@ type VNICfg struct {
 	Required bool
 }
 
+// AddSwitchID adds the Switch ID flag to a given command.
+func AddSwitchID(cmd *command.Command, keyName string, required bool) error {
+	key := keyName
+	const (
+		longName     = "switch-id"
+		shortName    = ""
+		defaultValue = ""
+		description  = "Specify the VPC Switch ID"
+	)
+
+	flags := cmd.Cobra.Flags()
+	flags.StringP(longName, shortName, defaultValue, description)
+	if required {
+		cmd.Cobra.MarkFlagRequired(longName)
+	}
+
+	viper.BindPFlag(key, flags.Lookup(longName))
+	viper.SetDefault(key, defaultValue)
+
+	return nil
+}
+
 // AddFlagVNI adds the VNI flag to a given command.
 func AddVNI(cmd *command.Command, cfg VNICfg) error {
 	key := cfg.Name
@@ -100,12 +122,17 @@ func GetID(v *viper.Viper, key string) (id vpc.ID, err error) {
 	return id, nil
 }
 
-// GetMAC returns the MAC address found in the Viper key.  GetMAC falls back to
-// id.Node for the default value.  If GetMAC uses id.Node, it sets the viper key
-// accordingly for future callers.
-func GetMAC(v *viper.Viper, key string, id vpc.ID) (mac net.HardwareAddr, err error) {
+// GetMAC returns the MAC address found in the Viper key.  If id is not nil,
+// GetMAC falls back to id.Node for the default value.  If GetMAC uses id.Node,
+// it sets the viper key accordingly for future callers.  If id is nil and no
+// MAC is found, an error is returned.
+func GetMAC(v *viper.Viper, key string, id *vpc.ID) (mac net.HardwareAddr, err error) {
 	switch macStr := v.GetString(key); macStr {
 	case "":
+		if id == nil {
+			return net.HardwareAddr{}, errors.Wrapf(err, "missing MAC address")
+		}
+
 		mac = id.Node[:]
 		v.Set(key, mac.String())
 	default:
@@ -115,4 +142,32 @@ func GetMAC(v *viper.Viper, key string, id vpc.ID) (mac net.HardwareAddr, err er
 	}
 
 	return mac, nil
+}
+
+// GetPortID returns the VPC ID found in the Viper key.
+func GetPortID(v *viper.Viper, key string) (id vpc.ID, err error) {
+	portIDStr := v.GetString(key)
+	if portIDStr == "" {
+		return vpc.ID{}, errors.Wrap(err, "missing VPC Port ID")
+	}
+
+	if id, err = vpc.ParseID(portIDStr); err != nil {
+		return vpc.ID{}, errors.Wrapf(err, "unable to parse VPC Port ID %q", portIDStr)
+	}
+
+	return id, nil
+}
+
+// GetSwitchID returns the VPC ID found in the Viper key.
+func GetSwitchID(v *viper.Viper, key string) (id vpc.ID, err error) {
+	switchIDStr := v.GetString(key)
+	if switchIDStr == "" {
+		return vpc.ID{}, errors.Wrap(err, "missing VPC Switch ID")
+	}
+
+	if id, err = vpc.ParseID(switchIDStr); err != nil {
+		return vpc.ID{}, errors.Wrapf(err, "unable to parse VPC ID %q", switchIDStr)
+	}
+
+	return id, nil
 }

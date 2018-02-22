@@ -50,7 +50,7 @@ var Cmd = &command.Command{
 				return errors.Wrap(err, "unable to get VPC ID")
 			}
 
-			mac, err := flag.GetMAC(viper.GetViper(), _KeyMAC, id)
+			mac, err := flag.GetMAC(viper.GetViper(), _KeyMAC, &id)
 			if err != nil {
 				return errors.Wrap(err, "unable to get MAC address")
 			}
