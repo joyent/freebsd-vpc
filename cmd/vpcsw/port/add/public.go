@@ -22,6 +22,7 @@ const (
 	_KeyPortID   = config.KeySWPortAddID
 	_KeyPortMAC  = config.KeySWPortAddMAC
 	_KeySwitchID = config.KeySWPortAddSwitchID
+	_KeyUplink   = config.KeySWPortAddUplink
 )
 
 var Cmd = &command.Command{
@@ -78,6 +79,7 @@ var Cmd = &command.Command{
 			portAddCfg := vpcsw.Config{
 				PortID: portID,
 				MAC:    mac,
+				Uplink: viper.GetBool(_KeyUplink),
 			}
 			if err = vpcSwitch.PortAdd(portAddCfg); err != nil {
 				log.Error().Err(err).Str("port-id", portAddCfg.PortID.String()).Msg("vpc switch port add failed")
@@ -128,6 +130,22 @@ var Cmd = &command.Command{
 
 		if err := flag.AddSwitchID(self, _KeySwitchID, false); err != nil {
 			return errors.Wrap(err, "unable to register Switch ID flag for VPC Port add")
+		}
+
+		{
+			key := _KeyUplink
+			const (
+				longName     = "uplink"
+				shortName    = "u"
+				defaultValue = false
+				description  = "Tag the port as an uplink port in the VPC Switch"
+			)
+
+			flags := self.Cobra.Flags()
+			flags.BoolP(longName, shortName, defaultValue, description)
+
+			viper.BindPFlag(key, flags.Lookup(longName))
+			viper.SetDefault(key, defaultValue)
 		}
 
 		return nil

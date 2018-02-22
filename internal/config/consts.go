@@ -19,6 +19,7 @@ const (
 	KeySWPortAddID       = "switch.port.add.id"
 	KeySWPortAddMAC      = "switch.port.add.mac"
 	KeySWPortAddSwitchID = "switch.port.add.switch-id"
+	KeySWPortAddUplink   = "switch.port.add.uplink"
 
 	KeyShellAutoCompBashDir = "shell.autocomplete.bash-dir"
 
