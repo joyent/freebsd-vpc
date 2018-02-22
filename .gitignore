@@ -10,18 +10,15 @@
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
-# Project-local glide cache, RE: https://github.com/Masterminds/glide/issues/736
-.glide/
-
 # Vagrant-related items
-.vagrant/
-guest_disks/
+/.vagrant/
+/guest_disks/
 
 # System related items
 .DS_Store
 /vpc
-crdb/
-docs/bash.d/
-docs/man/
-docs/md/
+/crdb/
+/docs/bash.d/
+/docs/man/
+/docs/md/
 .idea/
