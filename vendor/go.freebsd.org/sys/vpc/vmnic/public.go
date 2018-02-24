@@ -42,8 +42,9 @@ const DeviceNamePrefix = "vmnic"
 
 // Config is the configuration used to populate a given VM NIC.
 type Config struct {
-	ID  vpc.ID
-	MAC net.HardwareAddr
+	ID        vpc.ID
+	MAC       net.HardwareAddr
+	Writeable bool
 }
 
 func (c Config) MarshalZerologObject(e *zerolog.Event) {
@@ -137,7 +138,12 @@ func Open(cfg Config) (*VMNIC, error) {
 		return nil, errors.Wrap(err, "unable to create a new VM NIC handle type")
 	}
 
-	h, err := vpc.Open(cfg.ID, ht, vpc.FlagOpen|vpc.FlagRead)
+	flags := vpc.FlagOpen | vpc.FlagRead
+	if cfg.Writeable {
+		flags |= vpc.FlagWrite
+	}
+
+	h, err := vpc.Open(cfg.ID, ht, flags)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to open VM NIC handle")
 	}

@@ -56,7 +56,8 @@ func runE(cmd *cobra.Command, args []string) error {
 	}
 
 	vmnicCfg := vmnic.Config{
-		ID: id,
+		ID:        id,
+		Writeable: true,
 	}
 
 	// TODO(seanc@): Go back and add vmnic/vpcsw to other commands
