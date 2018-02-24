@@ -48,8 +48,9 @@ func init() {
 // functionality of a switch.
 func TestVPCSW_CreateCommitDestroy(t *testing.T) {
 	cfg := vpcsw.Config{
-		ID:  vpc.GenID(),
-		VNI: vpc.VNI(rand.Intn(int(vpc.VNIMax))),
+		ID:        vpc.GenID(),
+		VNI:       vpc.VNI(rand.Intn(int(vpc.VNIMax))),
+		Writeable: true,
 	}
 
 	existingIfaces, err := vpctest.GetAllInterfaces()
@@ -128,18 +129,19 @@ func TestVPCSW_CreateCommitDestroy(t *testing.T) {
 		if err := sw.Close(); err != nil {
 			t.Fatalf("unable to close switch: %v", err)
 		}
-
-		{ // Make sure the iface is still available
-			ifacesAfterClose, err := vpctest.GetAllInterfaces()
-			if err != nil {
-				t.Fatalf("unable to get all interfaces")
-			}
-			_, newIfaces, _ := existingIfaces.Difference(ifacesAfterClose)
-			if len(newIfaces) != 1 {
-				t.Fatalf("one interface should have persisted added")
-			}
-		}
 	}()
+
+	// Make sure the iface is still available
+	ifacesAfterClose, err := vpctest.GetAllInterfaces()
+	if err != nil {
+		t.Fatalf("unable to get all interfaces")
+	}
+	{
+		_, newIfaces, _ := existingIfaces.Difference(ifacesAfterClose)
+		if len(newIfaces) != 1 {
+			t.Fatalf("one interface should have persisted added")
+		}
+	}
 
 	func() { // Open + Close switch scope
 		sw, err := vpcsw.Open(cfg)
@@ -168,7 +170,7 @@ func TestVPCSW_CreateCommitDestroy(t *testing.T) {
 		if err != nil {
 			t.Fatalf("unable to get all interfaces")
 		}
-		o, n, _ := existingIfaces.Difference(ifacesAfterOpenClose)
+		o, n, _ := ifacesAfterClose.Difference(ifacesAfterOpenClose)
 		if len(o) != 0 || len(n) != 0 {
 			t.Fatalf("no interfaces should have been added or removed: %d/%d", len(o), len(n))
 		}
