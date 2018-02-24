@@ -56,7 +56,8 @@ func runE(cmd *cobra.Command, args []string) error {
 	}
 
 	switchCfg := vpcsw.Config{
-		ID: id,
+		ID:        id,
+		Writeable: true,
 	}
 
 	log.Info().Object("cfg", switchCfg).Str("op", "destroy").Msg("vpc_ctl")
