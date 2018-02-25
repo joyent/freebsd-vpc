@@ -407,3 +407,66 @@ func TestVPCSW_SwitchPort_ReAdd(t *testing.T) {
 		t.Fatalf("no interfaces should have been added or removed: %d/%d", len(o), len(n))
 	}
 }
+
+func TestVPCSW_SwitchPort_RedundantAdd(t *testing.T) {
+	existingIfaces, err := vpctest.GetAllInterfaces()
+	if err != nil {
+		t.Fatalf("unable to get existing interfaces")
+	}
+	defer func() {
+		// one last check to make sure we didn't taint the environment
+		ifacesAfterClose, err := vpctest.GetAllInterfaces()
+		if err != nil {
+			t.Fatalf("unable to get all interfaces")
+		}
+		o, n, _ := existingIfaces.Difference(ifacesAfterClose)
+		if len(o) != 0 || len(n) != 0 {
+			t.Fatalf("no interfaces should have been added or removed: %d/%d", len(o), len(n))
+		}
+	}()
+
+	switchCfg := vpcsw.Config{
+		ID:        vpc.GenID(),
+		VNI:       vpc.VNI(rand.Intn(int(vpc.VNIMax))),
+		Writeable: true,
+	}
+
+	sw, err := vpcsw.Create(switchCfg)
+	if err != nil {
+		t.Fatalf("unable to create switch: %v", err)
+	}
+	defer func() {
+		if err := sw.Close(); err != nil {
+			t.Fatalf("unable to close switch: %v", err)
+		}
+	}()
+
+	// Get the ifaces after create
+	ifacesAfterCreate, err := vpctest.GetAllInterfaces()
+	if err != nil {
+		t.Fatalf("unable to get all interfaces")
+	}
+	_, newIfaces, _ := existingIfaces.Difference(ifacesAfterCreate)
+	if len(newIfaces) != 1 {
+		t.Fatalf("one VPC Switch should have been added")
+	}
+
+	// 1) add port
+	portAddCfg := vpcsw.Config{
+		PortID: vpc.GenID(),
+	}
+	if err = sw.PortAdd(portAddCfg); err != nil {
+		t.Fatalf("unable to add port to switch: %v", err)
+	}
+	defer func() {
+		// Unwind
+		if err = sw.PortRemove(portAddCfg); err != nil {
+			t.Fatalf("unable to remove port from VPC switch: %v", err)
+		}
+	}()
+
+	// 2) re-add same port
+	if err = sw.PortAdd(portAddCfg); err == nil {
+		t.Errorf("it should not be possible to add the same port twice")
+	}
+}
