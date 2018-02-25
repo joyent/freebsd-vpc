@@ -29,6 +29,12 @@
 
 package vpc
 
+import (
+	"fmt"
+
+	"github.com/rs/zerolog"
+)
+
 // Cmd is the operation being performed.  A Cmd encodes:
 //
 // 1. The direction of the arguments (in or out)
@@ -38,6 +44,12 @@ type Cmd uint32
 
 // Op is the action being performed on a given object type.
 type Op uint16
+
+// String returns a hex-encded string representing the op.  Individual Object
+// Types should have their own Op type that satisfies the stringer method.
+func (op Op) String() string {
+	return fmt.Sprintf("op-0x%04x", uint16(op))
+}
 
 // Constants used to test or extract information from a command.
 const (
@@ -88,4 +100,13 @@ func (cmd Cmd) Out() bool {
 // privileged.
 func (cmd Cmd) Privileged() bool {
 	return cmd&PrivBit != 0
+}
+
+func (cmd Cmd) MarshalZerologObject(e *zerolog.Event) {
+	e.Bool("in", cmd.In())
+	e.Bool("out", cmd.Out())
+	e.Bool("priv", cmd.Privileged())
+	e.Bool("mutate", cmd.Mutate())
+	e.Str("obj-type", cmd.ObjType().String())
+	e.Str("obj-op", cmd.Op().String())
 }

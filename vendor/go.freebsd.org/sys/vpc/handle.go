@@ -140,11 +140,24 @@ func (t HandleType) SetObjType(objType ObjType) (HandleType, error) {
 // Operations that can be applied to all VPC Object types
 const (
 	_DestroyOp = Op(0x0001)
-	_GetOp     = Op(0x0002)
+	_TypeOp    = Op(0x0002)
 	_CommitOp  = Op(0x0003)
+	_MACSet    = Op(0x0004)
+	_MACGet    = Op(0x0005)
+	_MTUSet    = Op(0x0006)
+	_MTUGet    = Op(0x0007)
+	_GetID     = Op(0x0008)
+	_CountOp   = Op(0x0009)
 
 	_CommitCmd  = PrivBit | MutateBit | (Cmd(ObjTypeMgmt) << 16) | Cmd(_CommitOp)
+	_CountCmd   = PrivBit | (Cmd(ObjTypeMgmt) << 16) | Cmd(_CountOp)
 	_DestroyCmd = PrivBit | MutateBit | (Cmd(ObjTypeMgmt) << 16) | Cmd(_DestroyOp)
+	_GetIDCmd   = (Cmd(ObjTypeMgmt) << 16) | Cmd(_GetID)
+	_MACGetCmd  = (Cmd(ObjTypeMgmt) << 16) | Cmd(_MACGet)
+	_MACSetCmd  = PrivBit | MutateBit | (Cmd(ObjTypeMgmt) << 16) | Cmd(_MACSet)
+	_MTUGetCmd  = (Cmd(ObjTypeMgmt) << 16) | Cmd(_MTUGet)
+	_MTUSetCmd  = PrivBit | MutateBit | (Cmd(ObjTypeMgmt) << 16) | Cmd(_MTUSet)
+	_TypeCmd    = (Cmd(ObjTypeMgmt) << 16) | Cmd(_TypeOp)
 )
 
 // Commit increments the refcount on the object referrenced by this VPC Handle.

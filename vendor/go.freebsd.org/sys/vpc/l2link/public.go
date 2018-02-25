@@ -1,4 +1,4 @@
-// Go interface to VPC Switch objects.
+// Go interface to Layer-2 Network Link objects.
 //
 // SPDX-License-Identifier: BSD-2-Clause-FreeBSD
 //
@@ -27,103 +27,78 @@
 // OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 // SUCH DAMAGE.
 
-package vpcsw
+package l2link
 
 import (
-	"net"
-
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 	"go.freebsd.org/sys/vpc"
 )
 
-// DeviceNamePrefix is the prefix of the device name (i.e. "vpcsw0").
-const DeviceNamePrefix = "vpcsw"
-
-// Config is the configuration used to populate a given VPC Switch.
+// Config is the configuration used to populate a given L2 Link.
 type Config struct {
-	ID        vpc.ID
-	PortID    vpc.ID
-	MAC       net.HardwareAddr
-	VNI       vpc.VNI
-	UplinkID  *vpc.ID
-	Writeable bool
+	ID   vpc.ID
+	Name string
 }
 
 func (c Config) MarshalZerologObject(e *zerolog.Event) {
-	e.
-		Str("id", c.ID.String()).
-		Str("port-id", c.PortID.String()).
-		Str("mac", c.MAC.String()).
-		Int32("vni", int32(c.VNI)).
-		Bool("writable", c.Writeable)
+	e.Str("id", c.ID.String()).
+		Str("name", c.Name)
 }
 
-// VPCSW is an opaque struct representing a VPC Switch.
-type VPCSW struct {
-	h   *vpc.Handle
-	ht  vpc.HandleType
-	vni vpc.VNI
-	id  vpc.ID
-	mac net.HardwareAddr
+// L2Link is an opaque struct representing a VM NIC.
+type L2Link struct {
+	h    *vpc.Handle
+	ht   vpc.HandleType
+	id   vpc.ID
+	name string
 }
 
-// Create creates a new VPC Switch using the Config parameters.  Callers are
-// expected to Close a given VPCSW (otherwise a file descriptor would leak).
-func Create(cfg Config) (*VPCSW, error) {
-	switch {
-	case cfg.VNI < vpc.VNIMin:
-		return nil, errors.Errorf("VNI %d too small", cfg.VNI)
-	case cfg.VNI > vpc.VNIMax:
-		return nil, errors.Errorf("VNI %d exceeds max value", cfg.VNI)
-	}
-
+// Create VPC facade over an existing L2 link (either physical or cloned
+// interface) using the Config parameters.  Callers are expected to Close a
+// given L2Link (otherwise a file descriptor would leak).
+func Create(cfg Config) (*L2Link, error) {
 	ht, err := vpc.NewHandleType(vpc.HandleTypeInput{
 		Version: 1,
-		Type:    vpc.ObjTypeSwitch,
+		Type:    vpc.ObjTypeNICVM,
 	})
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to create a new VPC Switch handle type")
+		return nil, errors.Wrap(err, "unable to create a new L2 Link handle type")
 	}
 
 	h, err := vpc.Open(cfg.ID, ht, vpc.FlagCreate|vpc.FlagWrite)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to open VPC Switch handle")
+		return nil, errors.Wrap(err, "unable to open L2 Link handle")
 	}
 
-	return &VPCSW{
-		h:   h,
-		ht:  ht,
-		id:  cfg.ID,
-		mac: cfg.MAC,
-		vni: cfg.VNI,
+	return &L2Link{
+		h:    h,
+		ht:   ht,
+		id:   cfg.ID,
+		name: cfg.Name,
 	}, nil
 }
 
-// Open opens an existing VPC Switch using the Config parameters.  Callers are
-// expected to Close a given VPCSW.
-func Open(cfg Config) (*VPCSW, error) {
+// Open opens an existing L2 Link using the Config parameters.  Callers are
+// expected to Close a given L2Link.
+func Open(cfg Config) (*L2Link, error) {
 	ht, err := vpc.NewHandleType(vpc.HandleTypeInput{
 		Version: 1,
-		Type:    vpc.ObjTypeSwitch,
+		Type:    vpc.ObjTypeLinkL2,
 	})
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to create a new VPC Switch handle type")
+		return nil, errors.Wrap(err, "unable to create a new L2 Link handle type")
 	}
 
-	flags := vpc.FlagOpen | vpc.FlagRead
-	if cfg.Writeable {
-		flags |= vpc.FlagWrite
-	}
-
-	h, err := vpc.Open(cfg.ID, ht, flags)
+	h, err := vpc.Open(cfg.ID, ht, vpc.FlagOpen|vpc.FlagRead|vpc.FlagWrite)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to open VPC Switch handle")
+		return nil, errors.Wrap(err, "unable to open L2 Link handle")
 	}
 
-	return &VPCSW{
-		h:  h,
-		ht: ht,
-		id: cfg.ID,
+	return &L2Link{
+		h:    h,
+		ht:   ht,
+		id:   cfg.ID,
+		name: cfg.Name,
 	}, nil
 }

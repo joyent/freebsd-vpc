@@ -17,9 +17,13 @@ const (
 	KeyLogTermColor = "log.use-color"
 
 	KeySWPortAddID       = "switch.port.add.id"
+	KeySWPortAddL2Name   = "switch.port.add.l2-name"
 	KeySWPortAddMAC      = "switch.port.add.mac"
 	KeySWPortAddSwitchID = "switch.port.add.switch-id"
-	KeySWPortAddUplink   = "switch.port.add.uplink"
+	KeySWPortAddUplinkID = "switch.port.add.uplink-id"
+
+	KeySWPortRemovePortID   = "switch.port.remove.port-id"
+	KeySWPortRemoveSwitchID = "switch.port.remove.switch-id"
 
 	KeyShellAutoCompBashDir = "shell.autocomplete.bash-dir"
 

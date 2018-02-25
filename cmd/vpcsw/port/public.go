@@ -3,6 +3,7 @@ package port
 import (
 	"github.com/pkg/errors"
 	"github.com/sean-/vpc/cmd/vpcsw/port/add"
+	"github.com/sean-/vpc/cmd/vpcsw/port/remove"
 	"github.com/sean-/vpc/internal/command"
 	"github.com/spf13/cobra"
 )
@@ -21,7 +22,7 @@ var Cmd = &command.Command{
 	Setup: func(self *command.Command) error {
 		subCommands := command.Commands{
 			add.Cmd,
-			//destroy.Cmd,
+			remove.Cmd,
 			//list.Cmd,
 		}
 

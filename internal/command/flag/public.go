@@ -56,9 +56,26 @@ func AddMAC(cmd *command.Command, keyName string, required bool) error {
 	return nil
 }
 
-type VNICfg struct {
-	Name     string
-	Required bool
+// AddPortID adds the Port ID flag to a given command.
+func AddPortID(cmd *command.Command, keyName string, required bool) error {
+	key := keyName
+	const (
+		longName     = "port-id"
+		shortName    = ""
+		defaultValue = ""
+		description  = "Specify the VPC Port ID"
+	)
+
+	flags := cmd.Cobra.Flags()
+	flags.StringP(longName, shortName, defaultValue, description)
+	if required {
+		cmd.Cobra.MarkFlagRequired(longName)
+	}
+
+	viper.BindPFlag(key, flags.Lookup(longName))
+	viper.SetDefault(key, defaultValue)
+
+	return nil
 }
 
 // AddSwitchID adds the Switch ID flag to a given command.
@@ -81,6 +98,11 @@ func AddSwitchID(cmd *command.Command, keyName string, required bool) error {
 	viper.SetDefault(key, defaultValue)
 
 	return nil
+}
+
+type VNICfg struct {
+	Name     string
+	Required bool
 }
 
 // AddFlagVNI adds the VNI flag to a given command.

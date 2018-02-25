@@ -37,9 +37,11 @@ import (
 	"crypto/rand"
 	"encoding/binary"
 	"encoding/hex"
+	"fmt"
 	"syscall"
 
 	"github.com/pkg/errors"
+	"github.com/rs/zerolog"
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -58,6 +60,12 @@ const (
 	VNIMin VNI = 0
 )
 
+// Byter ensures objects can be converted to binary
+type Byter interface {
+	// Bytes returns a byte representation of the receiver
+	Bytes() []byte
+}
+
 // ID is the globally unique identifier for a VPC object.
 type ID struct {
 	TimeLow     uint32
@@ -66,6 +74,18 @@ type ID struct {
 	ClockSeqHi  uint8
 	ClockSeqLow uint8
 	Node        [6]byte
+}
+
+func (id ID) MarshalZerologObject(e *zerolog.Event) {
+	e.Str("id", id.String())
+}
+
+// Bytes returns a id as a little endian byte slice
+func (id ID) Bytes() []byte {
+	var binBuf bytes.Buffer
+	binBuf.Grow(16)
+	binary.Write(&binBuf, binary.LittleEndian, id)
+	return binBuf.Bytes()
 }
 
 // GenID randomly generates a new UUID
@@ -201,6 +221,47 @@ const (
 	ObjTypeMgmt       ObjType = 7
 	ObjTypeLinkL2     ObjType = 8
 )
+
+// ObjTypes returns a lits of supported Object Types
+func ObjTypes() []ObjType {
+	return []ObjType{
+		// ObjTypeInvalid,
+		ObjTypeSwitch,
+		ObjTypeSwitchPort,
+		ObjTypeRouter,
+		ObjTypeNAT,
+		ObjTypeLinkVPC,
+		ObjTypeNICVM,
+		// ObjTypeMgmt,
+		ObjTypeLinkL2,
+	}
+}
+
+// String returns the string representation of a given object
+func (obj ObjType) String() string {
+	switch obj {
+	case ObjTypeInvalid:
+		return "invalid"
+	case ObjTypeSwitch:
+		return "vpcsw"
+	case ObjTypeSwitchPort:
+		return "vpcp"
+	case ObjTypeRouter:
+		return "vpcrtr"
+	case ObjTypeNAT:
+		return "vpcnat"
+	case ObjTypeLinkVPC:
+		return "vpc-link"
+	case ObjTypeNICVM:
+		return "vmnic"
+	case ObjTypeMgmt:
+		return "mgmt"
+	case ObjTypeLinkL2:
+		return "l2-link"
+	default:
+		panic(fmt.Sprintf("unsupported object type: 0x%02x", uint8(obj)))
+	}
+}
 
 // Close closes a VPC Handle.  Closing a VPC Handle does not destroy any
 // resources.

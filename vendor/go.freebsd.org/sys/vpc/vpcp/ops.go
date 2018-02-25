@@ -30,30 +30,42 @@
 package vpcp
 
 import (
+	"github.com/pkg/errors"
 	"go.freebsd.org/sys/vpc"
 )
 
-// _VPCPCmd is the encoded type of operations that can be performed on a VM
+// _PortCmd is the encoded type of operations that can be performed on a VM
 // NIC.
-type _VPCPCmd vpc.Cmd
+type _PortCmd vpc.Cmd
 
-// _VPCPCmdSetArgType is the value used by a VM NIC set operation.
-type _VPCPSetOpArgType uint64
-
-const (
-	// Bits for input
-	_DownBit _VPCPSetOpArgType = 0x00000000
-	_UpBit   _VPCPSetOpArgType = 0x00000001
-)
+// _PortCmdSetArgType is the value used by a VM NIC set operation.
+type _PortSetOpArgType uint64
 
 // Ops that can be encoded into a vpc.Cmd
 const (
-	_OpInvalid = vpc.Op(0)
-	// _OpReset         = vpc.Op(7)
+	_OpInvalid    = vpc.Op(0)
+	_OpConnect    = vpc.Op(1)
+	_OpDisconnect = vpc.Op(2)
+	_OpVNIGet     = vpc.Op(3)
+	_OpVNISet     = vpc.Op(4)
+	_OpVLANGet    = vpc.Op(5)
+	_OpVLANSet    = vpc.Op(6)
+	_             = vpc.Op(7) // Unused
+	_             = vpc.Op(8) // Unused
+	_OpPeerIDGet  = vpc.Op(9)
+
+	_ConnectCmd    _PortCmd = _PortCmd(vpc.InBit|vpc.PrivBit|vpc.MutateBit|(vpc.Cmd(vpc.ObjTypeSwitchPort)<<16)) | _PortCmd(_OpConnect)
+	_DisconnectCmd _PortCmd = _PortCmd(vpc.InBit|vpc.PrivBit|vpc.MutateBit|(vpc.Cmd(vpc.ObjTypeSwitchPort)<<16)) | _PortCmd(_OpDisconnect)
 )
 
-// Template commands that can be passed to vpc.Ctl() with a valid VM NIC
-// Handle.
-// var (
-// 	_ResetCmd _VPCPCmd
-// )
+// Connect connects this VPC Port to a VPC Interface.  VPC Interfaces include
+// VMNIC, and L2Link.
+func (port *VPCP) Connect(interfaceID vpc.ID) error {
+	// TODO(seanc@): Test to see make sure the descriptor has the mutate bit set.
+
+	if err := vpc.Ctl(port.h, vpc.Cmd(_ConnectCmd), interfaceID.Bytes(), nil); err != nil {
+		return errors.Wrap(err, "unable to connect VPC Interface to VPC Port")
+	}
+
+	return nil
+}
