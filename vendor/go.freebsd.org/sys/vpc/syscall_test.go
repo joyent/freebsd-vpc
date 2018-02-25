@@ -33,12 +33,53 @@
 package vpc_test
 
 import (
+	"encoding/binary"
 	"reflect"
 	"testing"
 	"unsafe"
 
+	"github.com/kylelemons/godebug/pretty"
 	"go.freebsd.org/sys/vpc"
 )
+
+func TestVPCIDBytes(t *testing.T) {
+	tests := []struct {
+		bin vpc.ID
+		str string
+	}{
+		{
+			bin: vpc.ID{},
+			str: "00000000-0000-0000-0000-000000000000",
+		},
+		{
+			bin: vpc.ID{
+				TimeLow:     binary.LittleEndian.Uint32([]byte{0xa1, 0x0a, 0xbf, 0xcf}),
+				TimeMid:     binary.LittleEndian.Uint16([]byte{0x1a, 0x6f}),
+				TimeHi:      binary.LittleEndian.Uint16([]byte{0x11, 0xe8}),
+				ClockSeqHi:  uint8(binary.LittleEndian.Uint16([]byte{0x81, 0x00})),
+				ClockSeqLow: uint8(binary.LittleEndian.Uint16([]byte{0x77, 0x00})),
+				Node:        [6]byte{0x0c, 0xc4, 0x7a, 0x6c, 0x7d, 0x1e},
+			},
+			str: "a10abfcf-1a6f-11e8-8177-0cc47a6c7d1e",
+		},
+	}
+
+	for i, test := range tests {
+		s := test.bin.String()
+		if diff := pretty.Compare(s, test.str); diff != "" {
+			t.Errorf("[%d] String VPC ID diff: (-got +want)\n%s", i, diff)
+		}
+
+		o, err := vpc.ParseID(s)
+		if err != nil {
+			t.Errorf("[%d] ParseID failed: %v", err)
+		}
+
+		if diff := pretty.Compare(o.String(), test.str); diff != "" {
+			t.Errorf("[%d] round-trip VPC ID diff: (-got +want)\n%s", i, diff)
+		}
+	}
+}
 
 func Test_VPC_ID(t *testing.T) {
 	origID := vpc.GenID()
