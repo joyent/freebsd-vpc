@@ -49,7 +49,7 @@ func TestL2Link_CreateCommitDestroy(t *testing.T) {
 	var cfg l2link.Config
 	{
 		cfg.ID = vpc.GenID()
-		cfg.MAC = cfg.ID.Node[:]
+		cfg.ID.Node = [6]byte{}
 	}
 
 	existingIfaces, err := vpctest.GetAllInterfaces()
@@ -211,7 +211,7 @@ func TestL2Link_CreateClose(t *testing.T) {
 	var cfg l2link.Config
 	{
 		cfg.ID = vpc.GenID()
-		cfg.MAC = cfg.ID.Node[:]
+		cfg.ID.Node = [6]byte{}
 	}
 
 	sw, err := l2link.Create(cfg)
@@ -252,7 +252,7 @@ func TestL2Link_CreateDestroyClose(t *testing.T) {
 	var cfg l2link.Config
 	{
 		cfg.ID = vpc.GenID()
-		cfg.MAC = cfg.ID.Node[:]
+		cfg.ID.Node = [6]byte{}
 	}
 
 	sw, err := l2link.Create(cfg)
@@ -300,7 +300,7 @@ func TestL2Link_CreateCommitDestroyClose(t *testing.T) {
 	var cfg l2link.Config
 	{
 		cfg.ID = vpc.GenID()
-		cfg.MAC = cfg.ID.Node[:]
+		cfg.ID.Node = [6]byte{}
 	}
 
 	sw, err := l2link.Create(cfg)
