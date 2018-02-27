@@ -12,8 +12,9 @@
 # 6. make crdb-sql
 
 build: generate
-	govvv build
-	./vpc shell autocomplete bash -d docs/bash.d/
+	mkdir ./bin
+	govvv build -o bin/vpc ./cmd/vpc
+	bin/vpc shell autocomplete bash -d docs/bash.d/
 
 install:
 	govvv install
