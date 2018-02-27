@@ -20,11 +20,12 @@ import (
 
 const (
 	_CmdName     = "add"
+	_KeyL2ID     = config.KeySWPortAddL2ID
 	_KeyL2Name   = config.KeySWPortAddL2Name
 	_KeyPortID   = config.KeySWPortAddID
 	_KeyPortMAC  = config.KeySWPortAddMAC
 	_KeySwitchID = config.KeySWPortAddSwitchID
-	_KeyUplinkID = config.KeySWPortAddUplinkID
+	_KeyUplink   = config.KeySWPortAddUplink
 )
 
 var Cmd = &command.Command{
@@ -39,10 +40,14 @@ var Cmd = &command.Command{
 		Args: cobra.NoArgs,
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			switch {
-			case viper.GetString(_KeyUplinkID) != "" && viper.GetString(_KeyL2Name) == "":
-				// TODO(seanc@): convert uplink-id and l2-name to constants used by
+			case viper.GetString(_KeyL2ID) != "" && viper.GetString(_KeyL2Name) == "":
+				// TODO(seanc@): convert l2-id and l2-name to constants used by
 				// cobra when setting the viper key.
-				return errors.Errorf("uplink-id requires an l2-name")
+				return errors.Errorf("l2-id requires an l2-name")
+			case viper.GetString(_KeyL2ID) == "" && viper.GetString(_KeyL2Name) != "":
+				// TODO(seanc@): convert l2-id and l2-name to constants used by
+				// cobra when setting the viper key.
+				return errors.Errorf("l2-name requires an l2-id")
 			}
 
 			if l2Name := viper.GetString(_KeyL2Name); l2Name != "" {
@@ -82,14 +87,9 @@ var Cmd = &command.Command{
 				return errors.Wrap(err, "unable to get VPC Switch Port ID")
 			}
 
-			var uplinkID vpc.ID
-			if uplinkStr := viper.GetString(_KeyUplinkID); uplinkStr != "" {
-				uplinkID, err = vpc.ParseID(uplinkStr)
-				if err != nil {
-					// TODO(seanc@): convert uplink-id to a constant usable within this
-					// package.
-					return errors.Wrapf(err, "unable to parse uplink-id %q", viper.GetString(_KeyUplinkID))
-				}
+			l2ID, err := _GetLinkID(viper.GetViper(), _KeyL2ID, true)
+			if err != nil {
+				return errors.Wrap(err, "unable to get l2-id")
 			}
 
 			portMAC, err := flag.GetMAC(viper.GetViper(), _KeyPortMAC, nil)
@@ -150,9 +150,19 @@ var Cmd = &command.Command{
 			})
 
 			// If we have an L2 Link, add it to the port
-			if l2Name != "" {
+			switch {
+			case l2Name == "":
+				if err = vpcSwitch.PortAdd(portID, portMAC); err != nil {
+					log.Error().Err(err).
+						Object("port-id", portID).
+						Str("port-mac", portMAC.String()).
+						Object("switch-cfg", switchCfg).
+						Msg("failed to add VPC Switch Port")
+					return errors.Wrap(err, "unable to add a port to VPC Switch")
+				}
+			case l2Name != "":
 				l2Cfg := l2link.Config{
-					ID:   uplinkID,
+					ID:   l2ID,
 					Name: l2Name,
 				}
 				l2, err := l2link.Create(l2Cfg)
@@ -171,9 +181,11 @@ var Cmd = &command.Command{
 					return nil
 				})
 
-				if err := vpcSwitch.PortUplinkSet(portID, portMAC); err != nil {
-					log.Error().Err(err).Object("port-id", portID).Object("switch-cfg", switchCfg).Msg("failed to set VPC Switch Port as an Uplink port")
-					return errors.Wrap(err, "unable to create a VPC Switch Port uplink")
+				if viper.GetBool(_KeyUplink) {
+					if err := vpcSwitch.PortUplinkSet(portID, portMAC); err != nil {
+						log.Error().Err(err).Object("port-id", portID).Object("switch-cfg", switchCfg).Msg("failed to set VPC Switch Port as an Uplink port")
+						return errors.Wrap(err, "unable to create a VPC Switch Port uplink")
+					}
 				}
 
 				portCfg := vpcp.Config{
@@ -187,9 +199,11 @@ var Cmd = &command.Command{
 				}
 
 				if err := vpcPort.Connect(l2Cfg.ID); err != nil {
-					log.Error().Err(err).Object("port-id", portID).Object("interface", switchCfg).Msg("failed to connect VPC interface to VPC Switch Port")
+					log.Error().Err(err).Object("l2-cfg", l2Cfg).Object("l2", l2).Object("port-id", portID).Object("switch-cfg", switchCfg).Msg("failed to connect VPC interface to VPC Switch Port")
 					return errors.Wrap(err, "unable to connect VPC Interface to VPC Port")
 				}
+			default:
+				panic("invalid switch port add logic")
 			}
 
 			commit = true
@@ -232,11 +246,11 @@ var Cmd = &command.Command{
 
 		{
 			const (
-				key          = _KeyUplinkID
-				longName     = "uplink-id"
-				shortName    = "u"
+				key          = _KeyL2ID
+				longName     = "l2-id"
+				shortName    = ""
 				defaultValue = ""
-				description  = "Specify the ID of the VPC Switch's uplink port"
+				description  = "Specify the ID of the VPC L2 Link"
 			)
 
 			flags := self.Cobra.Flags()
@@ -246,18 +260,37 @@ var Cmd = &command.Command{
 			viper.SetDefault(key, defaultValue)
 		}
 
+		{
+			const (
+				key          = _KeyUplink
+				longName     = "uplink"
+				shortName    = "u"
+				defaultValue = false
+				description  = "make the port ID an uplink for the switch"
+			)
+
+			flags := self.Cobra.Flags()
+			flags.BoolP(longName, shortName, defaultValue, description)
+
+			viper.BindPFlag(key, flags.Lookup(longName))
+			viper.SetDefault(key, defaultValue)
+		}
+
 		return nil
 	},
 }
 
-func _GetUplinkID(v *viper.Viper, key string) (id vpc.ID, err error) {
-	uplinkIDStr := v.GetString(key)
-	if uplinkIDStr == "" {
-		return vpc.ID{}, errors.Wrap(err, "missing VPC Uplink ID")
+func _GetLinkID(v *viper.Viper, key string, optional bool) (id vpc.ID, err error) {
+	l2IDStr := v.GetString(key)
+	switch {
+	case optional && l2IDStr == "":
+		return vpc.ID{}, nil
+	case !optional && l2IDStr == "":
+		return vpc.ID{}, errors.Wrap(err, "missing VPC L2 Link ID")
 	}
 
-	if id, err = vpc.ParseID(uplinkIDStr); err != nil {
-		return vpc.ID{}, errors.Wrapf(err, "unable to parse VPC Uplink ID %q", uplinkIDStr)
+	if id, err = vpc.ParseID(l2IDStr); err != nil {
+		return vpc.ID{}, errors.Wrapf(err, "unable to parse VPC L2 Link ID %q", l2IDStr)
 	}
 
 	return id, nil
