@@ -62,13 +62,13 @@ var Cmd = &command.Command{
 
 			vmNIC, err := vmnic.Create(vmnicCfg)
 			if err != nil {
-				log.Error().Err(err).Str("id", id.String()).Msg("vmnic create failed")
+				log.Error().Err(err).Object("vmnic-id", id).Msg("vmnic create failed")
 				return errors.Wrap(err, "unable to create VM NIC")
 			}
 			defer vmNIC.Close()
 
 			if err := vmNIC.Commit(); err != nil {
-				log.Error().Err(err).Str("id", id.String()).Msg("VM NIC commit failed")
+				log.Error().Err(err).Object("vmnic-id", id).Msg("VM NIC commit failed")
 				return errors.Wrap(err, "unable to commit VM NIC")
 			}
 
@@ -89,7 +89,7 @@ var Cmd = &command.Command{
 				}
 			}
 
-			log.Info().Str("id", id.String()).Str("mac", newVMNIC.HardwareAddr.String()).Str("name", newVMNIC.Name).Msg("VM NIC created")
+			log.Info().Object("vmnic-id", id).Str("mac", newVMNIC.HardwareAddr.String()).Str("name", newVMNIC.Name).Msg("VM NIC created")
 
 			return nil
 		},
