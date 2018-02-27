@@ -1,29 +1,29 @@
-package autocompletion
+package shell
 
 import (
 	"github.com/rs/zerolog/log"
-	"github.com/sean-/vpc/cmd/shell/autocompletion/bash"
+	"github.com/sean-/vpc/cli/shell/autocompletion"
 	"github.com/sean-/vpc/internal/command"
 	"github.com/spf13/cobra"
 )
 
-const _CmdName = "autocomplete"
+const _CmdName = "shell"
 
 var Cmd = &command.Command{
 	Name: _CmdName,
 
 	Cobra: &cobra.Command{
 		Use:   _CmdName,
-		Short: "Autocompletion generation",
+		Short: "shell commands",
 	},
 
 	Setup: func(self *command.Command) error {
 		subCommands := command.Commands{
-			bash.Cmd,
+			autocompletion.Cmd,
 		}
 
 		if err := self.Register(subCommands); err != nil {
-			log.Fatal().Str("cmd", _CmdName).Err(err).Msg("unable to register sub-commands")
+			log.Fatal().Err(err).Str("cmd", _CmdName).Msg("unable to register sub-commands")
 		}
 
 		return nil

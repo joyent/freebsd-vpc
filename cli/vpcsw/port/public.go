@@ -1,30 +1,33 @@
-package intf
+package port
 
 import (
-	"github.com/rs/zerolog/log"
-	"github.com/sean-/vpc/cmd/intf/list"
+	"github.com/pkg/errors"
+	"github.com/sean-/vpc/cli/vpcsw/port/add"
+	"github.com/sean-/vpc/cli/vpcsw/port/remove"
 	"github.com/sean-/vpc/internal/command"
 	"github.com/spf13/cobra"
 )
 
-const _CmdName = "interface"
+const _CmdName = "port"
 
 var Cmd = &command.Command{
 	Name: _CmdName,
 
 	Cobra: &cobra.Command{
 		Use:     _CmdName,
-		Aliases: []string{"int", "intf"},
-		Short:   "VPC interface management",
+		Aliases: []string{"sw"},
+		Short:   "VPC switch management",
 	},
 
 	Setup: func(self *command.Command) error {
 		subCommands := command.Commands{
-			list.Cmd,
+			add.Cmd,
+			remove.Cmd,
+			//list.Cmd,
 		}
 
 		if err := self.Register(subCommands); err != nil {
-			log.Fatal().Err(err).Str("cmd", _CmdName).Msg("unable to register sub-commands")
+			return errors.Wrapf(err, "unable to register sub-commands under %s", _CmdName)
 		}
 
 		return nil

@@ -1,25 +1,29 @@
-package shell
+package doc
 
 import (
 	"github.com/rs/zerolog/log"
-	"github.com/sean-/vpc/cmd/shell/autocompletion"
+	"github.com/sean-/vpc/cli/doc/man"
+	"github.com/sean-/vpc/cli/doc/md"
+	"github.com/sean-/vpc/internal/buildtime"
 	"github.com/sean-/vpc/internal/command"
 	"github.com/spf13/cobra"
 )
 
-const _CmdName = "shell"
+const _CmdName = "doc"
 
 var Cmd = &command.Command{
 	Name: _CmdName,
 
 	Cobra: &cobra.Command{
-		Use:   _CmdName,
-		Short: "shell commands",
+		Use:     _CmdName,
+		Aliases: []string{"docs", "documentation"},
+		Short:   "Documentation for " + buildtime.PROGNAME,
 	},
 
 	Setup: func(self *command.Command) error {
 		subCommands := command.Commands{
-			autocompletion.Cmd,
+			man.Cmd,
+			md.Cmd,
 		}
 
 		if err := self.Register(subCommands); err != nil {

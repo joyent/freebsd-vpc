@@ -2,9 +2,9 @@ package vmnic
 
 import (
 	"github.com/pkg/errors"
-	"github.com/sean-/vpc/cmd/vmnic/create"
-	"github.com/sean-/vpc/cmd/vmnic/destroy"
-	"github.com/sean-/vpc/cmd/vmnic/list"
+	"github.com/sean-/vpc/cli/vmnic/create"
+	"github.com/sean-/vpc/cli/vmnic/destroy"
+	"github.com/sean-/vpc/cli/vmnic/list"
 	"github.com/sean-/vpc/internal/command"
 	"github.com/spf13/cobra"
 )

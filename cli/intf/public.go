@@ -1,29 +1,26 @@
-package doc
+package intf
 
 import (
 	"github.com/rs/zerolog/log"
-	"github.com/sean-/vpc/cmd/doc/man"
-	"github.com/sean-/vpc/cmd/doc/md"
-	"github.com/sean-/vpc/internal/buildtime"
+	"github.com/sean-/vpc/cli/intf/list"
 	"github.com/sean-/vpc/internal/command"
 	"github.com/spf13/cobra"
 )
 
-const _CmdName = "doc"
+const _CmdName = "interface"
 
 var Cmd = &command.Command{
 	Name: _CmdName,
 
 	Cobra: &cobra.Command{
 		Use:     _CmdName,
-		Aliases: []string{"docs", "documentation"},
-		Short:   "Documentation for " + buildtime.PROGNAME,
+		Aliases: []string{"int", "intf"},
+		Short:   "VPC interface management",
 	},
 
 	Setup: func(self *command.Command) error {
 		subCommands := command.Commands{
-			man.Cmd,
-			md.Cmd,
+			list.Cmd,
 		}
 
 		if err := self.Register(subCommands); err != nil {

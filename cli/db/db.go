@@ -2,8 +2,8 @@ package db
 
 import (
 	"github.com/rs/zerolog/log"
-	"github.com/sean-/vpc/cmd/db/migrate"
-	"github.com/sean-/vpc/cmd/db/ping"
+	"github.com/sean-/vpc/cli/db/migrate"
+	"github.com/sean-/vpc/cli/db/ping"
 	"github.com/sean-/vpc/internal/command"
 	"github.com/spf13/cobra"
 )
