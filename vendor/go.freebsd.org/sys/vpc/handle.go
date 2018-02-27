@@ -33,6 +33,7 @@ import (
 	"sync"
 
 	"github.com/pkg/errors"
+	"github.com/rs/zerolog"
 )
 
 // HandleFD is the descriptor number associated with an opened VPC Object.
@@ -42,6 +43,10 @@ type HandleFD int
 type Handle struct {
 	lock sync.RWMutex
 	fd   HandleFD
+}
+
+func (h Handle) MarshalZerologObject(e *zerolog.Event) {
+	e.Int("fd", int(h.fd))
 }
 
 const (
@@ -58,6 +63,10 @@ const (
 // HandleVersion is the version number of the VPC API and controls the ABI used
 // to talk with a VPC Handle.
 type HandleVersion uint64
+
+func (v HandleVersion) MarshalZerologObject(e *zerolog.Event) {
+	e.Int64("version", int64(v))
+}
 
 // HandleTypeInput is passed to the constructor NewHandleType
 type HandleTypeInput struct {
@@ -88,6 +97,11 @@ func NewHandleType(cfg HandleTypeInput) (ht HandleType, err error) {
 	}
 
 	return ht, err
+}
+
+func (ht HandleType) MarshalZerologObject(e *zerolog.Event) {
+	e.Object("version", ht.Version()).
+		Object("obj-type", ht.ObjType())
 }
 
 const (

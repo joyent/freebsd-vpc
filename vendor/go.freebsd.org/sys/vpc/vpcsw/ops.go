@@ -169,13 +169,15 @@ func (sw *VPCSW) Reset() error {
 
 // UplinkSet designates an existing VPC Port as an uplink port for this VPC
 // Switch.
-func (sw *VPCSW) PortUplinkSet(portID vpc.ID) error {
+func (sw *VPCSW) PortUplinkSet(portID vpc.ID, mac net.HardwareAddr) error {
 	// TODO(seanc@): Test to see make sure the descriptor has the mutate bit set.
 
 	// Create the port
 	if err := vpc.Ctl(sw.h, vpc.Cmd(_PortUplinkSetCmd), portID.Bytes(), nil); err != nil {
 		return errors.Wrap(err, "unable to set VPC Port as uplink in VPC Switch")
 	}
+
+	// TODO(seanc@): Set the MAC address
 
 	return nil
 }

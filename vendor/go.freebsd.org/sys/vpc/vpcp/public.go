@@ -39,8 +39,9 @@ import (
 
 // Config is the configuration used to populate a given VPC Swith Port.
 type Config struct {
-	ID  vpc.ID
-	MAC net.HardwareAddr
+	ID        vpc.ID
+	MAC       net.HardwareAddr
+	Writeable bool
 }
 
 func (c Config) MarshalZerologObject(e *zerolog.Event) {
@@ -144,7 +145,12 @@ func Open(cfg Config) (*VPCP, error) {
 		return nil, errors.Wrap(err, "unable to create a new VPC Switch Port handle type")
 	}
 
-	h, err := vpc.Open(cfg.ID, ht, vpc.FlagOpen|vpc.FlagRead)
+	flags := vpc.FlagOpen | vpc.FlagRead
+	if cfg.Writeable {
+		flags |= vpc.FlagWrite
+	}
+
+	h, err := vpc.Open(cfg.ID, ht, flags)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to open VPC Switch Port handle")
 	}

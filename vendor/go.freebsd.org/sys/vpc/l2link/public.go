@@ -60,7 +60,7 @@ type L2Link struct {
 func Create(cfg Config) (*L2Link, error) {
 	ht, err := vpc.NewHandleType(vpc.HandleTypeInput{
 		Version: 1,
-		Type:    vpc.ObjTypeNICVM,
+		Type:    vpc.ObjTypeLinkL2,
 	})
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to create a new L2 Link handle type")
@@ -101,4 +101,11 @@ func Open(cfg Config) (*L2Link, error) {
 		id:   cfg.ID,
 		name: cfg.Name,
 	}, nil
+}
+
+func (l2 L2Link) MarshalZerologObject(e *zerolog.Event) {
+	e.Str("id", l2.id.String()).
+		Str("name", l2.name).
+		Object("handle-type", l2.ht).
+		Object("handle", l2.h)
 }

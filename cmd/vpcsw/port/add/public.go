@@ -102,20 +102,24 @@ var Cmd = &command.Command{
 			// Create a stack of commit and undo operations to walk through in the
 			// event of an error.
 			var commit bool
-			var commitFuncs, undoFuncs []func()
+			var commitFuncs, undoFuncs []func() error
 			defer func() {
+				scopeHandlers := undoFuncs
+				modeStr := "undo"
 				if commit {
-					for _, fn := range commitFuncs {
-						fn()
-					}
-				} else {
-					for _, fn := range undoFuncs {
-						fn()
+					modeStr = "commit"
+					scopeHandlers = commitFuncs
+				}
+
+				for i := len(scopeHandlers) - 1; i >= 0; i-- {
+					if err := scopeHandlers[i](); err != nil {
+						log.Error().Err(err).Msgf("failure during %s", modeStr)
 					}
 				}
 			}()
-			commitFuncs = append(commitFuncs, func() {
+			commitFuncs = append(commitFuncs, func() error {
 				cons.Write([]byte("done.\n"))
+				return nil
 			})
 
 			// 1) Open switch and add a port
@@ -129,25 +133,21 @@ var Cmd = &command.Command{
 				log.Error().Err(err).Object("switch-cfg", switchCfg).Msg("vpcsw open failed")
 				return errors.Wrap(err, "unable to open VPC Switch")
 			}
-			commitFuncs = append(commitFuncs, func() {
+			commitFuncs = append(commitFuncs, func() error {
 				if err := vpcSwitch.Close(); err != nil {
 					log.Error().Err(err).Msg("unable to commit VPC Switch")
+					return errors.Wrap(err, "unable to commit VPC switch during operation commit")
 				}
+
+				return nil
 			})
-			undoFuncs = append(undoFuncs, func() {
+			undoFuncs = append(undoFuncs, func() error {
 				if err := vpcSwitch.Close(); err != nil {
 					log.Error().Err(err).Msg("unable to clean up VPC Switch during error recovery")
 				}
-			})
 
-			if err = vpcSwitch.PortAdd(portID, portMAC); err != nil {
-				log.Error().Err(err).
-					Object("port-id", portID).
-					Str("port-mac", portMAC.String()).
-					Object("switch-cfg", switchCfg).
-					Msg("failed to add VPC Switch Port")
-				return errors.Wrap(err, "unable to add a port to VPC Switch")
-			}
+				return nil
+			})
 
 			// If we have an L2 Link, add it to the port
 			if l2Name != "" {
@@ -159,44 +159,36 @@ var Cmd = &command.Command{
 				if err != nil {
 					return errors.Wrap(err, "unable to create VPC L2 Link")
 				}
-				commitFuncs = append(commitFuncs, func() {
-					if err := l2.Commit(); err != nil {
-						log.Error().Err(err).Msg("unable to commit VPC L2 Link")
-					}
-				})
-				undoFuncs = append(undoFuncs, func() {
-					if err := l2.Destroy(); err != nil {
-						log.Error().Err(err).Msg("unable to clean up VPC L2 Link during error recovery")
-					}
-
-					if err := l2.Close(); err != nil {
-						log.Error().Err(err).Msg("unable to clean up VPC L2 Link during error recovery")
-					}
-				})
 
 				if err := l2.Attach(); err != nil {
-					l2.Close()
 					return errors.Wrapf(err, "unable to attach L2 link to device %q", l2Name)
 				}
+				commitFuncs = append(commitFuncs, func() error {
+					if err := l2.Commit(); err != nil {
+						log.Error().Err(err).Object("l2", l2).Msg("unable to commit VPC L2 Link")
+						return errors.Wrap(err, "unable to commit VPC L2 Link")
+					}
+					return nil
+				})
 
-				// if err := vpcSwitch.PortAdd(portID); err != nil {
-				// 	log.Error().Err(err).Object("port-id", portID).Object("switch-cfg", switchCfg).Msg("failed to add VPC Switch Port")
-				// }
-
-				if err := vpcSwitch.PortUplinkSet(portID); err != nil {
+				if err := vpcSwitch.PortUplinkSet(portID, portMAC); err != nil {
 					log.Error().Err(err).Object("port-id", portID).Object("switch-cfg", switchCfg).Msg("failed to set VPC Switch Port as an Uplink port")
+					return errors.Wrap(err, "unable to create a VPC Switch Port uplink")
 				}
 
 				portCfg := vpcp.Config{
-					ID: portID,
+					ID:        portID,
+					Writeable: true,
 				}
 				vpcPort, err := vpcp.Open(portCfg)
 				if err != nil {
 					log.Error().Err(err).Object("port-id", portID).Object("switch-cfg", switchCfg).Msg("failed to connect VPC interface to VPC Switch Port")
+					return errors.Wrap(err, "unable to open VPC Switch Port")
 				}
 
 				if err := vpcPort.Connect(l2Cfg.ID); err != nil {
 					log.Error().Err(err).Object("port-id", portID).Object("interface", switchCfg).Msg("failed to connect VPC interface to VPC Switch Port")
+					return errors.Wrap(err, "unable to connect VPC Interface to VPC Port")
 				}
 			}
 

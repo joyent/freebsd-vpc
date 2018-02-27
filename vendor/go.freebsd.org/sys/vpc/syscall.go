@@ -209,6 +209,10 @@ const (
 // ObjType distinguishes the different types of supported VPC Object Types.
 type ObjType uint8
 
+func (objType ObjType) MarshalZerologObject(e *zerolog.Event) {
+	e.Str("type", objType.String())
+}
+
 // Exported enumerated types of available VPC objects.
 const (
 	ObjTypeInvalid    ObjType = 0
