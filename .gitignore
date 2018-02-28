@@ -16,7 +16,7 @@
 
 # System related items
 .DS_Store
-/vpc
+/bin/
 /crdb/
 /docs/bash.d/
 /docs/man/
