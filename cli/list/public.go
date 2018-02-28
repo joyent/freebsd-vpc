@@ -110,13 +110,13 @@ func listTypeIDs(cons conswriter.ConsoleWriter) error {
 	table.SetHeaderLine(false)
 	table.SetAutoFormatHeaders(true)
 
-	table.SetColumnAlignment([]int{tablewriter.ALIGN_LEFT, tablewriter.ALIGN_RIGHT, tablewriter.ALIGN_RIGHT})
+	table.SetColumnAlignment([]int{tablewriter.ALIGN_LEFT, tablewriter.ALIGN_RIGHT, tablewriter.ALIGN_LEFT})
 	table.SetBorders(tablewriter.Border{Left: true, Top: false, Right: true, Bottom: false})
 	table.SetCenterSeparator("")
 	table.SetColumnSeparator("")
 	table.SetRowSeparator("")
 
-	table.SetHeader([]string{"name", "id", "type"})
+	table.SetHeader([]string{"type", "id", "unit name"})
 
 	mgr, err := mgmt.New(nil)
 	if err != nil {
@@ -133,9 +133,9 @@ func listTypeIDs(cons conswriter.ConsoleWriter) error {
 
 		for _, hdr := range objHeaders {
 			table.Append([]string{
-				hdr.UnitName(),
-				hdr.ID().String(),
 				hdr.ObjType().String(),
+				hdr.ID().String(),
+				hdr.UnitName(),
 			})
 			numIDs++
 		}
