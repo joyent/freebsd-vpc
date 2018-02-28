@@ -99,8 +99,52 @@ func (m *Mgmt) Close() error {
 	return nil
 }
 
+// ObjHeader is the interface used to describe an ObjHeader returned by
+// GetAllIDs.
+type ObjHeader interface {
+	ObjType() vpc.ObjType
+	UnitNo() uint32
+	ID() vpc.ID
+	UnitName() string
+}
+
+// KBI compatible struct representing a VPC Object Header.  _ObjHeader satisfies
+// the ObjHeader interface.
+type _ObjHeader struct {
+	objType uint32
+	unitNo  uint32
+	id      [16]byte
+}
+
+// ObjType returns the VPC Object Type
+func (oh _ObjHeader) ObjType() vpc.ObjType {
+	return vpc.ObjType(oh.objType)
+}
+
+// UnitName returns the unit name of the VPC Object in question or an empty
+// string if the VPC Object Type does not have backing cloned interface.
+func (oh _ObjHeader) UnitName() string {
+	return fmt.Sprintf("%s%d", oh.ObjType(), oh.UnitNo())
+}
+
+// ObjType returns the device unit number.
+func (oh _ObjHeader) UnitNo() uint32 {
+	return oh.unitNo
+}
+
+// ID returns the VPC ID.
+func (oh _ObjHeader) ID() vpc.ID {
+	id := vpc.ID{}
+	buf := bytes.NewReader(oh.id[:])
+	err := binary.Read(buf, binary.LittleEndian, &id)
+	if err != nil {
+		panic(fmt.Sprintf("failed to read VPC ID from KBI Object Header: ", err))
+	}
+	return id
+}
+
 // GetAllIDs returns a slice of VPC IDs for the specified object type.
-func (m *Mgmt) GetAllIDs(objType vpc.ObjType) ([]vpc.ID, error) {
+func (m *Mgmt) GetAllIDs(objType vpc.ObjType) ([]ObjHeader, error) {
 	// TODO(seanc@): Test to see make sure the descriptor has the mutate bit set.
 
 	objCount, err := m.CountType(objType)
@@ -110,7 +154,7 @@ func (m *Mgmt) GetAllIDs(objType vpc.ObjType) ([]vpc.ID, error) {
 
 	// Shortcircuit
 	if objCount == 0 {
-		return []vpc.ID{}, nil
+		return []ObjHeader{}, nil
 	}
 
 	in := make([]byte, binary.MaxVarintLen64)
@@ -121,10 +165,6 @@ func (m *Mgmt) GetAllIDs(objType vpc.ObjType) ([]vpc.ID, error) {
 		panic(fmt.Sprintf("invariant: ObjType size too big for kernel interface input (want/got: 2/%d", n))
 	}
 
-	type _ObjHeader struct {
-		objType uint32
-		id      [16]byte
-	}
 	objHeaderSize := uint32(unsafe.Sizeof(_ObjHeader{}))
 
 	out := make([]byte, objCount*objHeaderSize)
@@ -132,23 +172,32 @@ func (m *Mgmt) GetAllIDs(objType vpc.ObjType) ([]vpc.ID, error) {
 		return nil, errors.Wrapf(err, "unable to get %s VPC Object headers", objType)
 	}
 
-	ids := make([]vpc.ID, 0, objCount)
+	ids := make([]ObjHeader, 0, objCount)
 	for i := uint32(0); i < objCount; i++ {
+		cur := 0
 		off := i * objHeaderSize
 		objHeader := out[off : off+objHeaderSize]
 
-		// FIXME(seanc@): this should be an asert to catch if the obj type coming
-		// out of the kernel doesn't match.
-		headerobjtype, _ := binary.Uvarint(objHeader[0:4])
-		_ = headerObjType
+		headerObjType, _ := binary.Uvarint(objHeader[cur : cur+4])
+		if headerObjType != uint64(objType) {
+			return []ObjHeader{}, errors.Wrapf(err, "mismatched VPC Object Types: 0x%x != 0x%x", headerObjType, objType)
+		}
+		cur += 4
 
-		var id vpc.ID
-		err := binary.Read(bytes.NewBuffer(objHeader[4:]), binary.LittleEndian, &id)
-		if err != nil {
-			return []vpc.ID{}, errors.Wrapf(err, "unable to read ID %d of object %s", i, objType)
+		headerUnitNo, _ := binary.Uvarint(objHeader[cur : cur+4])
+		cur += 4
+
+		id := [16]byte{}
+		if n := copy(id[:], objHeader[cur:]); n != 16 {
+			return nil, errors.Errorf("short read on VPC ID from KBI Object Header: only read %d", n)
 		}
 
-		ids = append(ids, id)
+		hdr := _ObjHeader{
+			objType: uint32(headerObjType),
+			unitNo:  uint32(headerUnitNo),
+			id:      id,
+		}
+		ids = append(ids, hdr)
 	}
 
 	return ids, nil

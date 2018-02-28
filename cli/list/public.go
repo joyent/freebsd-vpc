@@ -116,7 +116,7 @@ func listTypeIDs(cons conswriter.ConsoleWriter) error {
 	table.SetColumnSeparator("")
 	table.SetRowSeparator("")
 
-	table.SetHeader([]string{"type", "id"})
+	table.SetHeader([]string{"name", "id", "type"})
 
 	mgr, err := mgmt.New(nil)
 	if err != nil {
@@ -126,21 +126,22 @@ func listTypeIDs(cons conswriter.ConsoleWriter) error {
 
 	var numIDs int64
 	for _, objType := range vpc.ObjTypes() {
-		ids, err := mgr.GetAllIDs(objType)
+		objHeaders, err := mgr.GetAllIDs(objType)
 		if err != nil {
 			return errors.Wrapf(err, "unable to count object type %s", objType)
 		}
 
-		for _, id := range ids {
+		for _, hdr := range objHeaders {
 			table.Append([]string{
-				objType.String(),
-				id.String(),
+				hdr.UnitName(),
+				hdr.ID().String(),
+				hdr.ObjType().String(),
 			})
 			numIDs++
 		}
 	}
 
-	table.SetFooter([]string{"total", strconv.FormatInt(numIDs, 10)})
+	table.SetFooter([]string{"total", strconv.FormatInt(numIDs, 10), ""})
 
 	table.Render()
 
