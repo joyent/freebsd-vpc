@@ -84,49 +84,6 @@ func Create(cfg Config) (*VMNIC, error) {
 	}, nil
 }
 
-// Close closes the VPC Handle descriptor.  Created VM NICs will not be
-// destroyed when the VMNIC is closed if the VM NIC has been Committed.
-func (sw *VMNIC) Close() error {
-	if sw.h.FD() <= 0 {
-		return nil
-	}
-
-	if err := sw.h.Close(); err != nil {
-		return errors.Wrap(err, "unable to close VPC handle")
-	}
-
-	return nil
-}
-
-// Commit increments the refcount of the VM NIC in order to ensure the VM NIC
-// lives beyond the life of the current process and is not automatically cleaned
-// up when the VMNIC is closed.
-func (sw *VMNIC) Commit() error {
-	if sw.h.FD() <= 0 {
-		return nil
-	}
-
-	if err := sw.h.Commit(); err != nil {
-		return errors.Wrap(err, "unable to commit VM NIC")
-	}
-
-	return nil
-}
-
-// Destroy decrements the refcount of the VM NIC in destroy the the VM NIC when
-// the VPC Handle is closed.
-func (sw *VMNIC) Destroy() error {
-	if sw.h.FD() <= 0 {
-		return nil
-	}
-
-	if err := sw.h.Destroy(); err != nil {
-		return errors.Wrap(err, "unable to destroy VM NIC")
-	}
-
-	return nil
-}
-
 // Open opens an existing VM NIC using the Config parameters.  Callers are
 // expected to Close a given VMNIC.
 func Open(cfg Config) (*VMNIC, error) {
