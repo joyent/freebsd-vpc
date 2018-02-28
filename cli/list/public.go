@@ -2,6 +2,7 @@ package list
 
 import (
 	"bytes"
+	"fmt"
 	"sort"
 	"strconv"
 	"strings"
@@ -20,6 +21,8 @@ import (
 const (
 	_CmdName      = "list"
 	_KeyObjCounts = config.KeyListObjCounts
+	_KeySortBy    = config.KeyListObjSortBy
+	_KeyType      = config.KeyListObjType
 )
 
 var Cmd = &command.Command{
@@ -57,6 +60,48 @@ var Cmd = &command.Command{
 
 			flags := self.Cobra.Flags()
 			flags.BoolP(longName, shortName, defaultValue, description)
+
+			viper.BindPFlag(key, flags.Lookup(longName))
+			viper.SetDefault(key, defaultValue)
+		}
+
+		{
+			const (
+				key          = _KeySortBy
+				longName     = "sort-by"
+				shortName    = "s"
+				defaultValue = "id"
+			)
+			sortOptions := []string{"id", "name"}
+			sortOptionsStr := strings.Join(sortOptions, ", ")
+			description := fmt.Sprintf("Change the sort order within a given type: %s", sortOptionsStr)
+
+			flags := self.Cobra.Flags()
+			flags.StringP(longName, shortName, defaultValue, description)
+
+			viper.BindPFlag(key, flags.Lookup(longName))
+			viper.SetDefault(key, defaultValue)
+		}
+
+		{
+			const (
+				key          = _KeyType
+				longName     = "obj-type"
+				shortName    = "t"
+				defaultValue = "all"
+			)
+			objTypes := vpc.ObjTypes()
+			sort.SliceStable(objTypes, func(i, j int) bool { return objTypes[i].String() < objTypes[j].String() })
+
+			objTypesStrs := make([]string, len(objTypes))
+			for i := range objTypes {
+				objTypesStrs[i] = objTypes[i].String()
+			}
+			objTypesStr := strings.Join(objTypesStrs, ", ")
+			description := fmt.Sprintf("List objects of a given type. Valid types: %s", objTypesStr)
+
+			flags := self.Cobra.Flags()
+			flags.StringP(longName, shortName, defaultValue, description)
 
 			viper.BindPFlag(key, flags.Lookup(longName))
 			viper.SetDefault(key, defaultValue)
@@ -127,8 +172,27 @@ func listTypeIDs(cons conswriter.ConsoleWriter) error {
 	}
 	defer mgr.Close()
 
-	objTypes := vpc.ObjTypes()
-	sort.SliceStable(objTypes, func(i, j int) bool { return objTypes[i].String() < objTypes[j].String() })
+	var objTypes []vpc.ObjType
+	{
+		objTypes = vpc.ObjTypes()
+		sort.SliceStable(objTypes, func(i, j int) bool { return objTypes[i].String() < objTypes[j].String() })
+
+		wantObjTypeStr := viper.GetString(_KeyType)
+		if objTypeStr := strings.ToLower(wantObjTypeStr); objTypeStr != "any" {
+			var found bool
+			for _, objType := range objTypes {
+				if objTypeStr == strings.ToLower(objType.String()) {
+					found = true
+					objTypes = []vpc.ObjType{objType}
+					break
+				}
+			}
+
+			if !found {
+				return errors.Errorf("unsupported VPC Object Type %q", wantObjTypeStr)
+			}
+		}
+	}
 
 	var numIDs int64
 	for _, objType := range objTypes {
@@ -137,10 +201,12 @@ func listTypeIDs(cons conswriter.ConsoleWriter) error {
 			return errors.Wrapf(err, "unable to count object type %s", objType)
 		}
 
-		sortBy := "uuid"
-		switch k := strings.ToLower(sortBy); k {
-		case "uuid":
+		sortBy := viper.GetString(_KeySortBy)
+		switch k := strings.ToLower(viper.GetString(_KeySortBy)); k {
+		case "id":
 			sort.SliceStable(objHeaders, func(i, j int) bool { return bytes.Compare(objHeaders[i].ID().Bytes(), objHeaders[j].ID().Bytes()) < 0 })
+		case "name":
+			sort.SliceStable(objHeaders, func(i, j int) bool { return objHeaders[i].UnitName() < objHeaders[j].UnitName() })
 		default:
 			return errors.Errorf("unsupported sort option: %q", sortBy)
 		}
