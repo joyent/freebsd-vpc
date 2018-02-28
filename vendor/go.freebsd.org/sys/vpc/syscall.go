@@ -229,7 +229,7 @@ const (
 	ObjTypeLinkVPC    ObjType = 5
 	ObjTypeNICVM      ObjType = 6
 	ObjTypeMgmt       ObjType = 7
-	ObjTypeLinkL2     ObjType = 8
+	ObjTypeLinkEth    ObjType = 8
 	ObjTypeMeta       ObjType = 9
 	ObjTypeAny        ObjType = 10
 )
@@ -245,7 +245,8 @@ func ObjTypes() []ObjType {
 		ObjTypeLinkVPC,
 		ObjTypeNICVM,
 		ObjTypeMgmt,
-		ObjTypeLinkL2,
+		ObjTypeLinkEth,
+		// ObjTypeMeta, // Not a queriable type
 		// ObjTypeAny, // Not a queriable type
 	}
 }
@@ -269,8 +270,8 @@ func (obj ObjType) String() string {
 		return "vmnic"
 	case ObjTypeMgmt:
 		return "mgmt"
-	case ObjTypeLinkL2:
-		return "l2-link"
+	case ObjTypeLinkEth:
+		return "ethlink"
 	case ObjTypeMeta:
 		return "meta"
 	case ObjTypeAny:

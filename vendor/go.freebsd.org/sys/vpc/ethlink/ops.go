@@ -1,4 +1,4 @@
-// Go interface to L2 Link objects.
+// Go interface to VPC EthLink objects.
 //
 // SPDX-License-Identifier: BSD-2-Clause-FreeBSD
 //
@@ -27,23 +27,24 @@
 // OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 // SUCH DAMAGE.
 
-package l2link
+package ethlink
 
 import (
 	"github.com/pkg/errors"
 	"go.freebsd.org/sys/vpc"
 )
 
-// _L2Cmd is the encoded type of operations that can be performed on a L2 Link.
-type _L2Cmd vpc.Cmd
+// _EthLinkCmd is the encoded type of operations that can be performed on a VPC
+// EthLink.
+type _EthLinkCmd vpc.Cmd
 
-// _L2LinkCmdSetArgType is the value used by a L2 Link set operation.
-type _L2LinkSetOpArgType uint64
+// _EthLinkCmdSetArgType is the value used by a VPC EthLink set operation.
+type _EthLinkSetOpArgType uint64
 
 const (
 	// Bits for input
-	_DownBit _L2LinkSetOpArgType = 0x00000000
-	_UpBit   _L2LinkSetOpArgType = 0x00000001
+	_DownBit _EthLinkSetOpArgType = 0x00000000
+	_UpBit   _EthLinkSetOpArgType = 0x00000001
 )
 
 // Ops that can be encoded into a vpc.Cmd
@@ -53,66 +54,68 @@ const (
 
 	// _OpReset         = vpc.Op(7)
 
-	_AttachCmd _L2Cmd = _L2Cmd(vpc.InBit|vpc.PrivBit|vpc.MutateBit|(vpc.Cmd(vpc.ObjTypeLinkL2)<<16)) | _L2Cmd(_OpAttach)
+	_AttachCmd _EthLinkCmd = _EthLinkCmd(vpc.InBit|vpc.PrivBit|vpc.MutateBit|(vpc.Cmd(vpc.ObjTypeLinkEth)<<16)) | _EthLinkCmd(_OpAttach)
 )
 
 // Template commands that can be passed to vpc.Ctl() with a valid VM NIC
 // Handle.
 // var (
-// 	_ResetCmd _L2LinkCmd
+// 	_ResetCmd _EthLinkCmd
 // )
 
-// Attach attaches the named physical device or cloned interface to this VPC L2
-// Link.  The name of the device must be specified in the L2Link Config and
+// Attach attaches the named physical device or cloned interface to this VPC
+// EthLink.  The name of the device must be specified in the EthLink Config and
 // passed in at Create time.
-func (l2 *L2Link) Attach() error {
+func (el *EthLink) Attach() error {
 	// TODO(seanc@): Test to see make sure the descriptor has the mutate bit set.
 
-	if err := vpc.Ctl(l2.h, vpc.Cmd(_AttachCmd), []byte(l2.name), nil); err != nil {
-		return errors.Wrap(err, "unable to attach VPC L2 Link to a physical NIC")
+	if err := vpc.Ctl(el.h, vpc.Cmd(_AttachCmd), []byte(el.name), nil); err != nil {
+		return errors.Wrap(err, "unable to attach VPC EthLink to a physical NIC")
 	}
 
 	return nil
 }
 
-// Close closes the VPC Handle.  Created L2 Links will not be destroyed when the
-// L2Link is closed if the L2 Links has been Committed.
-func (l2 *L2Link) Close() error {
-	if l2.h.FD() <= 0 {
+// Close closes the VPC Handle.  Created EthLink will not be destroyed when the
+// EthLink is closed if the EthLink has been Committed.
+func (el *EthLink) Close() error {
+	if el.h.FD() <= 0 {
 		return nil
 	}
 
-	if err := l2.h.Close(); err != nil {
-		return errors.Wrap(err, "unable to close L2 Link VPC handle")
+	if err := el.h.Close(); err != nil {
+		return errors.Wrap(err, "unable to close VPC EthLink handle")
 	}
 
 	return nil
 }
 
-// Commit increments the refcount of the L2 Link in order to ensure the L2 Link
+// Commit increments the refcount of the EthLink in order to ensure the EthLink
 // lives beyond the life of the current process and is not automatically cleaned
-// up when the L2Link is closed.
-func (l2 *L2Link) Commit() error {
-	if l2.h.FD() <= 0 {
-		return errors.Errorf("unable to commit VPC L2 Link handle with an empty descriptor")
+// up when the EthLink is closed.
+func (el *EthLink) Commit() error {
+	if el.h.FD() <= 0 {
+		return errors.Errorf("unable to commit VPC EthLink handle with an empty descriptor")
 	}
 
-	if err := l2.h.Commit(); err != nil {
-		return errors.Wrap(err, "unable to commit VPC L2 Link")
+	if err := el.h.Commit(); err != nil {
+		return errors.Wrap(err, "unable to commit VPC EthLink")
 	}
 
 	return nil
 }
 
-// Destroy decrements the refcount of the L2 Link in destroy the the L2 Link
-// when the VPC Handle is closed.
-func (l2 *L2Link) Destroy() error {
-	if l2.h.FD() <= 0 {
+// Destroy decrements the refcount of the VPC EthLink.  This EthLlink will be
+// cleaned up when this VPC Handle is closed, however the object is destroyed
+// before this call returns.  Some operations may still be performed on the open
+// - and now invalidated - EthLink handle.
+func (el *EthLink) Destroy() error {
+	if el.h.FD() <= 0 {
 		return nil
 	}
 
-	if err := l2.h.Destroy(); err != nil {
-		return errors.Wrap(err, "unable to destroy L2 Link")
+	if err := el.h.Destroy(); err != nil {
+		return errors.Wrap(err, "unable to destroy VPC EthLink")
 	}
 
 	return nil

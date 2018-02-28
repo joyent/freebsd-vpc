@@ -1,4 +1,4 @@
-// Go interface to Layer-2 Network Link objects.
+// Go interface to VPC EthLink objects.
 //
 // SPDX-License-Identifier: BSD-2-Clause-FreeBSD
 //
@@ -27,7 +27,7 @@
 // OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 // SUCH DAMAGE.
 
-package l2link
+package ethlink
 
 import (
 	"github.com/pkg/errors"
@@ -35,7 +35,7 @@ import (
 	"go.freebsd.org/sys/vpc"
 )
 
-// Config is the configuration used to populate a given L2 Link.
+// Config is the configuration used to create or open a VPC EthLink device.
 type Config struct {
 	ID   vpc.ID
 	Name string
@@ -46,8 +46,8 @@ func (c Config) MarshalZerologObject(e *zerolog.Event) {
 		Str("name", c.Name)
 }
 
-// L2Link is an opaque struct representing a VM NIC.
-type L2Link struct {
+// EthLink is an opaque struct representing a VM NIC.
+type EthLink struct {
 	h    *vpc.Handle
 	ht   vpc.HandleType
 	id   vpc.ID
@@ -56,22 +56,22 @@ type L2Link struct {
 
 // Create VPC facade over an existing L2 link (either physical or cloned
 // interface) using the Config parameters.  Callers are expected to Close a
-// given L2Link (otherwise a file descriptor would leak).
-func Create(cfg Config) (*L2Link, error) {
+// given EthLink (otherwise a file descriptor would leak).
+func Create(cfg Config) (*EthLink, error) {
 	ht, err := vpc.NewHandleType(vpc.HandleTypeInput{
 		Version: 1,
-		Type:    vpc.ObjTypeLinkL2,
+		Type:    vpc.ObjTypeLinkEth,
 	})
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to create a new L2 Link handle type")
+		return nil, errors.Wrap(err, "unable to create a new VPC EthLink handle type")
 	}
 
 	h, err := vpc.Open(cfg.ID, ht, vpc.FlagCreate|vpc.FlagWrite)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to open L2 Link handle")
+		return nil, errors.Wrap(err, "unable to open VPC EthLink handle")
 	}
 
-	return &L2Link{
+	return &EthLink{
 		h:    h,
 		ht:   ht,
 		id:   cfg.ID,
@@ -79,23 +79,23 @@ func Create(cfg Config) (*L2Link, error) {
 	}, nil
 }
 
-// Open opens an existing L2 Link using the Config parameters.  Callers are
-// expected to Close a given L2Link.
-func Open(cfg Config) (*L2Link, error) {
+// Open opens an existing EthLink using the Config parameters.  Callers are
+// expected to Close a given EthLink.
+func Open(cfg Config) (*EthLink, error) {
 	ht, err := vpc.NewHandleType(vpc.HandleTypeInput{
 		Version: 1,
-		Type:    vpc.ObjTypeLinkL2,
+		Type:    vpc.ObjTypeLinkEth,
 	})
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to create a new L2 Link handle type")
+		return nil, errors.Wrap(err, "unable to create a new VPC EthLink handle type")
 	}
 
 	h, err := vpc.Open(cfg.ID, ht, vpc.FlagOpen|vpc.FlagRead|vpc.FlagWrite)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to open L2 Link handle")
+		return nil, errors.Wrap(err, "unable to open VPC EthLink handle")
 	}
 
-	return &L2Link{
+	return &EthLink{
 		h:    h,
 		ht:   ht,
 		id:   cfg.ID,
@@ -103,9 +103,9 @@ func Open(cfg Config) (*L2Link, error) {
 	}, nil
 }
 
-func (l2 L2Link) MarshalZerologObject(e *zerolog.Event) {
-	e.Str("id", l2.id.String()).
-		Str("name", l2.name).
-		Object("handle-type", l2.ht).
-		Object("handle", l2.h)
+func (el EthLink) MarshalZerologObject(e *zerolog.Event) {
+	e.Str("id", el.id.String()).
+		Str("name", el.name).
+		Object("handle-type", el.ht).
+		Object("handle", el.h)
 }

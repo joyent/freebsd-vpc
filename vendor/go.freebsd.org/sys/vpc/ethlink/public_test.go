@@ -1,4 +1,4 @@
-// Test L2 Link objects.
+// Test VPC L2 EthLink objects.
 //
 // SPDX-License-Identifier: BSD-2-Clause-FreeBSD
 //
@@ -27,7 +27,7 @@
 // OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 // SUCH DAMAGE.
 
-package l2link_test
+package ethlink_test
 
 import (
 	"syscall"
@@ -35,7 +35,7 @@ import (
 
 	"github.com/sean-/seed"
 	"go.freebsd.org/sys/vpc"
-	"go.freebsd.org/sys/vpc/l2link"
+	"go.freebsd.org/sys/vpc/ethlink"
 	"go.freebsd.org/sys/vpc/vpctest"
 )
 
@@ -43,10 +43,10 @@ func init() {
 	seed.MustInit()
 }
 
-// TestL2Link_CreateCommitDestroy is intended to verify the basic lifecycle
+// TestEthLink_CreateCommitDestroy is intended to verify the basic lifecycle
 // functionality of a switch.
-func TestL2Link_CreateCommitDestroy(t *testing.T) {
-	var cfg l2link.Config
+func TestEthLink_CreateCommitDestroy(t *testing.T) {
+	var cfg ethlink.Config
 	{
 		cfg.ID = vpc.GenID()
 		cfg.ID.Node = [6]byte{}
@@ -58,7 +58,7 @@ func TestL2Link_CreateCommitDestroy(t *testing.T) {
 	}
 
 	func() { // Create + close switch w/o commit
-		sw, err := l2link.Create(cfg)
+		sw, err := ethlink.Create(cfg)
 		if err != nil {
 			t.Fatalf("unable to create switch: %v", err)
 		}
@@ -92,7 +92,7 @@ func TestL2Link_CreateCommitDestroy(t *testing.T) {
 	}()
 
 	func() { // Create switch scope
-		sw, err := l2link.Create(cfg)
+		sw, err := ethlink.Create(cfg)
 		if err != nil {
 			t.Fatalf("unable to create switch: %v", err)
 		}
@@ -142,7 +142,7 @@ func TestL2Link_CreateCommitDestroy(t *testing.T) {
 	}()
 
 	func() { // Open + Close switch scope
-		sw, err := l2link.Open(cfg)
+		sw, err := ethlink.Open(cfg)
 		if err != nil {
 			t.Fatalf("unable to open switch: %v", err)
 		}
@@ -175,7 +175,7 @@ func TestL2Link_CreateCommitDestroy(t *testing.T) {
 	}
 
 	func() { // Open + Destroy switch scope
-		sw, err := l2link.Open(cfg)
+		sw, err := ethlink.Open(cfg)
 		if err != nil {
 			t.Fatalf("unable to open switch: %v", err)
 		}
@@ -202,19 +202,19 @@ func TestL2Link_CreateCommitDestroy(t *testing.T) {
 	}
 }
 
-func TestL2Link_CreateClose(t *testing.T) {
+func TestEthLink_CreateClose(t *testing.T) {
 	existingIfaces, err := vpctest.GetAllInterfaces()
 	if err != nil {
 		t.Fatalf("unable to get existing interfaces")
 	}
 
-	var cfg l2link.Config
+	var cfg ethlink.Config
 	{
 		cfg.ID = vpc.GenID()
 		cfg.ID.Node = [6]byte{}
 	}
 
-	sw, err := l2link.Create(cfg)
+	sw, err := ethlink.Create(cfg)
 	if err != nil {
 		t.Fatalf("unable to create switch: %v", err)
 	}
@@ -243,19 +243,19 @@ func TestL2Link_CreateClose(t *testing.T) {
 	}
 }
 
-func TestL2Link_CreateDestroyClose(t *testing.T) {
+func TestEthLink_CreateDestroyClose(t *testing.T) {
 	existingIfaces, err := vpctest.GetAllInterfaces()
 	if err != nil {
 		t.Fatalf("unable to get existing interfaces")
 	}
 
-	var cfg l2link.Config
+	var cfg ethlink.Config
 	{
 		cfg.ID = vpc.GenID()
 		cfg.ID.Node = [6]byte{}
 	}
 
-	sw, err := l2link.Create(cfg)
+	sw, err := ethlink.Create(cfg)
 	if err != nil {
 		t.Fatalf("unable to create switch: %v", err)
 	}
@@ -291,19 +291,19 @@ func TestL2Link_CreateDestroyClose(t *testing.T) {
 	}
 }
 
-func TestL2Link_CreateCommitDestroyClose(t *testing.T) {
+func TestEthLink_CreateCommitDestroyClose(t *testing.T) {
 	existingIfaces, err := vpctest.GetAllInterfaces()
 	if err != nil {
 		t.Fatalf("unable to get existing interfaces")
 	}
 
-	var cfg l2link.Config
+	var cfg ethlink.Config
 	{
 		cfg.ID = vpc.GenID()
 		cfg.ID.Node = [6]byte{}
 	}
 
-	sw, err := l2link.Create(cfg)
+	sw, err := ethlink.Create(cfg)
 	if err != nil {
 		t.Fatalf("unable to create switch: %v", err)
 	}
