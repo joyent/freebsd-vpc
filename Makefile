@@ -12,7 +12,7 @@
 # 6. make crdb-sql
 
 build: generate
-	mkdir ./bin
+	mkdir -p ./bin
 	govvv build -o bin/vpc ./cmd/vpc
 	bin/vpc shell autocomplete bash -d docs/bash.d/
 
