@@ -1,7 +1,10 @@
 package list
 
 import (
+	"bytes"
+	"sort"
 	"strconv"
+	"strings"
 
 	"github.com/olekukonko/tablewriter"
 	"github.com/pkg/errors"
@@ -124,11 +127,22 @@ func listTypeIDs(cons conswriter.ConsoleWriter) error {
 	}
 	defer mgr.Close()
 
+	objTypes := vpc.ObjTypes()
+	sort.SliceStable(objTypes, func(i, j int) bool { return objTypes[i].String() < objTypes[j].String() })
+
 	var numIDs int64
-	for _, objType := range vpc.ObjTypes() {
+	for _, objType := range objTypes {
 		objHeaders, err := mgr.GetAllIDs(objType)
 		if err != nil {
 			return errors.Wrapf(err, "unable to count object type %s", objType)
+		}
+
+		sortBy := "uuid"
+		switch k := strings.ToLower(sortBy); k {
+		case "uuid":
+			sort.SliceStable(objHeaders, func(i, j int) bool { return bytes.Compare(objHeaders[i].ID().Bytes(), objHeaders[j].ID().Bytes()) < 0 })
+		default:
+			return errors.Errorf("unsupported sort option: %q", sortBy)
 		}
 
 		for _, hdr := range objHeaders {
