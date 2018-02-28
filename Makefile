@@ -17,7 +17,7 @@ build: generate
 	bin/vpc shell autocomplete bash -d docs/bash.d/
 
 install:
-	govvv install
+	govvv install ./cmd/vpc
 
 get-tools::
 	go get -u github.com/ahmetb/govvv
