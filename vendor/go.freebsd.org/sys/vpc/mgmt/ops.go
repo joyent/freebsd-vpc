@@ -30,8 +30,10 @@
 package mgmt
 
 import (
+	"bytes"
 	"encoding/binary"
 	"fmt"
+	"unsafe"
 
 	"github.com/pkg/errors"
 	"go.freebsd.org/sys/vpc"
@@ -95,4 +97,59 @@ func (m *Mgmt) Close() error {
 	}
 
 	return nil
+}
+
+// GetAllIDs returns a slice of VPC IDs for the specified object type.
+func (m *Mgmt) GetAllIDs(objType vpc.ObjType) ([]vpc.ID, error) {
+	// TODO(seanc@): Test to see make sure the descriptor has the mutate bit set.
+
+	objCount, err := m.CountType(objType)
+	if err != nil {
+		return nil, errors.Wrapf(err, "unable to get a count of the number of %s VPC objects", objType)
+	}
+
+	// Shortcircuit
+	if objCount == 0 {
+		return []vpc.ID{}, nil
+	}
+
+	in := make([]byte, binary.MaxVarintLen64)
+	n := binary.PutUvarint(in, uint64(objType))
+	if n < 2 {
+		in = in[:2]
+	} else {
+		panic(fmt.Sprintf("invariant: ObjType size too big for kernel interface input (want/got: 2/%d", n))
+	}
+
+	type _ObjHeader struct {
+		objType uint32
+		id      [16]byte
+	}
+	objHeaderSize := uint32(unsafe.Sizeof(_ObjHeader{}))
+
+	out := make([]byte, objCount*objHeaderSize)
+	if err := vpc.Ctl(m.h, vpc.Cmd(_ObjHeaderGetAllCmd), in, out); err != nil {
+		return nil, errors.Wrapf(err, "unable to get %s VPC Object headers", objType)
+	}
+
+	ids := make([]vpc.ID, 0, objCount)
+	for i := uint32(0); i < objCount; i++ {
+		off := i * objHeaderSize
+		objHeader := out[off : off+objHeaderSize]
+
+		// FIXME(seanc@): this should be an asert to catch if the obj type coming
+		// out of the kernel doesn't match.
+		headerobjtype, _ := binary.Uvarint(objHeader[0:4])
+		_ = headerObjType
+
+		var id vpc.ID
+		err := binary.Read(bytes.NewBuffer(objHeader[4:]), binary.LittleEndian, &id)
+		if err != nil {
+			return []vpc.ID{}, errors.Wrapf(err, "unable to read ID %d of object %s", i, objType)
+		}
+
+		ids = append(ids, id)
+	}
+
+	return ids, nil
 }

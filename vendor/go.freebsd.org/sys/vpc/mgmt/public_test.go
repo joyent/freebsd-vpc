@@ -136,3 +136,24 @@ func TestMgmt_CountTypes(t *testing.T) {
 		})
 	}
 }
+
+// TestMgmt_GetAllIDs verifies that we can get the IDs for a given type.
+func TestMgmt_GetAllIDs(t *testing.T) {
+	for i, objType := range vpc.ObjTypes() {
+		objType := objType
+		t.Run(objType.String(), func(t *testing.T) {
+			mgr, err := mgmt.New(nil)
+			if err != nil {
+				t.Fatalf("[%d] unable to create new VPC Management handle: %v", i, err)
+			}
+			defer mgr.Close()
+
+			ids, err := mgr.GetAllIDs(objType)
+			if err != nil {
+				t.Fatalf("[%d] unable to get IDs for %s VPC objects: %v", i, objType, err)
+			}
+
+			_ = ids // Not sure what to do with these UUIDs
+		})
+	}
+}

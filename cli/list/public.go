@@ -38,7 +38,7 @@ var Cmd = &command.Command{
 				return listTypeCount(cons)
 			}
 
-			return errors.Errorf("list not implemented")
+			return listTypeIDs(cons)
 		},
 	},
 
@@ -98,6 +98,49 @@ func listTypeCount(cons conswriter.ConsoleWriter) error {
 	}
 
 	table.SetFooter([]string{"total", strconv.FormatInt(numTypes, 10)})
+
+	table.Render()
+
+	return nil
+}
+
+func listTypeIDs(cons conswriter.ConsoleWriter) error {
+	table := tablewriter.NewWriter(cons)
+	table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
+	table.SetHeaderLine(false)
+	table.SetAutoFormatHeaders(true)
+
+	table.SetColumnAlignment([]int{tablewriter.ALIGN_LEFT, tablewriter.ALIGN_RIGHT, tablewriter.ALIGN_RIGHT})
+	table.SetBorders(tablewriter.Border{Left: true, Top: false, Right: true, Bottom: false})
+	table.SetCenterSeparator("")
+	table.SetColumnSeparator("")
+	table.SetRowSeparator("")
+
+	table.SetHeader([]string{"type", "id"})
+
+	mgr, err := mgmt.New(nil)
+	if err != nil {
+		return errors.Wrapf(err, "unable to open VPC Management handle")
+	}
+	defer mgr.Close()
+
+	var numIDs int64
+	for _, objType := range vpc.ObjTypes() {
+		ids, err := mgr.GetAllIDs(objType)
+		if err != nil {
+			return errors.Wrapf(err, "unable to count object type %s", objType)
+		}
+
+		for _, id := range ids {
+			table.Append([]string{
+				objType.String(),
+				id.String(),
+			})
+			numIDs++
+		}
+	}
+
+	table.SetFooter([]string{"total", strconv.FormatInt(numIDs, 10)})
 
 	table.Render()
 
