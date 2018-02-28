@@ -178,7 +178,7 @@ func listTypeIDs(cons conswriter.ConsoleWriter) error {
 		sort.SliceStable(objTypes, func(i, j int) bool { return objTypes[i].String() < objTypes[j].String() })
 
 		wantObjTypeStr := viper.GetString(_KeyType)
-		if objTypeStr := strings.ToLower(wantObjTypeStr); objTypeStr != "any" {
+		if objTypeStr := strings.ToLower(wantObjTypeStr); objTypeStr != "all" {
 			var found bool
 			for _, objType := range objTypes {
 				if objTypeStr == strings.ToLower(objType.String()) {
