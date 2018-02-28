@@ -61,10 +61,10 @@ const (
 
 // Cmds that can be sent to vpc.Ctl()
 const (
-	_NQueuesGetCmd _VMNICCmd = _VMNICCmd(vpc.OutBit|(vpc.Cmd(vpc.ObjTypeLinkEth)<<16)) | _EthLinkCmd(_OpNQueuesGet)
-	_NQueuesSetCmd _VMNICCmd = _VMNICCmd(vpc.InBit|vpc.PrivBit|vpc.MutateBit|(vpc.Cmd(vpc.ObjTypeLinkEth)<<16)) | _EthLinkCmd(_OpNQueuesSet)
-	_FreezeCmd     _VMNICCmd = _VMNICCmd(vpc.PrivBit|vpc.MutateBit|(vpc.Cmd(vpc.ObjTypeLinkEth)<<16)) | _EthLinkCmd(_OpFreeze)
-	_UnfreezeCmd   _VMNICCmd = _VMNICCmd(vpc.PrivBit|vpc.MutateBit|(vpc.Cmd(vpc.ObjTypeLinkEth)<<16)) | _EthLinkCmd(_OpUnfreeze)
+	_NQueuesGetCmd _VMNICCmd = _VMNICCmd(vpc.OutBit|(vpc.Cmd(vpc.ObjTypeLinkEth)<<16)) | _VMNICCmd(_OpNQueuesGet)
+	_NQueuesSetCmd _VMNICCmd = _VMNICCmd(vpc.InBit|vpc.PrivBit|vpc.MutateBit|(vpc.Cmd(vpc.ObjTypeLinkEth)<<16)) | _VMNICCmd(_OpNQueuesSet)
+	_FreezeCmd     _VMNICCmd = _VMNICCmd(vpc.PrivBit|vpc.MutateBit|(vpc.Cmd(vpc.ObjTypeLinkEth)<<16)) | _VMNICCmd(_OpFreeze)
+	_UnfreezeCmd   _VMNICCmd = _VMNICCmd(vpc.PrivBit|vpc.MutateBit|(vpc.Cmd(vpc.ObjTypeLinkEth)<<16)) | _VMNICCmd(_OpUnfreeze)
 )
 
 // Close closes the VPC Handle descriptor.  Created VM NICs will not be
@@ -112,7 +112,7 @@ func (vmn *VMNIC) Destroy() error {
 
 // Freeze freezes the VMNIC so it can be plugged into a VPC Switch Port.
 func (vmn *VMNIC) Freeze() error {
-	if err := vpc.Ctl(el.h, vpc.Cmd(_FreezeCmd), nil, nil); err != nil {
+	if err := vpc.Ctl(vmn.h, vpc.Cmd(_FreezeCmd), nil, nil); err != nil {
 		return errors.Wrap(err, "unable to freeze VMNIC")
 	}
 
@@ -122,8 +122,8 @@ func (vmn *VMNIC) Freeze() error {
 // NQueuesGet returns the number of queues assigned to this VMNIC.
 func (vmn *VMNIC) NQueuesGet() (uint16, error) {
 	out := make([]byte, binary.MaxVarintLen64)
-	if err := vpc.Ctl(el.h, vpc.Cmd(_NQueuesGetCmd), nil, out); err != nil {
-		return -1, errors.Wrap(err, "unable to get the number of hardware queues from VMNIC")
+	if err := vpc.Ctl(vmn.h, vpc.Cmd(_NQueuesGetCmd), nil, out); err != nil {
+		return 0, errors.Wrap(err, "unable to get the number of hardware queues from VMNIC")
 	}
 
 	numQueues, n := binary.Uvarint(out)
@@ -144,7 +144,7 @@ func (vmn *VMNIC) NQueuesSet(numQueues uint16) error {
 		panic(fmt.Sprintf("invariant: num queuese size too big for kernel interface input (want/got: 2/%d", n))
 	}
 
-	if err := vpc.Ctl(el.h, vpc.Cmd(_NQueuesGetCmd), in, nil); err != nil {
+	if err := vpc.Ctl(vmn.h, vpc.Cmd(_NQueuesGetCmd), in, nil); err != nil {
 		return errors.Wrap(err, "unable to set the number of hardware queues for VMNIC")
 	}
 
@@ -153,7 +153,7 @@ func (vmn *VMNIC) NQueuesSet(numQueues uint16) error {
 
 // Unfreeze unfreezes the VMNIC.
 func (vmn *VMNIC) Unfreeze() error {
-	if err := vpc.Ctl(el.h, vpc.Cmd(_UnfreezeCmd), nil, nil); err != nil {
+	if err := vpc.Ctl(vmn.h, vpc.Cmd(_UnfreezeCmd), nil, nil); err != nil {
 		return errors.Wrap(err, "unable to unfreeze VMNIC")
 	}
 

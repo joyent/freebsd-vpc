@@ -4,6 +4,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sean-/vpc/cli/vmnic/create"
 	"github.com/sean-/vpc/cli/vmnic/destroy"
+	"github.com/sean-/vpc/cli/vmnic/get"
 	"github.com/sean-/vpc/cli/vmnic/list"
 	"github.com/sean-/vpc/internal/command"
 	"github.com/spf13/cobra"
@@ -24,6 +25,7 @@ var Cmd = &command.Command{
 		subCommands := command.Commands{
 			create.Cmd,
 			destroy.Cmd,
+			get.Cmd,
 			list.Cmd,
 		}
 

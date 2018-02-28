@@ -11,6 +11,9 @@ const (
 	KeyDocMarkdownDir       = "doc.markdown-dir"
 	KeyDocMarkdownURLPrefix = "doc.markdown-url-prefix"
 
+	KeyGetNQueues = "vmnic.get.num-queues"
+	KeyGetVMNICID = "vmnic.get.vmnic-id"
+
 	KeyListObjCounts = "list.obj-counts"
 	KeyListObjSortBy = "list.sort-by"
 	KeyListObjType   = "list.type"

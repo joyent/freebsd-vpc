@@ -105,6 +105,28 @@ type VNICfg struct {
 	Required bool
 }
 
+// AddVMNICID adds the VM NIC ID flag to a given command.
+func AddVMNICID(cmd *command.Command, keyName string, required bool) error {
+	key := keyName
+	const (
+		longName     = "vmnic-id"
+		shortName    = "N"
+		defaultValue = ""
+		description  = "Specify the VM NIC ID"
+	)
+
+	flags := cmd.Cobra.Flags()
+	flags.StringP(longName, shortName, defaultValue, description)
+	if required {
+		cmd.Cobra.MarkFlagRequired(longName)
+	}
+
+	viper.BindPFlag(key, flags.Lookup(longName))
+	viper.SetDefault(key, defaultValue)
+
+	return nil
+}
+
 // AddFlagVNI adds the VNI flag to a given command.
 func AddVNI(cmd *command.Command, cfg VNICfg) error {
 	key := cfg.Name
