@@ -11,6 +11,8 @@ const (
 	KeyDocMarkdownDir       = "doc.markdown-dir"
 	KeyDocMarkdownURLPrefix = "doc.markdown-url-prefix"
 
+	KeyListObjCounts = "list.obj-counts"
+
 	KeyLogFormat    = "log.format"
 	KeyLogLevel     = "log.level"
 	KeyLogStats     = "log.stats"

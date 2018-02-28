@@ -13,6 +13,7 @@ import (
 	"github.com/sean-/vpc/cli/db"
 	"github.com/sean-/vpc/cli/doc"
 	"github.com/sean-/vpc/cli/intf"
+	"github.com/sean-/vpc/cli/list"
 	"github.com/sean-/vpc/cli/run"
 	"github.com/sean-/vpc/cli/shell"
 	"github.com/sean-/vpc/cli/version"
@@ -32,6 +33,7 @@ var subCommands = command.Commands{
 	db.Cmd,
 	doc.Cmd,
 	intf.Cmd,
+	list.Cmd,
 	run.Cmd,
 	shell.Cmd,
 	version.Cmd,
