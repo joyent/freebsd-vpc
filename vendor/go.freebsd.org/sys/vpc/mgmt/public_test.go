@@ -107,7 +107,12 @@ func TestMgmt_CountTypes(t *testing.T) {
 	tests := []struct {
 		objType vpc.ObjType
 		count   int64
-	}{}
+	}{
+		{
+			objType: vpc.ObjTypeSwitch,
+			count:   -1,
+		},
+	}
 
 	for i, test := range tests {
 		test := test
@@ -124,7 +129,7 @@ func TestMgmt_CountTypes(t *testing.T) {
 			}
 
 			switch {
-			case test.count == -1 && count > 0:
+			case test.count == -1 && count >= 0:
 			case test.count >= 0 && int64(count) != test.count:
 				t.Errorf("[%d] wrong number of %s VPC objects", i, test.objType)
 			}

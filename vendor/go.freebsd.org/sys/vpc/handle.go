@@ -163,15 +163,15 @@ const (
 	_GetID     = Op(0x0008)
 	_CountOp   = Op(0x0009)
 
-	_CommitCmd  = PrivBit | MutateBit | (Cmd(ObjTypeMgmt) << 16) | Cmd(_CommitOp)
+	_CommitCmd  = PrivBit | MutateBit | (Cmd(ObjTypeMeta) << 16) | Cmd(_CommitOp)
 	_CountCmd   = PrivBit | (Cmd(ObjTypeMgmt) << 16) | Cmd(_CountOp)
-	_DestroyCmd = PrivBit | MutateBit | (Cmd(ObjTypeMgmt) << 16) | Cmd(_DestroyOp)
-	_GetIDCmd   = (Cmd(ObjTypeMgmt) << 16) | Cmd(_GetID)
-	_MACGetCmd  = (Cmd(ObjTypeMgmt) << 16) | Cmd(_MACGet)
-	_MACSetCmd  = PrivBit | MutateBit | (Cmd(ObjTypeMgmt) << 16) | Cmd(_MACSet)
-	_MTUGetCmd  = (Cmd(ObjTypeMgmt) << 16) | Cmd(_MTUGet)
-	_MTUSetCmd  = PrivBit | MutateBit | (Cmd(ObjTypeMgmt) << 16) | Cmd(_MTUSet)
-	_TypeCmd    = (Cmd(ObjTypeMgmt) << 16) | Cmd(_TypeOp)
+	_DestroyCmd = PrivBit | MutateBit | (Cmd(ObjTypeMeta) << 16) | Cmd(_DestroyOp)
+	_GetIDCmd   = (Cmd(ObjTypeMeta) << 16) | Cmd(_GetID)
+	_MACGetCmd  = (Cmd(ObjTypeMeta) << 16) | Cmd(_MACGet)
+	_MACSetCmd  = PrivBit | MutateBit | (Cmd(ObjTypeMeta) << 16) | Cmd(_MACSet)
+	_MTUGetCmd  = (Cmd(ObjTypeMeta) << 16) | Cmd(_MTUGet)
+	_MTUSetCmd  = PrivBit | MutateBit | (Cmd(ObjTypeMeta) << 16) | Cmd(_MTUSet)
+	_TypeCmd    = (Cmd(ObjTypeMeta) << 16) | Cmd(_TypeOp)
 )
 
 // Commit increments the refcount on the object referrenced by this VPC Handle.

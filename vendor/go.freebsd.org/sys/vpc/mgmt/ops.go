@@ -61,13 +61,13 @@ func (m *Mgmt) CountType(objType vpc.ObjType) (uint32, error) {
 	in := make([]byte, binary.MaxVarintLen64)
 	n := binary.PutUvarint(in, uint64(objType))
 	if n < 2 {
-		in = in[:n]
+		in = in[:2]
 	} else {
 		panic(fmt.Sprintf("invariant: ObjType size too big for kernel interface input (want/got: 2/%d", n))
 	}
 
 	out := make([]byte, binary.MaxVarintLen64)
-	if err := vpc.Ctl(m.h, vpc.Cmd(_CountTypeCmd), in, &out); err != nil {
+	if err := vpc.Ctl(m.h, vpc.Cmd(_CountTypeCmd), in, out); err != nil {
 		return 0, errors.Wrapf(err, "unable to get count of VPC %s objects", objType)
 	}
 

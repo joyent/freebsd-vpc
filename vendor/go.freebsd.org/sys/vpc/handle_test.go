@@ -111,6 +111,16 @@ func TestHandleTypeVersion(t *testing.T) {
 			outVersion: 9,
 			outObjType: vpc.ObjTypeLinkL2,
 		},
+		{
+			in:         0xa009000000000000,
+			outVersion: 10,
+			outObjType: vpc.ObjTypeMeta,
+		},
+		{
+			in:         0xb00a000000000000,
+			outVersion: 11,
+			outObjType: vpc.ObjTypeAny,
+		},
 	}
 
 	// Test Version bits
