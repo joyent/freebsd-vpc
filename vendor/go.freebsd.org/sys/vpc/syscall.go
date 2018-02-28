@@ -209,6 +209,12 @@ const (
 // ObjType distinguishes the different types of supported VPC Object Types.
 type ObjType uint8
 
+func (objType ObjType) Bytes() []byte {
+	buf := make([]byte, binary.MaxVarintLen64)
+	n := binary.PutUvarint(buf, uint64(objType))
+	return buf[:n]
+}
+
 func (objType ObjType) MarshalZerologObject(e *zerolog.Event) {
 	e.Str("type", objType.String())
 }
@@ -224,6 +230,8 @@ const (
 	ObjTypeNICVM      ObjType = 6
 	ObjTypeMgmt       ObjType = 7
 	ObjTypeLinkL2     ObjType = 8
+	ObjTypeMeta       ObjType = 9
+	ObjTypeAny        ObjType = 10
 )
 
 // ObjTypes returns a lits of supported Object Types
@@ -236,8 +244,9 @@ func ObjTypes() []ObjType {
 		ObjTypeNAT,
 		ObjTypeLinkVPC,
 		ObjTypeNICVM,
-		// ObjTypeMgmt,
+		ObjTypeMgmt,
 		ObjTypeLinkL2,
+		// ObjTypeAny, // Not a queriable type
 	}
 }
 
@@ -262,6 +271,10 @@ func (obj ObjType) String() string {
 		return "mgmt"
 	case ObjTypeLinkL2:
 		return "l2-link"
+	case ObjTypeMeta:
+		return "meta"
+	case ObjTypeAny:
+		return "any"
 	default:
 		panic(fmt.Sprintf("unsupported object type: 0x%02x", uint8(obj)))
 	}

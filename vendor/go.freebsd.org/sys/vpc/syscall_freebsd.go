@@ -45,6 +45,16 @@ const (
 	SysVPCCtl = 581
 )
 
+// Ctl manipulates the Handle based on the args
+func Ctl(h *Handle, cmd Cmd, in []byte, out *[]byte) error {
+	// TODO(seanc@): Potential concurrency optimization if we conditionalize the
+	// type of lock based on the bits encoded in Cmd.
+	h.lock.Lock()
+	defer h.lock.Unlock()
+
+	return ctl(h, cmd, in, out)
+}
+
 // Open obtains a VPC handle to a given object type.  Obtaining an open Handle
 // affords no privilges beyond validating that an ID exists on this system.  In
 // all other cases Open returns a handle to a resource.  If the id can not be
@@ -68,15 +78,7 @@ func Open(id ID, ht HandleType, flags OpenFlags) (h *Handle, err error) {
 	return h, nil
 }
 
-// Ctl manipulates the Handle based on the args
-func Ctl(h *Handle, cmd Cmd, in []byte, out *[]byte) error {
-	// TODO(seanc@): Potential concurrency optimization if we conditionalize the
-	// type of lock based on the bits encoded in Cmd.
-	h.lock.Lock()
-	defer h.lock.Unlock()
 
-	return ctl(h, cmd, in, out)
-}
 
 func ctl(h *Handle, cmd Cmd, in []byte, out *[]byte) error {
 	// Implementation sanity checking
