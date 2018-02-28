@@ -61,10 +61,10 @@ const (
 
 // Cmds that can be sent to vpc.Ctl()
 const (
-	_NQueuesGetCmd _VMNICCmd = _VMNICCmd(vpc.OutBit|(vpc.Cmd(vpc.ObjTypeLinkEth)<<16)) | _VMNICCmd(_OpNQueuesGet)
-	_NQueuesSetCmd _VMNICCmd = _VMNICCmd(vpc.InBit|vpc.PrivBit|vpc.MutateBit|(vpc.Cmd(vpc.ObjTypeLinkEth)<<16)) | _VMNICCmd(_OpNQueuesSet)
-	_FreezeCmd     _VMNICCmd = _VMNICCmd(vpc.PrivBit|vpc.MutateBit|(vpc.Cmd(vpc.ObjTypeLinkEth)<<16)) | _VMNICCmd(_OpFreeze)
-	_UnfreezeCmd   _VMNICCmd = _VMNICCmd(vpc.PrivBit|vpc.MutateBit|(vpc.Cmd(vpc.ObjTypeLinkEth)<<16)) | _VMNICCmd(_OpUnfreeze)
+	_NQueuesGetCmd _VMNICCmd = _VMNICCmd(vpc.OutBit|(vpc.Cmd(vpc.ObjTypeNICVM)<<16)) | _VMNICCmd(_OpNQueuesGet)
+	_NQueuesSetCmd _VMNICCmd = _VMNICCmd(vpc.InBit|vpc.PrivBit|vpc.MutateBit|(vpc.Cmd(vpc.ObjTypeNICVM)<<16)) | _VMNICCmd(_OpNQueuesSet)
+	_FreezeCmd     _VMNICCmd = _VMNICCmd(vpc.PrivBit|vpc.MutateBit|(vpc.Cmd(vpc.ObjTypeNICVM)<<16)) | _VMNICCmd(_OpFreeze)
+	_UnfreezeCmd   _VMNICCmd = _VMNICCmd(vpc.PrivBit|vpc.MutateBit|(vpc.Cmd(vpc.ObjTypeNICVM)<<16)) | _VMNICCmd(_OpUnfreeze)
 )
 
 // Close closes the VPC Handle descriptor.  Created VM NICs will not be
