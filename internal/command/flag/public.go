@@ -31,6 +31,28 @@ func AddEthLinkID(cmd *command.Command, keyName string, required bool) error {
 	return nil
 }
 
+// AddInterfaceID adds the Interface ID to a given command.
+func AddInterfaceID(cmd *command.Command, keyName string, required bool) error {
+	key := keyName
+	const (
+		longName     = "interface-id"
+		shortName    = "I"
+		defaultValue = ""
+		description  = "Specify the VPC Interface ID"
+	)
+
+	flags := cmd.Cobra.Flags()
+	flags.StringP(longName, shortName, defaultValue, description)
+	if required {
+		cmd.Cobra.MarkFlagRequired(longName)
+	}
+
+	viper.BindPFlag(key, flags.Lookup(longName))
+	viper.SetDefault(key, defaultValue)
+
+	return nil
+}
+
 // AddMAC adds the MAC flag to a given command.
 func AddMAC(cmd *command.Command, keyName string, required bool) error {
 	key := keyName
@@ -149,21 +171,17 @@ func AddVNI(cmd *command.Command, cfg VNICfg) error {
 	return nil
 }
 
-// GetID returns the VPC ID address found in the Viper key.  GetID falls back to
-// generating a random ID if no argument was found.  If GetID sets the viper key
-// accordingly for future callers if it needs to generate an ID.
+// GetID returns the VPC ID address found in the Viper key.
 func GetID(v *viper.Viper, key string) (id vpc.ID, err error) {
-	switch idStr := v.GetString(key); idStr {
-	case "":
-		id = vpc.GenID()
-		v.Set(key, id.String())
-	default:
+	if idStr := v.GetString(key); idStr != "" {
 		if id, err = vpc.ParseID(idStr); err != nil {
-			return vpc.ID{}, errors.Wrapf(err, "unable to parse UUID %q", idStr)
+			return vpc.ID{}, errors.Wrapf(err, "unable to parse VPC ID %q", idStr)
 		}
+
+		return id, nil
 	}
 
-	return id, nil
+	return vpc.ID{}, errors.Wrapf(err, "unable to lookup VPC ID %q", key)
 }
 
 // GetMAC returns the MAC address found in the Viper key.  If id is not nil,
