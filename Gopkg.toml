@@ -41,3 +41,7 @@
 [[override]]
   branch = "master"
   name = "github.com/satori/go.uuid"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/pkg/term"

@@ -145,6 +145,15 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/pkg/term"
+  packages = [
+    ".",
+    "termios"
+  ]
+  revision = "b1f72af2d63057363398bec5873d16a98b453312"
+
+[[projects]]
+  branch = "master"
   name = "github.com/rs/zerolog"
   packages = [
     ".",
@@ -253,6 +262,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "6b9943bc782e1b3c8a5474aabd459c3fe86db4aebf80308d21734b4df1223b05"
+  inputs-digest = "9190222ea2a1d173866cc665eb4eef906392f289301c7e7fadfffb9cf39037c5"
   solver-name = "gps-cdcl"
   solver-version = 1
