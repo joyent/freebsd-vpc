@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc"
+	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc/mgmt"
 	"github.com/olekukonko/tablewriter"
 	"github.com/pkg/errors"
 	"github.com/sean-/conswriter"
@@ -14,8 +16,6 @@ import (
 	"github.com/sean-/vpc/internal/config"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"go.freebsd.org/sys/vpc"
-	"go.freebsd.org/sys/vpc/mgmt"
 )
 
 const (

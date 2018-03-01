@@ -79,7 +79,6 @@ func Open(id ID, ht HandleType, flags OpenFlags) (h *Handle, err error) {
 }
 
 
-
 func ctl(h *Handle, cmd Cmd, in []byte, out []byte) error {
 	// Implementation sanity checking
 	switch {

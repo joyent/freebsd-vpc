@@ -35,9 +35,9 @@ import (
 	"testing"
 
 	"github.com/sean-/seed"
-	"go.freebsd.org/sys/vpc"
-	"go.freebsd.org/sys/vpc/vpcsw"
-	"go.freebsd.org/sys/vpc/vpctest"
+	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc"
+	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc/vpcsw"
+	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc/vpctest"
 )
 
 func init() {

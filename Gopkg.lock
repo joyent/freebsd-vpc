@@ -8,6 +8,21 @@
   version = "v1.0.8"
 
 [[projects]]
+  branch = "projects/VPC"
+  name = "github.com/freebsd/freebsd"
+  packages = [
+    "libexec/go/src/go.freebsd.org/sys/vpc",
+    "libexec/go/src/go.freebsd.org/sys/vpc/ethlink",
+    "libexec/go/src/go.freebsd.org/sys/vpc/mgmt",
+    "libexec/go/src/go.freebsd.org/sys/vpc/vmnic",
+    "libexec/go/src/go.freebsd.org/sys/vpc/vpcp",
+    "libexec/go/src/go.freebsd.org/sys/vpc/vpcsw",
+    "libexec/go/src/go.freebsd.org/sys/vpc/vpctest"
+  ]
+  revision = "c20d5d004fe589518ffe467bc2d2c2aa21f7a619"
+  source = "github.com/joyent/freebsd/libexec/go/src/go.freebsd.org/sys/vpc"
+
+[[projects]]
   name = "github.com/fsnotify/fsnotify"
   packages = ["."]
   revision = "c2828203cd70a50dcccfb2761f8b1f8ceef9a8e9"
@@ -141,8 +156,14 @@
 [[projects]]
   name = "github.com/russross/blackfriday"
   packages = ["."]
-  revision = "4048872b16cc0fc2c5fd9eacf0ed2c2fedaa0c8c"
-  version = "v1.5"
+  revision = "55d61fa8aa702f59229e6cff85793c22e580eaf5"
+  version = "v1.5.1"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/satori/go.uuid"
+  packages = ["."]
+  revision = "36e9d2ebbde5e3f13ab2e25625fd453271d6522e"
 
 [[projects]]
   branch = "master"
@@ -208,7 +229,7 @@
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix"]
-  revision = "c1138c84af3a9927aee1a1b8b7ce06c9b7ea52bc"
+  revision = "f6cff0780e542efa0c8e864dc8fa522808f6a598"
 
 [[projects]]
   name = "golang.org/x/text"
@@ -224,14 +245,14 @@
   version = "v0.3.0"
 
 [[projects]]
-  branch = "v2"
   name = "gopkg.in/yaml.v2"
   packages = ["."]
-  revision = "d670f9405373e636a5a2765eea47fac0c9bc91a4"
+  revision = "7f97868eec74b32b0982dd158a51a446d1da7eb5"
+  version = "v2.1.1"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "9a827d49f46fb86270d321a55428b29476849f99a2ca663e8c80878cf233a455"
+  inputs-digest = "6b9943bc782e1b3c8a5474aabd459c3fe86db4aebf80308d21734b4df1223b05"
   solver-name = "gps-cdcl"
   solver-version = 1

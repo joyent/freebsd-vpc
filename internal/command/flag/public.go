@@ -3,10 +3,10 @@ package flag
 import (
 	"net"
 
+	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc"
 	"github.com/pkg/errors"
 	"github.com/sean-/vpc/internal/command"
 	"github.com/spf13/viper"
-	"go.freebsd.org/sys/vpc"
 )
 
 // AddEthLinkID adds the VM NIC ID flag to a given command.

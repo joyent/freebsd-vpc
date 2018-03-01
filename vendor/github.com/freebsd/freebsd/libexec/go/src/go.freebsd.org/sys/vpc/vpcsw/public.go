@@ -1,4 +1,4 @@
-// Go interface to VPC EthLink objects.
+// Go interface to VPC Switch objects.
 //
 // SPDX-License-Identifier: BSD-2-Clause-FreeBSD
 //
@@ -27,69 +27,88 @@
 // OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 // SUCH DAMAGE.
 
-package ethlink
+package vpcsw
 
 import (
+	"net"
+
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
-	"go.freebsd.org/sys/vpc"
+	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc"
 )
 
-// Config is the configuration used to create or open a VPC EthLink device.
+// DeviceNamePrefix is the prefix of the device name (i.e. "vpcsw0").
+const DeviceNamePrefix = "vpcsw"
+
+// Config is the configuration used to populate a given VPC Switch.
 type Config struct {
 	ID        vpc.ID
-	Name      string
+	PortID    vpc.ID
+	MAC       net.HardwareAddr
+	VNI       vpc.VNI
+	UplinkID  *vpc.ID
 	Writeable bool
 }
 
 func (c Config) MarshalZerologObject(e *zerolog.Event) {
-	e.Str("id", c.ID.String()).
-		Str("name", c.Name).
+	e.
+		Str("id", c.ID.String()).
+		Str("port-id", c.PortID.String()).
+		Str("mac", c.MAC.String()).
+		Int32("vni", int32(c.VNI)).
 		Bool("writable", c.Writeable)
 }
 
-// EthLink is an opaque struct representing a VM NIC.
-type EthLink struct {
-	h    *vpc.Handle
-	ht   vpc.HandleType
-	id   vpc.ID
-	name string
+// VPCSW is an opaque struct representing a VPC Switch.
+type VPCSW struct {
+	h   *vpc.Handle
+	ht  vpc.HandleType
+	vni vpc.VNI
+	id  vpc.ID
+	mac net.HardwareAddr
 }
 
-// Create VPC facade over an existing L2 link (either physical or cloned
-// interface) using the Config parameters.  Callers are expected to Close a
-// given EthLink (otherwise a file descriptor would leak).
-func Create(cfg Config) (*EthLink, error) {
+// Create creates a new VPC Switch using the Config parameters.  Callers are
+// expected to Close a given VPCSW (otherwise a file descriptor would leak).
+func Create(cfg Config) (*VPCSW, error) {
+	switch {
+	case cfg.VNI < vpc.VNIMin:
+		return nil, errors.Errorf("VNI %d too small", cfg.VNI)
+	case cfg.VNI > vpc.VNIMax:
+		return nil, errors.Errorf("VNI %d exceeds max value", cfg.VNI)
+	}
+
 	ht, err := vpc.NewHandleType(vpc.HandleTypeInput{
 		Version: 1,
-		Type:    vpc.ObjTypeLinkEth,
+		Type:    vpc.ObjTypeSwitch,
 	})
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to create a new VPC EthLink handle type")
+		return nil, errors.Wrap(err, "unable to create a new VPC Switch handle type")
 	}
 
 	h, err := vpc.Open(cfg.ID, ht, vpc.FlagCreate|vpc.FlagWrite)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to open VPC EthLink handle")
+		return nil, errors.Wrap(err, "unable to open VPC Switch handle")
 	}
 
-	return &EthLink{
-		h:    h,
-		ht:   ht,
-		id:   cfg.ID,
-		name: cfg.Name,
+	return &VPCSW{
+		h:   h,
+		ht:  ht,
+		id:  cfg.ID,
+		mac: cfg.MAC,
+		vni: cfg.VNI,
 	}, nil
 }
 
-// Open opens an existing EthLink using the Config parameters.  Callers are
-// expected to Close a given EthLink.
-func Open(cfg Config) (*EthLink, error) {
+// Open opens an existing VPC Switch using the Config parameters.  Callers are
+// expected to Close a given VPCSW.
+func Open(cfg Config) (*VPCSW, error) {
 	ht, err := vpc.NewHandleType(vpc.HandleTypeInput{
 		Version: 1,
-		Type:    vpc.ObjTypeLinkEth,
+		Type:    vpc.ObjTypeSwitch,
 	})
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to create a new VPC EthLink handle type")
+		return nil, errors.Wrap(err, "unable to create a new VPC Switch handle type")
 	}
 
 	flags := vpc.FlagOpen | vpc.FlagRead
@@ -99,20 +118,12 @@ func Open(cfg Config) (*EthLink, error) {
 
 	h, err := vpc.Open(cfg.ID, ht, flags)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to open VPC EthLink handle")
+		return nil, errors.Wrap(err, "unable to open VPC Switch handle")
 	}
 
-	return &EthLink{
-		h:    h,
-		ht:   ht,
-		id:   cfg.ID,
-		name: cfg.Name,
+	return &VPCSW{
+		h:  h,
+		ht: ht,
+		id: cfg.ID,
 	}, nil
-}
-
-func (el EthLink) MarshalZerologObject(e *zerolog.Event) {
-	e.Str("id", el.id.String()).
-		Str("name", el.name).
-		Object("handle-type", el.ht).
-		Object("handle", el.h)
 }

@@ -1,13 +1,13 @@
 package set
 
 import (
+	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc/vmnic"
 	"github.com/pkg/errors"
 	"github.com/sean-/vpc/internal/command"
 	"github.com/sean-/vpc/internal/command/flag"
 	"github.com/sean-/vpc/internal/config"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"go.freebsd.org/sys/vpc/vmnic"
 )
 
 const (

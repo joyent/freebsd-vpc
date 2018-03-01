@@ -1,4 +1,4 @@
-// Go interface to VPC Switch objects.
+// Go interface to VM NIC objects.
 //
 // SPDX-License-Identifier: BSD-2-Clause-FreeBSD
 //
@@ -27,88 +27,72 @@
 // OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 // SUCH DAMAGE.
 
-package vpcsw
+package vmnic
 
 import (
 	"net"
 
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
-	"go.freebsd.org/sys/vpc"
+	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc"
 )
 
-// DeviceNamePrefix is the prefix of the device name (i.e. "vpcsw0").
-const DeviceNamePrefix = "vpcsw"
+// DeviceNamePrefix is the prefix of the device name (i.e. "vmnic0").
+const DeviceNamePrefix = "vmnic"
 
-// Config is the configuration used to populate a given VPC Switch.
+// Config is the configuration used to populate a given VM NIC.
 type Config struct {
 	ID        vpc.ID
-	PortID    vpc.ID
 	MAC       net.HardwareAddr
-	VNI       vpc.VNI
-	UplinkID  *vpc.ID
 	Writeable bool
 }
 
 func (c Config) MarshalZerologObject(e *zerolog.Event) {
-	e.
-		Str("id", c.ID.String()).
-		Str("port-id", c.PortID.String()).
-		Str("mac", c.MAC.String()).
-		Int32("vni", int32(c.VNI)).
-		Bool("writable", c.Writeable)
+	e.Str("id", c.ID.String()).
+		Str("mac", c.MAC.String())
 }
 
-// VPCSW is an opaque struct representing a VPC Switch.
-type VPCSW struct {
+// VMNIC is an opaque struct representing a VM NIC.
+type VMNIC struct {
 	h   *vpc.Handle
 	ht  vpc.HandleType
-	vni vpc.VNI
 	id  vpc.ID
 	mac net.HardwareAddr
 }
 
-// Create creates a new VPC Switch using the Config parameters.  Callers are
-// expected to Close a given VPCSW (otherwise a file descriptor would leak).
-func Create(cfg Config) (*VPCSW, error) {
-	switch {
-	case cfg.VNI < vpc.VNIMin:
-		return nil, errors.Errorf("VNI %d too small", cfg.VNI)
-	case cfg.VNI > vpc.VNIMax:
-		return nil, errors.Errorf("VNI %d exceeds max value", cfg.VNI)
-	}
-
+// Create creates a new VM NIC using the Config parameters.  Callers are
+// expected to Close a given VMNIC (otherwise a file descriptor would leak).
+func Create(cfg Config) (*VMNIC, error) {
 	ht, err := vpc.NewHandleType(vpc.HandleTypeInput{
 		Version: 1,
-		Type:    vpc.ObjTypeSwitch,
+		Type:    vpc.ObjTypeNICVM,
 	})
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to create a new VPC Switch handle type")
+		return nil, errors.Wrap(err, "unable to create a new VM NIC handle type")
 	}
 
 	h, err := vpc.Open(cfg.ID, ht, vpc.FlagCreate|vpc.FlagWrite)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to open VPC Switch handle")
+		return nil, errors.Wrap(err, "unable to open VM NIC handle")
 	}
 
-	return &VPCSW{
+	return &VMNIC{
 		h:   h,
 		ht:  ht,
 		id:  cfg.ID,
 		mac: cfg.MAC,
-		vni: cfg.VNI,
 	}, nil
 }
 
-// Open opens an existing VPC Switch using the Config parameters.  Callers are
-// expected to Close a given VPCSW.
-func Open(cfg Config) (*VPCSW, error) {
+// Open opens an existing VM NIC using the Config parameters.  Callers are
+// expected to Close a given VMNIC.
+func Open(cfg Config) (*VMNIC, error) {
 	ht, err := vpc.NewHandleType(vpc.HandleTypeInput{
 		Version: 1,
-		Type:    vpc.ObjTypeSwitch,
+		Type:    vpc.ObjTypeNICVM,
 	})
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to create a new VPC Switch handle type")
+		return nil, errors.Wrap(err, "unable to create a new VM NIC handle type")
 	}
 
 	flags := vpc.FlagOpen | vpc.FlagRead
@@ -118,10 +102,10 @@ func Open(cfg Config) (*VPCSW, error) {
 
 	h, err := vpc.Open(cfg.ID, ht, flags)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to open VPC Switch handle")
+		return nil, errors.Wrap(err, "unable to open VM NIC handle")
 	}
 
-	return &VPCSW{
+	return &VMNIC{
 		h:  h,
 		ht: ht,
 		id: cfg.ID,

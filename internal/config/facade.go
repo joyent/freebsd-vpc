@@ -1,9 +1,9 @@
 package config
 
 import (
+	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
-	"go.freebsd.org/sys/vpc"
 )
 
 func GetUUID(v *viper.Viper, key string) (vpc.ID, error) {

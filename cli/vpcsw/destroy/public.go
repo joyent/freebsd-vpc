@@ -3,6 +3,7 @@ package destroy
 import (
 	"fmt"
 
+	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc/vpcsw"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"github.com/sean-/conswriter"
@@ -11,7 +12,6 @@ import (
 	"github.com/sean-/vpc/internal/config"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"go.freebsd.org/sys/vpc/vpcsw"
 )
 
 const (

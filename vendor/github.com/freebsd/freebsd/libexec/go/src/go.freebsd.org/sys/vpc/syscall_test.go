@@ -39,7 +39,7 @@ import (
 	"unsafe"
 
 	"github.com/kylelemons/godebug/pretty"
-	"go.freebsd.org/sys/vpc"
+	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc"
 )
 
 func TestVPCIDBytes(t *testing.T) {

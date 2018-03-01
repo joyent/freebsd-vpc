@@ -32,7 +32,7 @@ package vpc_test
 import (
 	"testing"
 
-	"go.freebsd.org/sys/vpc"
+	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc"
 )
 
 func TestOpFlagType(t *testing.T) {

@@ -1,4 +1,4 @@
-// Go interface to VM NIC objects.
+// Go interface to VPC EthLink objects.
 //
 // SPDX-License-Identifier: BSD-2-Clause-FreeBSD
 //
@@ -27,72 +27,69 @@
 // OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 // SUCH DAMAGE.
 
-package vmnic
+package ethlink
 
 import (
-	"net"
-
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
-	"go.freebsd.org/sys/vpc"
+	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc"
 )
 
-// DeviceNamePrefix is the prefix of the device name (i.e. "vmnic0").
-const DeviceNamePrefix = "vmnic"
-
-// Config is the configuration used to populate a given VM NIC.
+// Config is the configuration used to create or open a VPC EthLink device.
 type Config struct {
 	ID        vpc.ID
-	MAC       net.HardwareAddr
+	Name      string
 	Writeable bool
 }
 
 func (c Config) MarshalZerologObject(e *zerolog.Event) {
 	e.Str("id", c.ID.String()).
-		Str("mac", c.MAC.String())
+		Str("name", c.Name).
+		Bool("writable", c.Writeable)
 }
 
-// VMNIC is an opaque struct representing a VM NIC.
-type VMNIC struct {
-	h   *vpc.Handle
-	ht  vpc.HandleType
-	id  vpc.ID
-	mac net.HardwareAddr
+// EthLink is an opaque struct representing a VM NIC.
+type EthLink struct {
+	h    *vpc.Handle
+	ht   vpc.HandleType
+	id   vpc.ID
+	name string
 }
 
-// Create creates a new VM NIC using the Config parameters.  Callers are
-// expected to Close a given VMNIC (otherwise a file descriptor would leak).
-func Create(cfg Config) (*VMNIC, error) {
+// Create VPC facade over an existing L2 link (either physical or cloned
+// interface) using the Config parameters.  Callers are expected to Close a
+// given EthLink (otherwise a file descriptor would leak).
+func Create(cfg Config) (*EthLink, error) {
 	ht, err := vpc.NewHandleType(vpc.HandleTypeInput{
 		Version: 1,
-		Type:    vpc.ObjTypeNICVM,
+		Type:    vpc.ObjTypeLinkEth,
 	})
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to create a new VM NIC handle type")
+		return nil, errors.Wrap(err, "unable to create a new VPC EthLink handle type")
 	}
 
 	h, err := vpc.Open(cfg.ID, ht, vpc.FlagCreate|vpc.FlagWrite)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to open VM NIC handle")
+		return nil, errors.Wrap(err, "unable to open VPC EthLink handle")
 	}
 
-	return &VMNIC{
-		h:   h,
-		ht:  ht,
-		id:  cfg.ID,
-		mac: cfg.MAC,
+	return &EthLink{
+		h:    h,
+		ht:   ht,
+		id:   cfg.ID,
+		name: cfg.Name,
 	}, nil
 }
 
-// Open opens an existing VM NIC using the Config parameters.  Callers are
-// expected to Close a given VMNIC.
-func Open(cfg Config) (*VMNIC, error) {
+// Open opens an existing EthLink using the Config parameters.  Callers are
+// expected to Close a given EthLink.
+func Open(cfg Config) (*EthLink, error) {
 	ht, err := vpc.NewHandleType(vpc.HandleTypeInput{
 		Version: 1,
-		Type:    vpc.ObjTypeNICVM,
+		Type:    vpc.ObjTypeLinkEth,
 	})
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to create a new VM NIC handle type")
+		return nil, errors.Wrap(err, "unable to create a new VPC EthLink handle type")
 	}
 
 	flags := vpc.FlagOpen | vpc.FlagRead
@@ -102,12 +99,20 @@ func Open(cfg Config) (*VMNIC, error) {
 
 	h, err := vpc.Open(cfg.ID, ht, flags)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to open VM NIC handle")
+		return nil, errors.Wrap(err, "unable to open VPC EthLink handle")
 	}
 
-	return &VMNIC{
-		h:  h,
-		ht: ht,
-		id: cfg.ID,
+	return &EthLink{
+		h:    h,
+		ht:   ht,
+		id:   cfg.ID,
+		name: cfg.Name,
 	}, nil
+}
+
+func (el EthLink) MarshalZerologObject(e *zerolog.Event) {
+	e.Str("id", el.id.String()).
+		Str("name", el.name).
+		Object("handle-type", el.ht).
+		Object("handle", el.h)
 }

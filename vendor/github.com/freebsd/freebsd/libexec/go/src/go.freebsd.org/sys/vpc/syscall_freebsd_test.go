@@ -42,8 +42,8 @@ import (
 
 	"github.com/kylelemons/godebug/pretty"
 	"github.com/rs/zerolog/log"
-	"go.freebsd.org/sys/vpc"
-	"go.freebsd.org/sys/vpc/vpctest"
+	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc"
+	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc/vpctest"
 )
 
 // TestVPCCreateOpenClose performs a serialized and strict test of the Create,

@@ -1,4 +1,4 @@
-// Test VM NIC objects.
+// Test VPC L2 EthLink objects.
 //
 // SPDX-License-Identifier: BSD-2-Clause-FreeBSD
 //
@@ -27,29 +27,29 @@
 // OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 // SUCH DAMAGE.
 
-package vmnic_test
+package ethlink_test
 
 import (
 	"syscall"
 	"testing"
 
 	"github.com/sean-/seed"
-	"go.freebsd.org/sys/vpc"
-	"go.freebsd.org/sys/vpc/vmnic"
-	"go.freebsd.org/sys/vpc/vpctest"
+	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc"
+	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc/ethlink"
+	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc/vpctest"
 )
 
 func init() {
 	seed.MustInit()
 }
 
-// TestVMNIC_CreateCommitDestroy is intended to verify the basic lifecycle
+// TestEthLink_CreateCommitDestroy is intended to verify the basic lifecycle
 // functionality of a switch.
-func TestVMNIC_CreateCommitDestroy(t *testing.T) {
-	var cfg vmnic.Config
+func TestEthLink_CreateCommitDestroy(t *testing.T) {
+	var cfg ethlink.Config
 	{
 		cfg.ID = vpc.GenID()
-		cfg.MAC = cfg.ID.Node[:]
+		cfg.ID.Node = [6]byte{}
 	}
 
 	existingIfaces, err := vpctest.GetAllInterfaces()
@@ -58,7 +58,7 @@ func TestVMNIC_CreateCommitDestroy(t *testing.T) {
 	}
 
 	func() { // Create + close switch w/o commit
-		sw, err := vmnic.Create(cfg)
+		sw, err := ethlink.Create(cfg)
 		if err != nil {
 			t.Fatalf("unable to create switch: %v", err)
 		}
@@ -92,7 +92,7 @@ func TestVMNIC_CreateCommitDestroy(t *testing.T) {
 	}()
 
 	func() { // Create switch scope
-		sw, err := vmnic.Create(cfg)
+		sw, err := ethlink.Create(cfg)
 		if err != nil {
 			t.Fatalf("unable to create switch: %v", err)
 		}
@@ -142,7 +142,7 @@ func TestVMNIC_CreateCommitDestroy(t *testing.T) {
 	}()
 
 	func() { // Open + Close switch scope
-		sw, err := vmnic.Open(cfg)
+		sw, err := ethlink.Open(cfg)
 		if err != nil {
 			t.Fatalf("unable to open switch: %v", err)
 		}
@@ -175,7 +175,7 @@ func TestVMNIC_CreateCommitDestroy(t *testing.T) {
 	}
 
 	func() { // Open + Destroy switch scope
-		sw, err := vmnic.Open(cfg)
+		sw, err := ethlink.Open(cfg)
 		if err != nil {
 			t.Fatalf("unable to open switch: %v", err)
 		}
@@ -202,19 +202,19 @@ func TestVMNIC_CreateCommitDestroy(t *testing.T) {
 	}
 }
 
-func TestVMNIC_CreateClose(t *testing.T) {
+func TestEthLink_CreateClose(t *testing.T) {
 	existingIfaces, err := vpctest.GetAllInterfaces()
 	if err != nil {
 		t.Fatalf("unable to get existing interfaces")
 	}
 
-	var cfg vmnic.Config
+	var cfg ethlink.Config
 	{
 		cfg.ID = vpc.GenID()
-		cfg.MAC = cfg.ID.Node[:]
+		cfg.ID.Node = [6]byte{}
 	}
 
-	sw, err := vmnic.Create(cfg)
+	sw, err := ethlink.Create(cfg)
 	if err != nil {
 		t.Fatalf("unable to create switch: %v", err)
 	}
@@ -243,19 +243,19 @@ func TestVMNIC_CreateClose(t *testing.T) {
 	}
 }
 
-func TestVMNIC_CreateDestroyClose(t *testing.T) {
+func TestEthLink_CreateDestroyClose(t *testing.T) {
 	existingIfaces, err := vpctest.GetAllInterfaces()
 	if err != nil {
 		t.Fatalf("unable to get existing interfaces")
 	}
 
-	var cfg vmnic.Config
+	var cfg ethlink.Config
 	{
 		cfg.ID = vpc.GenID()
-		cfg.MAC = cfg.ID.Node[:]
+		cfg.ID.Node = [6]byte{}
 	}
 
-	sw, err := vmnic.Create(cfg)
+	sw, err := ethlink.Create(cfg)
 	if err != nil {
 		t.Fatalf("unable to create switch: %v", err)
 	}
@@ -291,19 +291,19 @@ func TestVMNIC_CreateDestroyClose(t *testing.T) {
 	}
 }
 
-func TestVMNIC_CreateCommitDestroyClose(t *testing.T) {
+func TestEthLink_CreateCommitDestroyClose(t *testing.T) {
 	existingIfaces, err := vpctest.GetAllInterfaces()
 	if err != nil {
 		t.Fatalf("unable to get existing interfaces")
 	}
 
-	var cfg vmnic.Config
+	var cfg ethlink.Config
 	{
 		cfg.ID = vpc.GenID()
-		cfg.MAC = cfg.ID.Node[:]
+		cfg.ID.Node = [6]byte{}
 	}
 
-	sw, err := vmnic.Create(cfg)
+	sw, err := ethlink.Create(cfg)
 	if err != nil {
 		t.Fatalf("unable to create switch: %v", err)
 	}

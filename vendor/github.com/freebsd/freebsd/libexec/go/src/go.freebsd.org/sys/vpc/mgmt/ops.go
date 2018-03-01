@@ -36,7 +36,7 @@ import (
 	"unsafe"
 
 	"github.com/pkg/errors"
-	"go.freebsd.org/sys/vpc"
+	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc"
 )
 
 // _MgmtCmd is the encoded type of operations that can be performed on a VPC

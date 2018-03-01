@@ -3,6 +3,7 @@ package remove
 import (
 	"fmt"
 
+	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc/vpcsw"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"github.com/sean-/conswriter"
@@ -11,7 +12,6 @@ import (
 	"github.com/sean-/vpc/internal/config"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"go.freebsd.org/sys/vpc/vpcsw"
 )
 
 const (
@@ -82,11 +82,8 @@ func runE(cmd *cobra.Command, args []string) error {
 	defer sw.Close()
 
 	// 4) send op to remove
-	portRemoveCfg := vpcsw.Config{
-		PortID: portID,
-	}
-	if err = sw.PortRemove(portRemoveCfg); err != nil {
-		log.Error().Err(err).Object("switch-cfg", switchCfg).Object("port-cfg", portRemoveCfg).Msg("vpc_ctl(2): switch port destroy failed")
+	if err = sw.PortRemove(portID); err != nil {
+		log.Error().Err(err).Object("switch-cfg", switchCfg).Object("port-id", portID).Msg("vpc_ctl(2): switch port destroy failed")
 		return errors.Wrap(err, "unable to remove VPC Switch Port")
 	}
 

@@ -4,12 +4,12 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc/vpctest"
 	"github.com/olekukonko/tablewriter"
 	"github.com/pkg/errors"
 	"github.com/sean-/conswriter"
 	"github.com/sean-/vpc/internal/command"
 	"github.com/spf13/cobra"
-	"go.freebsd.org/sys/vpc/vpctest"
 )
 
 const (
