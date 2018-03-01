@@ -1,4 +1,4 @@
-package connect
+package disconnect
 
 import (
 	"fmt"
@@ -15,9 +15,9 @@ import (
 )
 
 const (
-	_CmdName        = "connect"
-	_KeyPortID      = config.KeySWPortConnectPortID
-	_KeyInterfaceID = config.KeySWPortConnectInterfaceID
+	_CmdName        = "disconnect"
+	_KeyPortID      = config.KeySWPortDisconnectPortID
+	_KeyInterfaceID = config.KeySWPortDisconnectInterfaceID
 )
 
 var Cmd = &command.Command{
@@ -25,8 +25,8 @@ var Cmd = &command.Command{
 
 	Cobra: &cobra.Command{
 		Use:          _CmdName,
-		Short:        "connect a VPC Interface to a VPC Switch Port",
-		Aliases:      []string{"conn"},
+		Short:        "disconnect a VPC Interface from a VPC Switch Port",
+		Aliases:      []string{"disco"},
 		SilenceUsage: true,
 		Args:         cobra.NoArgs,
 		PreRunE: func(cmd *cobra.Command, args []string) error {
@@ -36,7 +36,7 @@ var Cmd = &command.Command{
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			cons := conswriter.GetTerminal()
 
-			cons.Write([]byte(fmt.Sprintf("Connecting VPC Interface to VPC Switch Port...")))
+			cons.Write([]byte(fmt.Sprintf("Disconnecting VPC Interface from VPC Switch Port...")))
 
 			interfaceID, err := flag.GetID(viper.GetViper(), _KeyInterfaceID)
 			if err != nil {
@@ -60,14 +60,14 @@ var Cmd = &command.Command{
 			}
 			defer vpcPort.Close()
 
-			if err = vpcPort.Connect(interfaceID); err != nil {
-				log.Error().Err(err).Object("port-id", portID).Object("interface-id", interfaceID).Msg("vpc switch port connect failed")
-				return errors.Wrap(err, "unable to connect a VPC Interface to VPC Switch Port")
+			if err = vpcPort.Disconnect(interfaceID); err != nil {
+				log.Error().Err(err).Object("port-id", portID).Object("interface-id", interfaceID).Msg("vpc switch port disconnect failed")
+				return errors.Wrap(err, "unable to disconnect a VPC Interface from VPC Switch Port")
 			}
 
 			cons.Write([]byte("done.\n"))
 
-			log.Info().Object("port-id", portID).Object("interface-id", interfaceID).Msg("VPC Interface connected to VPC Switch Port")
+			log.Info().Object("port-id", portID).Object("interface-id", interfaceID).Msg("VPC Interface disconnected from VPC Switch Port")
 
 			return nil
 		},
@@ -75,11 +75,11 @@ var Cmd = &command.Command{
 
 	Setup: func(self *command.Command) error {
 		if err := flag.AddInterfaceID(self, _KeyInterfaceID, true); err != nil {
-			return errors.Wrap(err, "unable to register Interface ID flag on VPC Switch Port connect")
+			return errors.Wrap(err, "unable to register Interface ID flag on VPC Switch Port disconnect")
 		}
 
 		if err := flag.AddPortID(self, _KeyPortID, true); err != nil {
-			return errors.Wrap(err, "unable to register Port ID flag on VPC Switch Port connect")
+			return errors.Wrap(err, "unable to register Port ID flag on VPC Switch Port disconnect")
 		}
 
 		return nil

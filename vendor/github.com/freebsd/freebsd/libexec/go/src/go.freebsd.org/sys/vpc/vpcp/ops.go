@@ -30,8 +30,8 @@
 package vpcp
 
 import (
-	"github.com/pkg/errors"
 	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc"
+	"github.com/pkg/errors"
 )
 
 // _PortCmd is the encoded type of operations that can be performed on a VM
@@ -58,13 +58,25 @@ const (
 	_DisconnectCmd _PortCmd = _PortCmd(vpc.InBit|vpc.PrivBit|vpc.MutateBit|(vpc.Cmd(vpc.ObjTypeSwitchPort)<<16)) | _PortCmd(_OpDisconnect)
 )
 
-// Connect connects this VPC Port to a VPC Interface.  VPC Interfaces include
-// VMNIC, and L2Link.
+// Connect a VPC Interface to this VPC Port.  VPC Interfaces include VMNIC, and
+// L2Link.
 func (port *VPCP) Connect(interfaceID vpc.ID) error {
 	// TODO(seanc@): Test to see make sure the descriptor has the mutate bit set.
 
 	if err := vpc.Ctl(port.h, vpc.Cmd(_ConnectCmd), interfaceID.Bytes(), nil); err != nil {
-		return errors.Wrap(err, "unable to connect VPC Interface to VPC Port")
+		return errors.Wrap(err, "unable to connect VPC Interface to VPC Switch Port")
+	}
+
+	return nil
+}
+
+// Disconnect a VPC Interface from this VPC Port.  VPC Interfaces include VMNIC,
+// and L2Link.
+func (port *VPCP) Disconnect(interfaceID vpc.ID) error {
+	// TODO(seanc@): Test to see make sure the descriptor has the mutate bit set.
+
+	if err := vpc.Ctl(port.h, vpc.Cmd(_DisconnectCmd), interfaceID.Bytes(), nil); err != nil {
+		return errors.Wrap(err, "unable to disconnect VPC Interface from VPC Switch Port")
 	}
 
 	return nil

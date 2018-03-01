@@ -4,6 +4,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sean-/vpc/cli/vpcsw/port/add"
 	"github.com/sean-/vpc/cli/vpcsw/port/connect"
+	"github.com/sean-/vpc/cli/vpcsw/port/disconnect"
 	"github.com/sean-/vpc/cli/vpcsw/port/remove"
 	"github.com/sean-/vpc/internal/command"
 	"github.com/spf13/cobra"
@@ -24,6 +25,7 @@ var Cmd = &command.Command{
 		subCommands := command.Commands{
 			add.Cmd,
 			connect.Cmd,
+			disconnect.Cmd,
 			//list.Cmd,
 			remove.Cmd,
 		}
