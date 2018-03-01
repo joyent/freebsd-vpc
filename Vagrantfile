@@ -6,8 +6,27 @@ guest_disk_path = "#{File.dirname(__FILE__)}/guest_disks"
 
 Vagrant.configure("2") do |config|
 	config.ssh.extra_args = ["-e", "%"]
+	
+	config.vm.define "compile", autostart: true, primary: true do |vmCfg|
+		vmCfg.vm.box = freebsd_box
+		vmCfg.vm.hostname = "freebsd-compile"
+		vmCfg = configureFreeBSDDevProvisioners(vmCfg)
 
-	config.vm.define "cn1", autostart: true, primary: true do |vmCfg|
+		vmCfg.vm.synced_folder '.',
+			'/opt/gopath/src/github.com/sean-/vpc',
+			type: "nfs",
+			bsd__nfs_options: ['noatime']
+
+		vmCfg.vm.network "private_network", ip: "172.27.10.5"
+
+		vmCfg.vm.provider "vmware_fusion" do |v|
+			v.vmx["memsize"] = "1024"
+			v.vmx["numvcpus"] = "2"
+			v.vmx["ethernet1.virtualDev"] = "vmxnet3"
+		end
+	end
+
+	config.vm.define "cn1", autostart: false do |vmCfg|
 		vmCfg.vm.box = freebsd_box
 		vmCfg.vm.hostname = "freebsd-cn1"
 		vmCfg = configureFreeBSDProvisioners(vmCfg)
@@ -22,7 +41,7 @@ Vagrant.configure("2") do |config|
 		end
 	end
 	
-	config.vm.define "cn2", autostart: true do |vmCfg|
+	config.vm.define "cn2", autostart: false do |vmCfg|
 		vmCfg.vm.box = freebsd_box
 		vmCfg.vm.hostname = "freebsd-cn2"
 		vmCfg = configureFreeBSDProvisioners(vmCfg)
@@ -36,6 +55,14 @@ Vagrant.configure("2") do |config|
 			v.vmx["ethernet1.virtualDev"] = "vmxnet3"
 		end
 	end
+end
+
+def configureFreeBSDDevProvisioners(vmCfg)
+	vmCfg.vm.provision "shell",
+		path: './scripts/vagrant-freebsd-priv-dev-packages.sh',
+		privileged: true
+
+	return vmCfg
 end
 
 def configureFreeBSDProvisioners(vmCfg)

@@ -2,7 +2,7 @@
 
 export ASSUME_ALWAYS_YES=yes
 
-pkg -o OSVERSION=1200056 update
+pkg update
 pkg install -y \
 	dns/nss_mdns \
 	editors/vim-console \
