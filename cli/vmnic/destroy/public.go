@@ -37,8 +37,8 @@ var Cmd = &command.Command{
 	},
 
 	Setup: func(self *command.Command) error {
-		if err := flag.AddID(self, _KeyID, true); err != nil {
-			return errors.Wrap(err, "unable to register ID flag on VPC Switch destroy")
+		if err := flag.AddVMNICID(self, _KeyID, true); err != nil {
+			return errors.Wrap(err, "unable to register VM NIC ID flag on VPC Switch destroy")
 		}
 
 		return nil

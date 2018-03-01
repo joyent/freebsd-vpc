@@ -96,8 +96,8 @@ var Cmd = &command.Command{
 	},
 
 	Setup: func(self *command.Command) error {
-		if err := flag.AddID(self, _KeyID, false); err != nil {
-			return errors.Wrap(err, "unable to register ID flag on VM NIC create")
+		if err := flag.AddVMNICID(self, _KeyID, false); err != nil {
+			return errors.Wrap(err, "unable to register VM NIC ID flag on VM NIC create")
 		}
 
 		if err := flag.AddMAC(self, _KeyMAC, false); err != nil {
