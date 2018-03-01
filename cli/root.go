@@ -12,6 +12,7 @@ import (
 	"github.com/sean-/seed"
 	"github.com/sean-/vpc/cli/db"
 	"github.com/sean-/vpc/cli/doc"
+	"github.com/sean-/vpc/cli/ethlink"
 	"github.com/sean-/vpc/cli/intf"
 	"github.com/sean-/vpc/cli/list"
 	"github.com/sean-/vpc/cli/run"
@@ -32,6 +33,7 @@ const _CmdName = "root"
 var subCommands = command.Commands{
 	db.Cmd,
 	doc.Cmd,
+	ethlink.Cmd,
 	intf.Cmd,
 	list.Cmd,
 	run.Cmd,

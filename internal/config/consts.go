@@ -11,6 +11,8 @@ const (
 	KeyDocMarkdownDir       = "doc.markdown-dir"
 	KeyDocMarkdownURLPrefix = "doc.markdown-url-prefix"
 
+	KeyEthLinkListSortBy = "ethlink.list.sort-by"
+
 	KeyListObjCounts = "list.obj-counts"
 	KeyListObjSortBy = "list.sort-by"
 	KeyListObjType   = "list.type"
