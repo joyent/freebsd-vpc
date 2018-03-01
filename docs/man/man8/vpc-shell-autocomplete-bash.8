@@ -1,0 +1,85 @@
+.TH "VPC\-SHELL\-AUTOCOMPLETE\-BASH" "8" "Mar 2018" "vpc 0.0.1" "vpc" 
+.nh
+.ad l
+
+
+.SH NAME
+.PP
+vpc\-shell\-autocomplete\-bash \- Generates and install vpc bash autocompletion script
+
+
+.SH SYNOPSIS
+.PP
+\fBvpc shell autocomplete bash [flags]\fP
+
+
+.SH DESCRIPTION
+.PP
+Generates a bash autocompletion script for vpc
+
+.PP
+By default, the file is written directly to /usr/local/share/bash\-completion/completions/
+for convenience, and the command may need superuser rights, e.g.:
+
+.PP
+.RS
+
+.nf
+$ sudo vpc shell autocomplete bash
+
+.fi
+.RE
+
+.PP
+Add \fB\fC\-\-bash\-autocomplete\-dir=/path/to/file\fR\&. The default file name
+is vpc.sh.
+
+.PP
+Logout and in again to reload the completion scripts,
+or just source them in directly:
+
+.PP
+.RS
+
+.nf
+$ . /bash\_completion.d
+
+.fi
+.RE
+
+
+.SH OPTIONS
+.PP
+\fB\-d\fP, \fB\-\-dir\fP="/usr/local/share/bash\-completion/completions/"
+    autocompletion directory
+
+.PP
+\fB\-h\fP, \fB\-\-help\fP[=false]
+    help for bash
+
+
+.SH OPTIONS INHERITED FROM PARENT COMMANDS
+.PP
+\fB\-F\fP, \fB\-\-log\-format\fP="auto"
+    Specify the log format ("auto", "zerolog", or "human")
+
+.PP
+\fB\-l\fP, \fB\-\-log\-level\fP="INFO"
+    Change the log level being sent to stdout
+
+.PP
+\fB\-\-use\-color\fP[=true]
+    Use ASCII colors
+
+.PP
+\fB\-P\fP, \fB\-\-use\-pager\fP[=true]
+    Use a pager to read the output (defaults to $PAGER, less(1), or more(1))
+
+.PP
+\fB\-Z\fP, \fB\-\-utc\fP[=false]
+    Display times in UTC
+
+
+.SH SEE ALSO
+.PP
+\fBvpc\-shell\-autocomplete(8)\fP

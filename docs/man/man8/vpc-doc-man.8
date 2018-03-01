@@ -1,0 +1,57 @@
+.TH "VPC\-DOC\-MAN" "8" "Mar 2018" "vpc 0.0.1" "vpc" 
+.nh
+.ad l
+
+
+.SH NAME
+.PP
+vpc\-doc\-man \- Generates and install vpc man(1) pages
+
+
+.SH SYNOPSIS
+.PP
+\fBvpc doc man [flags]\fP
+
+
+.SH DESCRIPTION
+.PP
+This command automatically generates up\-to\-date man(1) pages of vpc(8)
+command\-line interface.  By default, it creates the man page files
+in the "docs/man" directory under the current directory.
+
+
+.SH OPTIONS
+.PP
+\fB\-h\fP, \fB\-\-help\fP[=false]
+    help for man
+
+.PP
+\fB\-m\fP, \fB\-\-man\-dir\fP="./docs/man"
+    Specify the MANDIR to use
+
+
+.SH OPTIONS INHERITED FROM PARENT COMMANDS
+.PP
+\fB\-F\fP, \fB\-\-log\-format\fP="auto"
+    Specify the log format ("auto", "zerolog", or "human")
+
+.PP
+\fB\-l\fP, \fB\-\-log\-level\fP="INFO"
+    Change the log level being sent to stdout
+
+.PP
+\fB\-\-use\-color\fP[=true]
+    Use ASCII colors
+
+.PP
+\fB\-P\fP, \fB\-\-use\-pager\fP[=true]
+    Use a pager to read the output (defaults to $PAGER, less(1), or more(1))
+
+.PP
+\fB\-Z\fP, \fB\-\-utc\fP[=false]
+    Display times in UTC
+
+
+.SH SEE ALSO
+.PP
+\fBvpc\-doc(8)\fP

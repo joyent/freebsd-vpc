@@ -15,6 +15,8 @@ build: generate
 	mkdir -p ./bin
 	govvv build -o bin/vpc ./cmd/vpc
 	bin/vpc shell autocomplete bash -d docs/bash.d/
+	bin/vpc docs man
+	bin/vpc docs md
 
 install:
 	govvv install ./cmd/vpc

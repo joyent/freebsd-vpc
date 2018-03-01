@@ -1,0 +1,71 @@
+.TH "VPC\-SWITCH\-PORT\-ADD" "8" "Mar 2018" "vpc 0.0.1" "vpc" 
+.nh
+.ad l
+
+
+.SH NAME
+.PP
+vpc\-switch\-port\-add \- add a port to a VPC Switch
+
+
+.SH SYNOPSIS
+.PP
+\fBvpc switch port add [flags]\fP
+
+
+.SH DESCRIPTION
+.PP
+add a port to a VPC Switch
+
+
+.SH OPTIONS
+.PP
+\fB\-\-ethlink\-id\fP=""
+    Specify the ID of the VPC EthLink
+
+.PP
+\fB\-h\fP, \fB\-\-help\fP[=false]
+    help for add
+
+.PP
+\fB\-n\fP, \fB\-\-l2\-name\fP=""
+    Name of the underlying L2 interface to be wrapped as a VPC EthLink and used as the uplink in the VPC Switch
+
+.PP
+\fB\-\-port\-id\fP=""
+    Specify the VPC Port ID
+
+.PP
+\fB\-\-switch\-id\fP=""
+    Specify the VPC Switch ID
+
+.PP
+\fB\-u\fP, \fB\-\-uplink\fP[=false]
+    make the port ID an uplink for the switch
+
+
+.SH OPTIONS INHERITED FROM PARENT COMMANDS
+.PP
+\fB\-F\fP, \fB\-\-log\-format\fP="auto"
+    Specify the log format ("auto", "zerolog", or "human")
+
+.PP
+\fB\-l\fP, \fB\-\-log\-level\fP="INFO"
+    Change the log level being sent to stdout
+
+.PP
+\fB\-\-use\-color\fP[=true]
+    Use ASCII colors
+
+.PP
+\fB\-P\fP, \fB\-\-use\-pager\fP[=true]
+    Use a pager to read the output (defaults to $PAGER, less(1), or more(1))
+
+.PP
+\fB\-Z\fP, \fB\-\-utc\fP[=false]
+    Display times in UTC
+
+
+.SH SEE ALSO
+.PP
+\fBvpc\-switch\-port(8)\fP
