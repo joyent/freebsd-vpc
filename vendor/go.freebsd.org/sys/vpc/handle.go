@@ -153,25 +153,32 @@ func (t HandleType) SetObjType(objType ObjType) (HandleType, error) {
 
 // Operations that can be applied to all VPC Object types
 const (
-	_DestroyOp = Op(0x0001)
-	_TypeOp    = Op(0x0002)
-	_CommitOp  = Op(0x0003)
-	_MACSet    = Op(0x0004)
-	_MACGet    = Op(0x0005)
-	_MTUSet    = Op(0x0006)
-	_MTUGet    = Op(0x0007)
-	_GetID     = Op(0x0008)
-	_CountOp   = Op(0x0009)
+	// Note: sorted by op number.  These commands are prefixed by the type of
+	// descriptor required to run the op.  Meta ops can be run by any descriptor.
+	// The Mgmt commands can only be run by the mgmt command.
 
-	_CommitCmd  = PrivBit | MutateBit | (Cmd(ObjTypeMeta) << 16) | Cmd(_CommitOp)
-	_CountCmd   = PrivBit | (Cmd(ObjTypeMgmt) << 16) | Cmd(_CountOp)
-	_DestroyCmd = PrivBit | MutateBit | (Cmd(ObjTypeMeta) << 16) | Cmd(_DestroyOp)
-	_GetIDCmd   = (Cmd(ObjTypeMeta) << 16) | Cmd(_GetID)
-	_MACGetCmd  = (Cmd(ObjTypeMeta) << 16) | Cmd(_MACGet)
-	_MACSetCmd  = PrivBit | MutateBit | (Cmd(ObjTypeMeta) << 16) | Cmd(_MACSet)
-	_MTUGetCmd  = (Cmd(ObjTypeMeta) << 16) | Cmd(_MTUGet)
-	_MTUSetCmd  = PrivBit | MutateBit | (Cmd(ObjTypeMeta) << 16) | Cmd(_MTUSet)
-	_TypeCmd    = (Cmd(ObjTypeMeta) << 16) | Cmd(_TypeOp)
+	_MetaDestroyOp = Op(0x0001)
+	_MetaTypeGetOp = Op(0x0002)
+	_MetaCommitOp  = Op(0x0003)
+	_MetaMACSetOp  = Op(0x0004)
+	_MetaMACGetOp  = Op(0x0005)
+	_MetaMTUSetOp  = Op(0x0006)
+	_MetaMTUGetOp  = Op(0x0007)
+	_MetaGetIDOp   = Op(0x0008)
+	_MgmtCountOp   = Op(0x0009)
+
+	// Management Commands
+	_CountCmd = PrivBit | (Cmd(ObjTypeMgmt) << 16) | Cmd(_MgmtCountOp)
+
+	// Meta commands
+	_CommitCmd  = PrivBit | MutateBit | (Cmd(ObjTypeMeta) << 16) | Cmd(_MetaCommitOp)
+	_DestroyCmd = PrivBit | MutateBit | (Cmd(ObjTypeMeta) << 16) | Cmd(_MetaDestroyOp)
+	_GetIDCmd   = (Cmd(ObjTypeMeta) << 16) | Cmd(_MetaGetIDOp)
+	_MACGetCmd  = (Cmd(ObjTypeMeta) << 16) | Cmd(_MetaMACGetOp)
+	_MACSetCmd  = PrivBit | MutateBit | (Cmd(ObjTypeMeta) << 16) | Cmd(_MetaMACSetOp)
+	_MTUGetCmd  = (Cmd(ObjTypeMeta) << 16) | Cmd(_MetaMTUGetOp)
+	_MTUSetCmd  = PrivBit | MutateBit | (Cmd(ObjTypeMeta) << 16) | Cmd(_MetaMTUSetOp)
+	_TypeCmd    = (Cmd(ObjTypeMeta) << 16) | Cmd(_MetaTypeGetOp)
 )
 
 // Commit increments the refcount on the object referrenced by this VPC Handle.

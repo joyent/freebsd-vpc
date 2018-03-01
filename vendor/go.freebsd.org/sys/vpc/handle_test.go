@@ -109,7 +109,7 @@ func TestHandleTypeVersion(t *testing.T) {
 		{
 			in:         0x9008000000000000,
 			outVersion: 9,
-			outObjType: vpc.ObjTypeLinkL2,
+			outObjType: vpc.ObjTypeLinkEth,
 		},
 		{
 			in:         0xa009000000000000,
@@ -167,7 +167,7 @@ func TestHandleTypeVersion(t *testing.T) {
 			vpc.ObjTypeLinkVPC,
 			vpc.ObjTypeNICVM,
 			vpc.ObjTypeMgmt,
-			vpc.ObjTypeLinkL2,
+			vpc.ObjTypeLinkEth,
 		}
 
 		origHandleType := ht
