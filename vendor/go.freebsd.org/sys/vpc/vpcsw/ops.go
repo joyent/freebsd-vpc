@@ -136,12 +136,11 @@ func (sw *VPCSW) PortAdd(portID vpc.ID, mac net.HardwareAddr) error {
 
 // PortRemove removes a VPC Port from this VPC Switch.  Uses the PortID member
 // of Config.
-func (sw *VPCSW) PortRemove(cfg Config) error {
+func (sw *VPCSW) PortRemove(portID vpc.ID) error {
 	// TODO(seanc@): Test to see make sure the descriptor has the mutate bit set.
 
-	if err := vpc.Ctl(sw.h, vpc.Cmd(_PortRemoveCmd), cfg.PortID.Bytes(), nil); err != nil {
+	if err := vpc.Ctl(sw.h, vpc.Cmd(_PortRemoveCmd), portID.Bytes(), nil); err != nil {
 		log.Error().Err(err).
-			Object("cfg", cfg).
 			Object("cmd", vpc.Cmd(_PortRemoveCmd)).
 			Str("cmd", "port remove").
 			Str("obj-type", "switch").

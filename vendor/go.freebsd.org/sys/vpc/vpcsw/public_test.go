@@ -369,28 +369,23 @@ func TestVPCSW_SwitchPort_ReAdd(t *testing.T) {
 	}
 
 	// 1) add port
-	portAddCfg := vpcsw.Config{
-		PortID: vpc.GenID(),
-	}
-	if err = sw.PortAdd(portAddCfg); err != nil {
+	portID := vpc.GenID()
+	if err = sw.PortAdd(portID, nil); err != nil {
 		t.Fatalf("unable to add port to switch: %v", err)
 	}
 
 	// 2) remove port (same config as add port)
-	portRemoveCfg := vpcsw.Config{
-		PortID: portAddCfg.PortID,
-	}
-	if err = sw.PortRemove(portRemoveCfg); err != nil {
+	if err = sw.PortRemove(portID); err != nil {
 		t.Fatalf("unable to remove port from VPC switch: %v", err)
 	}
 
 	// 3) add port
-	if err = sw.PortAdd(portAddCfg); err != nil {
+	if err = sw.PortAdd(portID, nil); err != nil {
 		t.Fatalf("unable to add port to switch: %v", err)
 	}
 
 	// 4) remove port
-	if err = sw.PortRemove(portRemoveCfg); err != nil {
+	if err = sw.PortRemove(portID); err != nil {
 		t.Fatalf("unable to remove port from VPC switch: %v", err)
 	}
 
@@ -452,21 +447,19 @@ func TestVPCSW_SwitchPort_RedundantAdd(t *testing.T) {
 	}
 
 	// 1) add port
-	portAddCfg := vpcsw.Config{
-		PortID: vpc.GenID(),
-	}
-	if err = sw.PortAdd(portAddCfg); err != nil {
+	portID := vpc.GenID()
+	if err = sw.PortAdd(portID, nil); err != nil {
 		t.Fatalf("unable to add port to switch: %v", err)
 	}
 	defer func() {
 		// Unwind
-		if err = sw.PortRemove(portAddCfg); err != nil {
+		if err = sw.PortRemove(portID); err != nil {
 			t.Fatalf("unable to remove port from VPC switch: %v", err)
 		}
 	}()
 
 	// 2) re-add same port
-	if err = sw.PortAdd(portAddCfg); err == nil {
+	if err = sw.PortAdd(portID, nil); err == nil {
 		t.Errorf("it should not be possible to add the same port twice")
 	}
 }
