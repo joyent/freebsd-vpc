@@ -16,8 +16,8 @@ import (
 
 const (
 	_CmdName       = "get"
-	_KeyGetNQueues = config.KeyGetNQueues
-	_KeyVMNICID    = config.KeyGetVMNICID
+	_KeyGetNQueues = config.KeyVMNICGetNQueues
+	_KeyVMNICID    = config.KeyVMNICGetVMNICID
 )
 
 var Cmd = &command.Command{

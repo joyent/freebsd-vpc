@@ -6,6 +6,7 @@ import (
 	"github.com/sean-/vpc/cli/vmnic/destroy"
 	"github.com/sean-/vpc/cli/vmnic/get"
 	"github.com/sean-/vpc/cli/vmnic/list"
+	"github.com/sean-/vpc/cli/vmnic/set"
 	"github.com/sean-/vpc/internal/command"
 	"github.com/spf13/cobra"
 )
@@ -27,6 +28,7 @@ var Cmd = &command.Command{
 			destroy.Cmd,
 			get.Cmd,
 			list.Cmd,
+			set.Cmd,
 		}
 
 		if err := self.Register(subCommands); err != nil {

@@ -11,9 +11,6 @@ const (
 	KeyDocMarkdownDir       = "doc.markdown-dir"
 	KeyDocMarkdownURLPrefix = "doc.markdown-url-prefix"
 
-	KeyGetNQueues = "vmnic.get.num-queues"
-	KeyGetVMNICID = "vmnic.get.vmnic-id"
-
 	KeyListObjCounts = "list.obj-counts"
 	KeyListObjSortBy = "list.sort-by"
 	KeyListObjType   = "list.type"
@@ -43,7 +40,11 @@ const (
 	KeyUsePager = "general.use-pager"
 	KeyUseUTC   = "general.utc"
 
-	KeyVMNICCreateID  = "vmnic.create.id"
-	KeyVMNICCreateMAC = "vmnic.create.mac"
-	KeyVMNICDestroyID = "vmnic.destroy.id"
+	KeyVMNICCreateID   = "vmnic.create.id"
+	KeyVMNICCreateMAC  = "vmnic.create.mac"
+	KeyVMNICDestroyID  = "vmnic.destroy.id"
+	KeyVMNICGetNQueues = "vmnic.get.num-queues"
+	KeyVMNICGetVMNICID = "vmnic.get.vmnic-id"
+	KeyVMNICSetNQueues = "vmnic.set.num-queues"
+	KeyVMNICSetVMNICID = "vmnic.set.vmnic-id"
 )
