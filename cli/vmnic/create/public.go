@@ -17,9 +17,9 @@ import (
 )
 
 const (
-	_CmdName = "create"
-	_KeyID   = config.KeyVMNICCreateID
-	_KeyMAC  = config.KeyVMNICCreateMAC
+	_CmdName     = "create"
+	_KeyVMNICID  = config.KeyVMNICCreateID
+	_KeyVMNICMAC = config.KeyVMNICCreateMAC
 )
 
 var Cmd = &command.Command{
@@ -45,12 +45,12 @@ var Cmd = &command.Command{
 
 			cons.Write([]byte(fmt.Sprintf("Creating VM NIC...")))
 
-			id, err := flag.GetID(viper.GetViper(), _KeyID)
+			id, err := flag.GetID(viper.GetViper(), _KeyVMNICID)
 			if err != nil {
 				return errors.Wrap(err, "unable to get VPC ID")
 			}
 
-			mac, err := flag.GetMAC(viper.GetViper(), _KeyMAC, &id)
+			mac, err := flag.GetMAC(viper.GetViper(), _KeyVMNICMAC, &id)
 			if err != nil {
 				return errors.Wrap(err, "unable to get MAC address")
 			}
@@ -96,11 +96,11 @@ var Cmd = &command.Command{
 	},
 
 	Setup: func(self *command.Command) error {
-		if err := flag.AddVMNICID(self, _KeyID, false); err != nil {
+		if err := flag.AddVMNICID(self, _KeyVMNICID, false); err != nil {
 			return errors.Wrap(err, "unable to register VM NIC ID flag on VM NIC create")
 		}
 
-		if err := flag.AddMAC(self, _KeyMAC, false); err != nil {
+		if err := flag.AddMAC(self, _KeyVMNICMAC, false); err != nil {
 			return errors.Wrap(err, "unable to register MAC flag on VM NIC create")
 		}
 

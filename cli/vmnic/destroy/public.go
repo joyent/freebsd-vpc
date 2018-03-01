@@ -15,8 +15,8 @@ import (
 )
 
 const (
-	_CmdName = "destroy"
-	_KeyID   = config.KeyVMNICDestroyID
+	_CmdName    = "destroy"
+	_KeyVMNICID = config.KeyVMNICDestroyID
 )
 
 var Cmd = &command.Command{
@@ -37,7 +37,7 @@ var Cmd = &command.Command{
 	},
 
 	Setup: func(self *command.Command) error {
-		if err := flag.AddVMNICID(self, _KeyID, true); err != nil {
+		if err := flag.AddVMNICID(self, _KeyVMNICID, true); err != nil {
 			return errors.Wrap(err, "unable to register VM NIC ID flag on VPC Switch destroy")
 		}
 
@@ -50,7 +50,7 @@ func runE(cmd *cobra.Command, args []string) error {
 
 	cons.Write([]byte(fmt.Sprintf("Destroying VM NIC...")))
 
-	id, err := flag.GetID(viper.GetViper(), _KeyID)
+	id, err := flag.GetID(viper.GetViper(), _KeyVMNICID)
 	if err != nil {
 		return errors.Wrap(err, "unable to get VPC ID")
 	}

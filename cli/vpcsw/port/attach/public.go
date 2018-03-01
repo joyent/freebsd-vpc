@@ -112,7 +112,7 @@ var Cmd = &command.Command{
 	},
 
 	Setup: func(self *command.Command) error {
-		if err := flag.AddID(self, _KeyPortID, false); err != nil {
+		if err := flag.AddPortID(self, _KeyPortID, false); err != nil {
 			return errors.Wrap(err, "unable to register ID flag on VPC Port add")
 		}
 

@@ -35,10 +35,10 @@ const (
 
 	KeyShellAutoCompBashDir = "shell.autocomplete.bash-dir"
 
-	KeySWCreateID  = "switch.create.id"
-	KeySWCreateMAC = "switch.create.mac"
-	KeySWCreateVNI = "switch.create.vni"
-	KeySWDestroyID = "switch.destroy.id"
+	KeySWCreateSwitchID  = "switch.create.switch-id"
+	KeySWCreateSwitchMAC = "switch.create.switch-mac"
+	KeySWCreateVNI       = "switch.create.vni"
+	KeySWDestroySwitchID = "switch.destroy.switch-id"
 
 	KeyUsePager = "general.use-pager"
 	KeyUseUTC   = "general.utc"

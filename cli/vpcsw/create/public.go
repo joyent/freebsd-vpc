@@ -18,9 +18,9 @@ import (
 )
 
 const (
-	_CmdName = "create"
-	_KeyID   = config.KeySWCreateID
-	_KeyMAC  = config.KeySWCreateMAC
+	_CmdName      = "create"
+	_KeySwitchID  = config.KeySWCreateSwitchID
+	_KeySwitchMAC = config.KeySWCreateSwitchMAC
 )
 
 var Cmd = &command.Command{
@@ -30,7 +30,7 @@ var Cmd = &command.Command{
 		Use:          _CmdName,
 		Short:        "create a VPC switch",
 		SilenceUsage: true,
-		Args: cobra.NoArgs,
+		Args:         cobra.NoArgs,
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			return nil
 		},
@@ -45,12 +45,12 @@ var Cmd = &command.Command{
 
 			cons.Write([]byte(fmt.Sprintf("Creating VPC Switch...")))
 
-			id, err := flag.GetID(viper.GetViper(), _KeyID)
+			id, err := flag.GetID(viper.GetViper(), _KeySwitchID)
 			if err != nil {
 				return errors.Wrap(err, "unable to get VPC ID")
 			}
 
-			mac, err := flag.GetMAC(viper.GetViper(), _KeyMAC, &id)
+			mac, err := flag.GetMAC(viper.GetViper(), _KeySwitchMAC, &id)
 			if err != nil {
 				return errors.Wrap(err, "unable to get MAC address")
 			}
@@ -97,11 +97,11 @@ var Cmd = &command.Command{
 	},
 
 	Setup: func(self *command.Command) error {
-		if err := flag.AddID(self, _KeyID, false); err != nil {
+		if err := flag.AddSwitchID(self, _KeySwitchID, false); err != nil {
 			return errors.Wrap(err, "unable to register ID flag on VPC Switch create")
 		}
 
-		if err := flag.AddMAC(self, _KeyMAC, false); err != nil {
+		if err := flag.AddMAC(self, _KeySwitchMAC, false); err != nil {
 			return errors.Wrap(err, "unable to register MAC flag on VPC Switch create")
 		}
 

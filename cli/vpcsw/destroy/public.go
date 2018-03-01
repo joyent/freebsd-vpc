@@ -15,8 +15,8 @@ import (
 )
 
 const (
-	_CmdName = "destroy"
-	_KeyID   = config.KeySWDestroyID
+	_CmdName     = "destroy"
+	_KeySwitchID = config.KeySWDestroySwitchID
 )
 
 var Cmd = &command.Command{
@@ -37,7 +37,7 @@ var Cmd = &command.Command{
 	},
 
 	Setup: func(self *command.Command) error {
-		if err := flag.AddID(self, _KeyID, true); err != nil {
+		if err := flag.AddSwitchID(self, _KeySwitchID, true); err != nil {
 			return errors.Wrap(err, "unable to register ID flag on VPC Switch destroy")
 		}
 
@@ -50,7 +50,7 @@ func runE(cmd *cobra.Command, args []string) error {
 
 	cons.Write([]byte(fmt.Sprintf("Destroying VPC Switch...")))
 
-	id, err := flag.GetID(viper.GetViper(), _KeyID)
+	id, err := flag.GetID(viper.GetViper(), _KeySwitchID)
 	if err != nil {
 		return errors.Wrap(err, "unable to get VPC ID")
 	}

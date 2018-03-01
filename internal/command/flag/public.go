@@ -31,28 +31,6 @@ func AddEthLinkID(cmd *command.Command, keyName string, required bool) error {
 	return nil
 }
 
-// AddID adds the ID flag to a given command.
-func AddID(cmd *command.Command, keyName string, required bool) error {
-	key := keyName
-	const (
-		longName     = "id"
-		shortName    = "I"
-		defaultValue = ""
-		description  = "Specify the ID"
-	)
-
-	flags := cmd.Cobra.Flags()
-	flags.StringP(longName, shortName, defaultValue, description)
-	if required {
-		cmd.Cobra.MarkFlagRequired(longName)
-	}
-
-	viper.BindPFlag(key, flags.Lookup(longName))
-	viper.SetDefault(key, defaultValue)
-
-	return nil
-}
-
 // AddMAC adds the MAC flag to a given command.
 func AddMAC(cmd *command.Command, keyName string, required bool) error {
 	key := keyName
