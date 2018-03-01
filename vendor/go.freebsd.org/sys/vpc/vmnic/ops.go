@@ -111,9 +111,16 @@ func (vmn *VMNIC) Destroy() error {
 }
 
 // Freeze freezes the VMNIC so it can be plugged into a VPC Switch Port.
-func (vmn *VMNIC) Freeze() error {
-	if err := vpc.Ctl(vmn.h, vpc.Cmd(_FreezeCmd), nil, nil); err != nil {
-		return errors.Wrap(err, "unable to freeze VMNIC")
+func (vmn *VMNIC) Freeze(enable bool) error {
+	cmd := _UnfreezeCmd
+	cmdStr := "unfreeze"
+	if enable {
+		cmd = _FreezeCmd
+		cmdStr = "freeze"
+	}
+
+	if err := vpc.Ctl(vmn.h, vpc.Cmd(cmd), nil, nil); err != nil {
+		return errors.Wrapf(err, "unable to %s VM NIC", cmdStr)
 	}
 
 	return nil
@@ -144,17 +151,8 @@ func (vmn *VMNIC) NQueuesSet(numQueues uint16) error {
 		panic(fmt.Sprintf("invariant: num queuese size too big for kernel interface input (want/got: 2/%d", n))
 	}
 
-	if err := vpc.Ctl(vmn.h, vpc.Cmd(_NQueuesGetCmd), in, nil); err != nil {
+	if err := vpc.Ctl(vmn.h, vpc.Cmd(_NQueuesSetCmd), in, nil); err != nil {
 		return errors.Wrap(err, "unable to set the number of hardware queues for VMNIC")
-	}
-
-	return nil
-}
-
-// Unfreeze unfreezes the VMNIC.
-func (vmn *VMNIC) Unfreeze() error {
-	if err := vpc.Ctl(vmn.h, vpc.Cmd(_UnfreezeCmd), nil, nil); err != nil {
-		return errors.Wrap(err, "unable to unfreeze VMNIC")
 	}
 
 	return nil
