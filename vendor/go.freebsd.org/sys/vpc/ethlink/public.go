@@ -37,13 +37,15 @@ import (
 
 // Config is the configuration used to create or open a VPC EthLink device.
 type Config struct {
-	ID   vpc.ID
-	Name string
+	ID        vpc.ID
+	Name      string
+	Writeable bool
 }
 
 func (c Config) MarshalZerologObject(e *zerolog.Event) {
 	e.Str("id", c.ID.String()).
-		Str("name", c.Name)
+		Str("name", c.Name).
+		Bool("writable", c.Writeable)
 }
 
 // EthLink is an opaque struct representing a VM NIC.
@@ -90,7 +92,12 @@ func Open(cfg Config) (*EthLink, error) {
 		return nil, errors.Wrap(err, "unable to create a new VPC EthLink handle type")
 	}
 
-	h, err := vpc.Open(cfg.ID, ht, vpc.FlagOpen|vpc.FlagRead|vpc.FlagWrite)
+	flags := vpc.FlagOpen | vpc.FlagRead
+	if cfg.Writeable {
+		flags |= vpc.FlagWrite
+	}
+
+	h, err := vpc.Open(cfg.ID, ht, flags)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to open VPC EthLink handle")
 	}

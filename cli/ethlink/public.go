@@ -2,6 +2,7 @@ package ethlink
 
 import (
 	"github.com/pkg/errors"
+	"github.com/sean-/vpc/cli/ethlink/destroy"
 	"github.com/sean-/vpc/cli/ethlink/list"
 	"github.com/sean-/vpc/internal/command"
 	"github.com/spf13/cobra"
@@ -23,7 +24,7 @@ var Cmd = &command.Command{
 
 	Setup: func(self *command.Command) error {
 		subCommands := command.Commands{
-			//destroy.Cmd,
+			destroy.Cmd,
 			list.Cmd,
 		}
 

@@ -9,6 +9,28 @@ import (
 	"go.freebsd.org/sys/vpc"
 )
 
+// AddEthLinkID adds the VM NIC ID flag to a given command.
+func AddEthLinkID(cmd *command.Command, keyName string, required bool) error {
+	key := keyName
+	const (
+		longName     = "ethlink-id"
+		shortName    = "E"
+		defaultValue = ""
+		description  = "Specify the EthLink ID"
+	)
+
+	flags := cmd.Cobra.Flags()
+	flags.StringP(longName, shortName, defaultValue, description)
+	if required {
+		cmd.Cobra.MarkFlagRequired(longName)
+	}
+
+	viper.BindPFlag(key, flags.Lookup(longName))
+	viper.SetDefault(key, defaultValue)
+
+	return nil
+}
+
 // AddID adds the ID flag to a given command.
 func AddID(cmd *command.Command, keyName string, required bool) error {
 	key := keyName
