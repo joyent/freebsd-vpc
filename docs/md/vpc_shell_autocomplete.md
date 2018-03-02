@@ -1,5 +1,5 @@
 ---
-date: 2018-03-01T23:47:53Z
+date: 2018-02-28T23:59:59Z
 title: "vpc shell autocomplete"
 slug: vpc_shell_autocomplete
 url: /command/vpc_shell_autocomplete
