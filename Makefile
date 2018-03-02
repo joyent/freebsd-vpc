@@ -1,3 +1,5 @@
+RELEASE_DATE?=2018-02-28T23:59:59Z
+
 # NOTES:
 #
 # 0. make get-tools && pkg intsall cockroachdb
@@ -13,7 +15,7 @@
 
 build: generate
 	mkdir -p ./bin
-	govvv build -o bin/vpc ./cmd/vpc
+	govvv build -ldflags "-X main.BuildDate=$(RELEASE_DATE)" -o bin/vpc ./cmd/vpc
 	bin/vpc shell autocomplete bash -d docs/bash.d/
 	bin/vpc docs man
 	bin/vpc docs md

@@ -54,13 +54,18 @@ Markdown file per command`,
 
 			log.Info().Str(config.KeyDocMarkdownDir, mdDir).Msg("Installing markdown documentation")
 
-			now := time.Now().UTC().Format(time.RFC3339)
+			now, err := time.Parse(time.RFC3339, buildtime.BuildDate)
+			if err != nil {
+				log.Warn().Err(err).Msg("unable to parse buildtime")
+				now = time.Now()
+			}
+			docDate := now.UTC().Format(time.RFC3339)
 			prefix := viper.GetString(config.KeyDocMarkdownURLPrefix)
 			prepender := func(filename string) string {
 				name := filepath.Base(filename)
 				base := strings.TrimSuffix(name, path.Ext(name))
 				url := prefix + path.Join("/", strings.ToLower(base), "/")
-				return fmt.Sprintf(template, now, strings.Replace(base, "_", " ", -1), base, url)
+				return fmt.Sprintf(template, docDate, strings.Replace(base, "_", " ", -1), base, url)
 			}
 
 			linkHandler := func(name string) string {
