@@ -95,3 +95,6 @@
 /vendor/github.com/freebsd/freebsd/tools/
 /vendor/github.com/freebsd/freebsd/usr.bin/
 /vendor/github.com/freebsd/freebsd/usr.sbin/
+
+# Image building tools
+/iso/*.iso
