@@ -20,7 +20,12 @@ vpc run [flags]
 ### Options
 
 ```
-  -h, --help   help for run
+      --db-host string       Database server address (default "127.0.0.1")
+      --db-name string       Database name (default "triton")
+      --db-password string   Database password (default "tls")
+      --db-port uint         Database port (default 26257)
+      --db-username string   Database username (default "root")
+  -h, --help                 help for run
 ```
 
 ### Options inherited from parent commands
