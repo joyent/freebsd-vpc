@@ -36,6 +36,7 @@ func (cmd *Command) Register(subCommands Commands) (err error) {
 			return errors.Wrapf(err, "unable to register %q subcommands", subCommand.Name)
 		}
 
+		cmd.Cobra.DisableAutoGenTag = true
 		cmd.Cobra.AddCommand(subCommand.Cobra)
 	}
 
