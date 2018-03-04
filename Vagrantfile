@@ -93,6 +93,10 @@ def configureFreeBSDDevProvisioners(vmCfg)
 		path: './vagrant/scripts/vagrant-freebsd-priv-dev-packages.sh',
 		privileged: true
 
+	vmCfg.vm.provision "shell",
+		path: './vagrant/scripts/vagrant-freebsd-unpriv-dev-migrate.sh',
+		privileged: false
+
 	return vmCfg
 end
 

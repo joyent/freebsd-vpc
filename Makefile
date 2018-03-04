@@ -39,7 +39,12 @@ CRDB_DBNAME?=triton
 CRDB_CERT_DSN?="sslmode=verify-ca"
 
 generate:
-	sh -c "cd db/migrations && go-bindata -o bindata.go -pkg migrations -ignore '(~|\.bak)$$' -prefix crdb crdb/"
+	cd db/migrations && \
+		$(GOPATH)/bin/go-bindata \
+			-o bindata.go \
+			-pkg migrations \
+			-ignore '(~|\.bak)$$' \
+			-prefix crdb crdb/
 
 crdb-mkdb:
 	cockroach sql \

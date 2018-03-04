@@ -12,7 +12,7 @@
 
 # Vagrant-related items
 /.vagrant/
-/guest_disks/
+vagrant/guest_disks/
 
 # System related items
 .DS_Store
