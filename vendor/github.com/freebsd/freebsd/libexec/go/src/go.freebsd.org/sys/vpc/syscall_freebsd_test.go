@@ -40,10 +40,10 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/kylelemons/godebug/pretty"
-	"github.com/rs/zerolog/log"
 	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc"
 	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc/vpctest"
+	"github.com/kylelemons/godebug/pretty"
+	"github.com/rs/zerolog/log"
 )
 
 // TestVPCCreateOpenClose performs a serialized and strict test of the Create,
@@ -51,7 +51,7 @@ import (
 // TestVPCCreateOpenCloseParallel.  Serialization is required because of the
 // use of vpctest.GetAllInterfaces().
 func TestVPCCreateOpenClose(t *testing.T) {
-	vpcsw0ID := vpc.GenID()
+	vpcsw0ID := vpc.GenID(vpc.ObjTypeSwitch)
 
 	existingIfaces, err := vpctest.GetAllInterfaces()
 	if err != nil {
@@ -131,7 +131,7 @@ func TestVPCCreateOpenClose(t *testing.T) {
 
 	}
 
-	vpcsw1ID := vpc.GenID()
+	vpcsw1ID := vpc.GenID(vpc.ObjTypeSwitch)
 
 	log.Debug().Msg("creating vpcsw1")
 	vpcsw1CreateFD, err := vpc.Open(vpcsw1ID, ht, vpc.FlagCreate)
@@ -196,7 +196,7 @@ func TestVPCCreateOpenCloseParallel(t *testing.T) {
 	for i := range testCases {
 		testCases[i] = _TestCase{
 			name: fmt.Sprintf("id%d", i),
-			id:   vpc.GenID(),
+			id:   vpc.GenID(vpc.ObjTypeSwitch),
 		}
 	}
 
@@ -213,7 +213,7 @@ func TestVPCCreateOpenCloseParallel(t *testing.T) {
 		testCase := testCase
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
-			vpcswID := vpc.GenID()
+			vpcswID := vpc.GenID(vpc.ObjTypeSwitch)
 
 			vpcswCHandle, err := vpc.Open(vpcswID, ht, vpc.FlagCreate)
 			if err != nil {
@@ -286,7 +286,7 @@ func TestVPCCreateOpenCloseParallel(t *testing.T) {
 }
 
 func TestVPCCreateCommitDestroyClose(t *testing.T) {
-	vpcsw0ID := vpc.GenID()
+	vpcsw0ID := vpc.GenID(vpc.ObjTypeSwitch)
 
 	ht, err := vpc.NewHandleType(vpc.HandleTypeInput{
 		Version: 1,
@@ -327,7 +327,7 @@ func TestVPCCreateCommitDestroyClose(t *testing.T) {
 
 func BenchmarkVPCCreateOpenClose(b *testing.B) {
 	b.RunParallel(func(pb *testing.PB) {
-		vpcsw0ID := vpc.GenID()
+		vpcsw0ID := vpc.GenID(vpc.ObjTypeSwitch)
 
 		ht, err := vpc.NewHandleType(vpc.HandleTypeInput{
 			Version: 1,

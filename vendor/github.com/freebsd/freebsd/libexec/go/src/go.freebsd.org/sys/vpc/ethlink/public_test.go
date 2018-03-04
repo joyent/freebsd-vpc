@@ -33,10 +33,10 @@ import (
 	"syscall"
 	"testing"
 
-	"github.com/sean-/seed"
 	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc"
 	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc/ethlink"
 	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc/vpctest"
+	"github.com/sean-/seed"
 )
 
 func init() {
@@ -48,7 +48,7 @@ func init() {
 func TestEthLink_CreateCommitDestroy(t *testing.T) {
 	var cfg ethlink.Config
 	{
-		cfg.ID = vpc.GenID()
+		cfg.ID = vpc.GenID(vpc.ObjTypeLinkEth)
 		cfg.ID.Node = [6]byte{}
 	}
 
@@ -210,7 +210,7 @@ func TestEthLink_CreateClose(t *testing.T) {
 
 	var cfg ethlink.Config
 	{
-		cfg.ID = vpc.GenID()
+		cfg.ID = vpc.GenID(vpc.ObjTypeLinkEth)
 		cfg.ID.Node = [6]byte{}
 	}
 
@@ -251,7 +251,7 @@ func TestEthLink_CreateDestroyClose(t *testing.T) {
 
 	var cfg ethlink.Config
 	{
-		cfg.ID = vpc.GenID()
+		cfg.ID = vpc.GenID(vpc.ObjTypeLinkEth)
 		cfg.ID.Node = [6]byte{}
 	}
 
@@ -299,7 +299,7 @@ func TestEthLink_CreateCommitDestroyClose(t *testing.T) {
 
 	var cfg ethlink.Config
 	{
-		cfg.ID = vpc.GenID()
+		cfg.ID = vpc.GenID(vpc.ObjTypeLinkEth)
 		cfg.ID.Node = [6]byte{}
 	}
 

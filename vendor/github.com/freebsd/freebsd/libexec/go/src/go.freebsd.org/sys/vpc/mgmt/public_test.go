@@ -32,10 +32,10 @@ package mgmt_test
 import (
 	"testing"
 
-	"github.com/sean-/seed"
 	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc"
 	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc/mgmt"
 	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc/vpctest"
+	"github.com/sean-/seed"
 )
 
 func init() {
@@ -46,7 +46,7 @@ func init() {
 // handle.
 func TestMgmt_OpenClose(t *testing.T) {
 	genIDPtr := func() *vpc.ID {
-		id := vpc.GenID()
+		id := vpc.GenID(vpc.ObjTypeMgmt)
 		return &id
 	}
 

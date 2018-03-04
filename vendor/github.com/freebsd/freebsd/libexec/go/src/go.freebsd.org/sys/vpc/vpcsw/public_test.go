@@ -34,10 +34,10 @@ import (
 	"syscall"
 	"testing"
 
-	"github.com/sean-/seed"
 	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc"
 	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc/vpcsw"
 	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc/vpctest"
+	"github.com/sean-/seed"
 )
 
 func init() {
@@ -48,7 +48,7 @@ func init() {
 // functionality of a switch.
 func TestVPCSW_CreateCommitDestroy(t *testing.T) {
 	cfg := vpcsw.Config{
-		ID:        vpc.GenID(),
+		ID:        vpc.GenID(vpc.ObjTypeSwitch),
 		VNI:       vpc.VNI(rand.Intn(int(vpc.VNIMax))),
 		Writeable: true,
 	}
@@ -211,7 +211,7 @@ func TestVPCSW_CreateClose(t *testing.T) {
 	}
 
 	cfg := vpcsw.Config{
-		ID:  vpc.GenID(),
+		ID:  vpc.GenID(vpc.ObjTypeSwitch),
 		VNI: vpc.VNI(rand.Intn(int(vpc.VNIMax))),
 	}
 
@@ -251,7 +251,7 @@ func TestVPCSW_CreateDestroyClose(t *testing.T) {
 	}
 
 	cfg := vpcsw.Config{
-		ID:  vpc.GenID(),
+		ID:  vpc.GenID(vpc.ObjTypeSwitch),
 		VNI: vpc.VNI(rand.Intn(int(vpc.VNIMax))),
 	}
 
@@ -298,7 +298,7 @@ func TestVPCSW_CreateCommitDestroyClose(t *testing.T) {
 	}
 
 	cfg := vpcsw.Config{
-		ID:  vpc.GenID(),
+		ID:  vpc.GenID(vpc.ObjTypeSwitch),
 		VNI: vpc.VNI(rand.Intn(int(vpc.VNIMax))),
 	}
 
@@ -348,7 +348,7 @@ func TestVPCSW_SwitchPort_ReAdd(t *testing.T) {
 	}
 
 	switchCfg := vpcsw.Config{
-		ID:        vpc.GenID(),
+		ID:        vpc.GenID(vpc.ObjTypeSwitch),
 		VNI:       vpc.VNI(rand.Intn(int(vpc.VNIMax))),
 		Writeable: true,
 	}
@@ -369,7 +369,7 @@ func TestVPCSW_SwitchPort_ReAdd(t *testing.T) {
 	}
 
 	// 1) add port
-	portID := vpc.GenID()
+	portID := vpc.GenID(vpc.ObjTypeSwitchPort)
 	if err = sw.PortAdd(portID, nil); err != nil {
 		t.Fatalf("unable to add port to switch: %v", err)
 	}
@@ -421,7 +421,7 @@ func TestVPCSW_SwitchPort_RedundantAdd(t *testing.T) {
 	}()
 
 	switchCfg := vpcsw.Config{
-		ID:        vpc.GenID(),
+		ID:        vpc.GenID(vpc.ObjTypeSwitch),
 		VNI:       vpc.VNI(rand.Intn(int(vpc.VNIMax))),
 		Writeable: true,
 	}
@@ -447,7 +447,7 @@ func TestVPCSW_SwitchPort_RedundantAdd(t *testing.T) {
 	}
 
 	// 1) add port
-	portID := vpc.GenID()
+	portID := vpc.GenID(vpc.ObjTypeSwitchPort)
 	if err = sw.PortAdd(portID, nil); err != nil {
 		t.Fatalf("unable to add port to switch: %v", err)
 	}

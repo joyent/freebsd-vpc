@@ -38,8 +38,8 @@ import (
 	"testing"
 	"unsafe"
 
-	"github.com/kylelemons/godebug/pretty"
 	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc"
+	"github.com/kylelemons/godebug/pretty"
 )
 
 func TestVPCIDBytes(t *testing.T) {
@@ -82,7 +82,7 @@ func TestVPCIDBytes(t *testing.T) {
 }
 
 func Test_VPC_ID(t *testing.T) {
-	origID := vpc.GenID()
+	origID := vpc.GenID(vpc.ObjTypeSwitch)
 	origIDStr := origID.String()
 	if len(origIDStr) != 36 {
 		t.Fatalf("ID wrong len")
@@ -116,7 +116,7 @@ func Test_VPC_ParseID(t *testing.T) {
 			ok:    false,
 		},
 		{
-			idStr: vpc.GenID().String(),
+			idStr: vpc.GenID(vpc.ObjTypeSwitch).String(),
 			ok:    true,
 		},
 	}

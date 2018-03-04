@@ -64,6 +64,10 @@ func Ctl(h *Handle, cmd Cmd, in []byte, out []byte) error {
 // returns EOPNOTSUPP.  Returned Handles must have their information Commit()'ed
 // in order for it to persist beyond the life of the Handle.
 func Open(id ID, ht HandleType, flags OpenFlags) (h *Handle, err error) {
+	if ht.ObjType() != id.ObjType {
+		return nil, errors.Errorf("unable to open Handle: VPC Object Type encoded in VPC ID does not match (handle object type 0x%02x != VPC ID object type 0x%02x)", int64(ht.ObjType()), int64(id.ObjType))
+	}
+
 	h = &Handle{}
 
 	// 580     AUE_VPC         NOSTD   { int vpc_open(const vpc_id_t *vpc_id, vpc_type_t obj_type, \
@@ -77,7 +81,6 @@ func Open(id ID, ht HandleType, flags OpenFlags) (h *Handle, err error) {
 
 	return h, nil
 }
-
 
 func ctl(h *Handle, cmd Cmd, in []byte, out []byte) error {
 	// Implementation sanity checking

@@ -68,12 +68,12 @@ type Byter interface {
 
 // ID is the globally unique identifier for a VPC object.
 type ID struct {
-	TimeLow     uint32
-	TimeMid     uint16
-	TimeHi      uint16
-	ClockSeqHi  uint8
-	ClockSeqLow uint8
-	Node        [6]byte
+	TimeLow    uint32
+	TimeMid    uint16
+	TimeHi     uint16
+	ClockSeqHi uint8
+	ObjType    ObjType
+	Node       [6]byte
 }
 
 func (id ID) MarshalZerologObject(e *zerolog.Event) {
@@ -89,7 +89,7 @@ func (id ID) Bytes() []byte {
 }
 
 // GenID randomly generates a new UUID
-func GenID() ID {
+func GenID(objType ObjType) ID {
 	randUint8 := func() uint8 {
 		var b [1]byte
 		if _, err := rand.Read(b[:]); err != nil {
@@ -129,12 +129,12 @@ func GenID() ID {
 	// an ID because I didn't want to fight with the language, but this should be
 	// done better and differently.
 	return ID{
-		TimeLow:     randUint32(),
-		TimeMid:     randUint16(),
-		TimeHi:      randUint16(),
-		ClockSeqHi:  randUint8(),
-		ClockSeqLow: randUint8(),
-		Node:        randNode(),
+		TimeLow:    randUint32(),
+		TimeMid:    randUint16(),
+		TimeHi:     randUint16(),
+		ClockSeqHi: randUint8(),
+		ObjType:    objType,
+		Node:       randNode(),
 	}
 }
 
@@ -153,11 +153,11 @@ func ParseID(idStr string) (ID, error) {
 	}
 
 	id := ID{
-		TimeLow:     binary.LittleEndian.Uint32(uuidRaw[0:]),
-		TimeMid:     binary.LittleEndian.Uint16(uuidRaw[4:]),
-		TimeHi:      binary.LittleEndian.Uint16(uuidRaw[6:]),
-		ClockSeqHi:  uint8(binary.LittleEndian.Uint16(uuidRaw[8:])),
-		ClockSeqLow: uint8(binary.LittleEndian.Uint16(uuidRaw[9:])),
+		TimeLow:    binary.LittleEndian.Uint32(uuidRaw[0:]),
+		TimeMid:    binary.LittleEndian.Uint16(uuidRaw[4:]),
+		TimeHi:     binary.LittleEndian.Uint16(uuidRaw[6:]),
+		ClockSeqHi: uint8(binary.LittleEndian.Uint16(uuidRaw[8:])),
+		ObjType:    ObjType(binary.LittleEndian.Uint16(uuidRaw[9:])),
 	}
 
 	buf := bytes.NewReader(uuidRaw[10:])

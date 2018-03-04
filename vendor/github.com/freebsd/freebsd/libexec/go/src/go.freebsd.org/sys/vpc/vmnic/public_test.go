@@ -33,10 +33,10 @@ import (
 	"syscall"
 	"testing"
 
-	"github.com/sean-/seed"
 	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc"
 	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc/vmnic"
 	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc/vpctest"
+	"github.com/sean-/seed"
 )
 
 func init() {
@@ -48,7 +48,7 @@ func init() {
 func TestVMNIC_CreateCommitDestroy(t *testing.T) {
 	var cfg vmnic.Config
 	{
-		cfg.ID = vpc.GenID()
+		cfg.ID = vpc.GenID(vpc.ObjTypeVMNIC)
 		cfg.MAC = cfg.ID.Node[:]
 	}
 
@@ -210,7 +210,7 @@ func TestVMNIC_CreateClose(t *testing.T) {
 
 	var cfg vmnic.Config
 	{
-		cfg.ID = vpc.GenID()
+		cfg.ID = vpc.GenID(vpc.ObjTypeVMNIC)
 		cfg.MAC = cfg.ID.Node[:]
 	}
 
@@ -251,7 +251,7 @@ func TestVMNIC_CreateDestroyClose(t *testing.T) {
 
 	var cfg vmnic.Config
 	{
-		cfg.ID = vpc.GenID()
+		cfg.ID = vpc.GenID(vpc.ObjTypeVMNIC)
 		cfg.MAC = cfg.ID.Node[:]
 	}
 
@@ -299,7 +299,7 @@ func TestVMNIC_CreateCommitDestroyClose(t *testing.T) {
 
 	var cfg vmnic.Config
 	{
-		cfg.ID = vpc.GenID()
+		cfg.ID = vpc.GenID(vpc.ObjTypeVMNIC)
 		cfg.MAC = cfg.ID.Node[:]
 	}
 
