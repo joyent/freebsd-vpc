@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -o errexit
+
 export ASSUME_ALWAYS_YES=yes
 
 pkg update

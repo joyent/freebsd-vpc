@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -o errexit
+
 chown vagrant:wheel \
        /opt/gopath \
        /opt/gopath/src \
