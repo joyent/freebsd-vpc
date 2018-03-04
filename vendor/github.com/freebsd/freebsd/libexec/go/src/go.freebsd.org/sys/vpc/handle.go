@@ -221,13 +221,13 @@ func (h *Handle) FD() HandleFD {
 }
 
 // Type returns the VPC Object Type used by this handle.
-func (h *Handle) Type() ObjType {
+func (h *Handle) Type() (ObjType, error) {
 	h.lock.RLock()
 	defer h.lock.RUnlock()
 
 	out := make([]byte, binary.MaxVarintLen64)
 	if err := ctl(h, _TypeCmd, nil, nil); err != nil {
-		return errors.Wrap(err, "unable to destroy VPC object")
+		return ObjTypeInvalid, errors.Wrap(err, "unable to destroy VPC object")
 	}
 
 	objType, n := binary.Uvarint(out)
