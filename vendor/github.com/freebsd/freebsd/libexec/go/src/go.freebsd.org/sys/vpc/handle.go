@@ -30,6 +30,8 @@
 package vpc
 
 import (
+	"encoding/binary"
+	"fmt"
 	"sync"
 
 	"github.com/pkg/errors"
@@ -178,7 +180,7 @@ const (
 	_MACSetCmd  = PrivBit | MutateBit | (Cmd(ObjTypeMeta) << 16) | Cmd(_MetaMACSetOp)
 	_MTUGetCmd  = (Cmd(ObjTypeMeta) << 16) | Cmd(_MetaMTUGetOp)
 	_MTUSetCmd  = PrivBit | MutateBit | (Cmd(ObjTypeMeta) << 16) | Cmd(_MetaMTUSetOp)
-	_TypeCmd    = (Cmd(ObjTypeMeta) << 16) | Cmd(_MetaTypeGetOp)
+	_TypeCmd    = OutBit | (Cmd(ObjTypeMeta) << 16) | Cmd(_MetaTypeGetOp)
 )
 
 // Commit increments the refcount on the object referrenced by this VPC Handle.
@@ -216,4 +218,22 @@ func (h *Handle) FD() HandleFD {
 	defer h.lock.RUnlock()
 
 	return h.fd
+}
+
+// Type returns the VPC Object Type used by this handle.
+func (h *Handle) Type() ObjType {
+	h.lock.RLock()
+	defer h.lock.RUnlock()
+
+	out := make([]byte, binary.MaxVarintLen64)
+	if err := ctl(h, _TypeCmd, nil, nil); err != nil {
+		return errors.Wrap(err, "unable to destroy VPC object")
+	}
+
+	objType, n := binary.Uvarint(out)
+	if n > 0 && n <= 2 {
+		return ObjType(objType), nil
+	}
+
+	panic(fmt.Sprintf("invariant: obj type too big for kernel interface output (want/got: 2/%d", n))
 }

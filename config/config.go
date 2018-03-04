@@ -13,6 +13,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/sean-/vpc/internal/buildtime"
 	"github.com/sean-/vpc/internal/logger"
+	"github.com/mitchellh/go-homedir"
 )
 
 const DefaultConnTimeout = 10 * time.Second
@@ -54,13 +55,28 @@ type Config struct {
 }
 
 func New() (*Config, error) {
+	caPath, err := homedir.Expand(".cockroach-certs/ca.crt")
+	if err != nil {
+		return nil, err
+	}
+
+	certPath, err := homedir.Expand(".cockroach-certs/client.root.crt")
+	if err != nil {
+		return nil, err
+	}
+
+	keyPath, err := homedir.Expand(".cockroach-certs/client.root.key")
+	if err != nil {
+		return nil, err
+	}
+
 	cfg := &Config{
 		DB: DB{
 			Scheme: DBSchemeCRDB,
 
-			CAPath:   "/usr/home/seanc/go/src/github.com/sean-/vpc/crdb/certs/ca.crt",
-			CertPath: "/usr/home/seanc/go/src/github.com/sean-/vpc/crdb/certs/client.root.crt",
-			KeyPath:  "/usr/home/seanc/go/src/github.com/sean-/vpc/crdb/certs/client.root.key",
+			CAPath:   caPath,
+			CertPath: certPath,
+			KeyPath:  keyPath,
 
 			PoolConfig: pgx.ConnPoolConfig{
 				MaxConnections: 5,

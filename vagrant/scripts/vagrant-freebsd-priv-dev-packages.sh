@@ -12,6 +12,7 @@ export ASSUME_ALWAYS_YES=yes
 
 pkg update
 pkg install -y \
+	databases/cockroach \
 	devel/git \
 	editors/vim-console \
 	lang/go \

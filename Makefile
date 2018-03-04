@@ -26,6 +26,7 @@ install:
 get-tools::
 	go get -u github.com/ahmetb/govvv
 	go get -u github.com/jteeuwen/go-bindata/...
+	go get -u github.com/golang/dep/cmd/dep
 
 DATA_DIR=`go env GOPATH`/src/github.com/sean-/vpc/crdb
 CERT_DIR=`go env GOPATH`/src/github.com/sean-/vpc/crdb/certs

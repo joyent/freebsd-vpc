@@ -19,7 +19,7 @@
     "libexec/go/src/go.freebsd.org/sys/vpc/vpcsw",
     "libexec/go/src/go.freebsd.org/sys/vpc/vpctest"
   ]
-  revision = "c20d5d004fe589518ffe467bc2d2c2aa21f7a619"
+  revision = "d3dbe3a00243cf3ae744c3ff694d3ae63060d834"
   source = "github.com/joyent/freebsd/libexec/go/src/go.freebsd.org/sys/vpc"
 
 [[projects]]
@@ -72,7 +72,7 @@
     "pgtype",
     "stdlib"
   ]
-  revision = "606697ffdfe6603013560dbc171656de57b4f542"
+  revision = "b931b56bf658b477add135472c8fd975daefb36a"
 
 [[projects]]
   branch = "master"
@@ -121,6 +121,12 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/mitchellh/go-homedir"
+  packages = ["."]
+  revision = "b8bc1bf767474819792c23f32d8286a45736f1c6"
+
+[[projects]]
+  branch = "master"
   name = "github.com/mitchellh/mapstructure"
   packages = ["."]
   revision = "00c29f56e2386353d58c599509e8dc3801b0d716"
@@ -142,15 +148,6 @@
   packages = ["."]
   revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
   version = "v0.8.0"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/pkg/term"
-  packages = [
-    ".",
-    "termios"
-  ]
-  revision = "b1f72af2d63057363398bec5873d16a98b453312"
 
 [[projects]]
   branch = "master"
@@ -238,7 +235,7 @@
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix"]
-  revision = "f6cff0780e542efa0c8e864dc8fa522808f6a598"
+  revision = "dd2ff4accc098aceecb86b36eaa7829b2a17b1c9"
 
 [[projects]]
   name = "golang.org/x/text"
@@ -262,6 +259,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "9190222ea2a1d173866cc665eb4eef906392f289301c7e7fadfffb9cf39037c5"
+  inputs-digest = "076f466c25fe4c3f4e30bdd3f8f4a1e66c623ec5015ba0a8d6235ede85d30332"
   solver-name = "gps-cdcl"
   solver-version = 1

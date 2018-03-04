@@ -119,8 +119,8 @@ def configureFreeBSDDBProvisioners(vmCfg, hostname, ip)
 
 	if hostname == "crdb3"
 		vmCfg.vm.provision "shell",
-			privileged: false,
-			inline: "cockroach init --host=#{ip}"
+			path: './vagrant/scripts/vagrant-freebsd-unpriv-db-init.sh',
+			privileged: false
 	end
 
 	return vmCfg
