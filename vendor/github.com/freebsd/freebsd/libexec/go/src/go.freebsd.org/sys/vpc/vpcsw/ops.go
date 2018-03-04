@@ -32,9 +32,9 @@ package vpcsw
 import (
 	"net"
 
+	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
-	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc"
 )
 
 // _SwitchCmd is the encoded type of operations that can be performed on a VPC
@@ -123,6 +123,15 @@ func (sw *VPCSW) Destroy() error {
 // the existing VPC Port to be added to this switch.
 func (sw *VPCSW) PortAdd(portID vpc.ID, mac net.HardwareAddr) error {
 	// TODO(seanc@): Test to see make sure the descriptor has the mutate bit set.
+
+	if portID.ObjType != vpc.ObjTypeSwitchPort {
+		// Try and be helpful and suggest the correct VPC ID based on the ObjType
+		// encoded in the handle.
+		suggestion := portID
+		suggestion.ObjType = vpc.ObjTypeSwitchPort
+
+		return errors.Errorf("unable to open add port: VPC Object Type encoded in VPC ID is does a switch port: HINT: did you mean %q?)", suggestion)
+	}
 
 	// Create the port
 	if err := vpc.Ctl(sw.h, vpc.Cmd(_PortAddCmd), portID.Bytes(), nil); err != nil {
