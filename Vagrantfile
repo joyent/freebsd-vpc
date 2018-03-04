@@ -2,7 +2,7 @@
 # vi: set ft=ruby :
 
 freebsd_box = 'jen20/FreeBSD-12.0-CURRENT-VPC'
-guest_disk_path = "#{File.dirname(__FILE__)}/guest_disks"
+guest_disk_path = "#{File.dirname(__FILE__)}/vagrant/guest_disks"
 
 Vagrant.configure("2") do |config|
 	config.ssh.extra_args = ["-e", "%"]
