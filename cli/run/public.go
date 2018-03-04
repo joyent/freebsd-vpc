@@ -7,7 +7,9 @@ import (
 	"github.com/sean-/vpc/config"
 	"github.com/sean-/vpc/internal/buildtime"
 	"github.com/sean-/vpc/internal/command"
+	internal_config "github.com/sean-/vpc/internal/config"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 const _CmdName = "run"
@@ -63,6 +65,76 @@ var Cmd = &command.Command{
 	},
 
 	Setup: func(self *command.Command) error {
+		{
+			const (
+				key          = internal_config.KeyPGDatabase
+				longName     = "db-name"
+				description  = "Database name"
+				defaultValue = "triton"
+			)
+
+			flags := self.Cobra.PersistentFlags()
+			flags.String(longName, defaultValue, description)
+			viper.BindPFlag(key, flags.Lookup(longName))
+			viper.SetDefault(key, defaultValue)
+		}
+
+		{
+			const (
+				key          = internal_config.KeyPGUser
+				longName     = "db-username"
+				description  = "Database username"
+				defaultValue = "root"
+			)
+
+			flags := self.Cobra.PersistentFlags()
+			flags.String(longName, defaultValue, description)
+			viper.BindPFlag(key, flags.Lookup(longName))
+			viper.SetDefault(key, defaultValue)
+		}
+
+		{
+			const (
+				key          = internal_config.KeyPGPassword
+				longName     = "db-password"
+				description  = "Database password"
+				defaultValue = "tls"
+			)
+
+			flags := self.Cobra.PersistentFlags()
+			flags.String(longName, defaultValue, description)
+			viper.BindPFlag(key, flags.Lookup(longName))
+			viper.SetDefault(key, defaultValue)
+		}
+
+		{
+			const (
+				key          = internal_config.KeyPGHost
+				longName     = "db-host"
+				description  = "Database server address"
+				defaultValue = "127.0.0.1"
+			)
+
+			flags := self.Cobra.PersistentFlags()
+			flags.String(longName, defaultValue, description)
+			viper.BindPFlag(key, flags.Lookup(longName))
+			viper.SetDefault(key, defaultValue)
+		}
+
+		{
+			const (
+				key          = internal_config.KeyPGPort
+				longName     = "db-port"
+				description  = "Database port"
+				defaultValue = 26257
+			)
+
+			flags := self.Cobra.PersistentFlags()
+			flags.Uint(longName, defaultValue, description)
+			viper.BindPFlag(key, flags.Lookup(longName))
+			viper.SetDefault(key, defaultValue)
+		}
+
 		return nil
 	},
 }

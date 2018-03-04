@@ -23,6 +23,12 @@ const (
 	KeyLogStats     = "log.stats"
 	KeyLogTermColor = "log.use-color"
 
+	KeyPGDatabase = "db.name"
+	KeyPGUser     = "db.username"
+	KeyPGPassword = "db.password"
+	KeyPGHost     = "db.host"
+	KeyPGPort     = "db.port"
+
 	KeySWPortAddEthLinkID          = "switch.port.add.ethlink-id"
 	KeySWPortAddID                 = "switch.port.add.id"
 	KeySWPortAddL2Name             = "switch.port.add.l2-name"

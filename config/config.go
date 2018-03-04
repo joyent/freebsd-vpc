@@ -9,11 +9,14 @@ import (
 	"time"
 
 	"github.com/jackc/pgx"
+	"github.com/mitchellh/go-homedir"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"github.com/sean-/vpc/internal/buildtime"
+	"github.com/sean-/vpc/internal/config"
 	"github.com/sean-/vpc/internal/logger"
-	"github.com/mitchellh/go-homedir"
+	"github.com/spf13/cast"
+	"github.com/spf13/viper"
 )
 
 const DefaultConnTimeout = 10 * time.Second
@@ -85,11 +88,11 @@ func New() (*Config, error) {
 
 				ConnConfig: pgx.ConnConfig{
 					Logger:   logger.NewPGX(log.Logger),
-					Database: "triton",    //viper.GetString(KeyPGDatabase),
-					User:     "root",      //viper.GetString(KeyPGUser),
-					Password: "tls",       //viper.GetString(KeyPGPassword),
-					Host:     "127.0.0.1", //viper.GetString(KeyPGHost),
-					Port:     26257,       //cast.ToUint16(viper.GetInt(KeyPGPort)),
+					Database: viper.GetString(config.KeyPGDatabase),
+					User:     viper.GetString(config.KeyPGUser),
+					Password: viper.GetString(config.KeyPGPassword),
+					Host:     viper.GetString(config.KeyPGHost),
+					Port:     cast.ToUint16(viper.GetInt(config.KeyPGPort)),
 					Dial:     (&net.Dialer{Timeout: DefaultConnTimeout, KeepAlive: 5 * time.Minute}).Dial,
 
 					UseFallbackTLS: false,
