@@ -77,6 +77,18 @@ Vagrant.configure("2") do |config|
 end
 
 def configureFreeBSDDevProvisioners(vmCfg)
+	vmCfg.vm.provision "file",
+		source: './vagrant/certs/ca/ca.crt',
+		destination: "/home/vagrant/.cockroach-certs/ca.crt"
+
+	vmCfg.vm.provision "file",
+		source: "./vagrant/certs/client/client.root.crt",
+		destination: "/home/vagrant/.cockroach-certs/client.root.crt"
+
+	vmCfg.vm.provision "file",
+		source: "./vagrant/certs/client/client.root.key",
+		destination: "/home/vagrant/.cockroach-certs/client.root.key"
+
 	vmCfg.vm.provision "shell",
 		path: './vagrant/scripts/vagrant-freebsd-priv-dev-packages.sh',
 		privileged: true

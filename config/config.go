@@ -55,17 +55,17 @@ type Config struct {
 }
 
 func New() (*Config, error) {
-	caPath, err := homedir.Expand(".cockroach-certs/ca.crt")
+	caPath, err := homedir.Expand("~/.cockroach-certs/ca.crt")
 	if err != nil {
 		return nil, err
 	}
 
-	certPath, err := homedir.Expand(".cockroach-certs/client.root.crt")
+	certPath, err := homedir.Expand("~/.cockroach-certs/client.root.crt")
 	if err != nil {
 		return nil, err
 	}
 
-	keyPath, err := homedir.Expand(".cockroach-certs/client.root.key")
+	keyPath, err := homedir.Expand("~/.cockroach-certs/client.root.key")
 	if err != nil {
 		return nil, err
 	}
