@@ -29,8 +29,8 @@ vpc ethlink destroy [flags]
 ```
   -F, --log-format string   Specify the log format ("auto", "zerolog", or "human") (default "auto")
   -l, --log-level string    Change the log level being sent to stdout (default "INFO")
-      --use-color           Use ASCII colors (default true)
-  -P, --use-pager           Use a pager to read the output (defaults to $PAGER, less(1), or more(1)) (default true)
+      --use-color           Use ASCII colors
+  -P, --use-pager           Use a pager to read the output (defaults to $PAGER, less(1), or more(1))
   -Z, --utc                 Display times in UTC
 ```
 
