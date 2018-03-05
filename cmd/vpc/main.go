@@ -13,6 +13,7 @@ var (
 	// Variables populated by govvv(1).
 	Version    = "dev"
 	BuildDate  string
+	DocsDate   string
 	GitCommit  string
 	GitBranch  string
 	GitState   string
@@ -39,5 +40,10 @@ func exportBuildtimeConsts() {
 	buildtime.GitState = GitState
 	buildtime.GitSummary = GitSummary
 	buildtime.BuildDate = BuildDate
+	if DocsDate != "" {
+		buildtime.DocsDate = DocsDate
+	} else {
+		buildtime.DocsDate = BuildDate
+	}
 	buildtime.Version = Version
 }

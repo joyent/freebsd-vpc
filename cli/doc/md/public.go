@@ -54,9 +54,9 @@ Markdown file per command`,
 
 			log.Info().Str(config.KeyDocMarkdownDir, mdDir).Msg("Installing markdown documentation")
 
-			now, err := time.Parse(time.RFC3339, buildtime.BuildDate)
+			now, err := time.Parse(time.RFC3339, buildtime.DocsDate)
 			if err != nil {
-				log.Warn().Err(err).Msg("unable to parse buildtime")
+				log.Warn().Err(err).Msg("unable to parse docsdate")
 				now = time.Now()
 			}
 			docDate := now.UTC().Format(time.RFC3339)
