@@ -94,16 +94,16 @@ CREATE TABLE IF NOT EXISTS az (
   UNIQUE(region_id, name)
 ) INTERLEAVE IN PARENT region(region_id);
 
--- vnis (VXLAN IDs) is a master table of all VNIs in use in a facility.  VNIs
+-- vni (VXLAN IDs) is a master table of all VNIs in use in a facility.  VNIs
 -- are populated on demand for a given facility.  Ideally it would be possible
 -- to create predicate indexes:
 --
--- * CREATE INDEX vnis_available_idx ON vnis (id) WHERE in_use = TRUE;
--- * CREATE INDEX vnis_used_idx ON vnis (id) WHERE in_use = FALSE;
+-- * CREATE INDEX vni_available_idx ON vnis (id) WHERE in_use = TRUE;
+-- * CREATE INDEX vni_used_idx ON vnis (id) WHERE in_use = FALSE;
 --
 -- For now, use a more simple data model and suck up the expense of performing a
 -- sequential scan to look for an available VNI in a facility.
-CREATE TABLE IF NOT EXISTS vnis (
+CREATE TABLE IF NOT EXISTS vni (
   facility_id UUID NOT NULL,
   vni INT NOT NULL CHECK (vni > 0 AND vni < 2 ^ 24),
 
@@ -156,7 +156,7 @@ CREATE TABLE IF NOT EXISTS subnet (
 -- conventional 4hr TTL.  One consequence of this is we explicitly do not
 -- support static ARP entries.  Static ARP will work until a VNIC or IP moves,
 -- at which point static arp will break 4-8hrs in the future.
-CREATE TABLE IF NOT EXISTS account_macs (
+CREATE TABLE IF NOT EXISTS account_mac (
   id UUID NOT NULL DEFAULT gen_random_uuid(),
   account_id UUID NOT NULL,
   mac TEXT NOT NULL,
@@ -333,7 +333,7 @@ CREATE TABLE IF NOT EXISTS router_subnet_interface (
   UNIQUE(mac_id, subnet_id),
   UNIQUE(id),
   CONSTRAINT router_id_fk FOREIGN KEY(router_id) REFERENCES router(id),
-  CONSTRAINT mac_id_fk FOREIGN KEY(mac_id, subnet_id) REFERENCES account_macs(id, subnet_id),
+  CONSTRAINT mac_id_fk FOREIGN KEY(mac_id, subnet_id) REFERENCES account_mac(id, subnet_id),
   CONSTRAINT vnic_id_fk FOREIGN KEY(vnic_id) REFERENCES vnic(id)
 ) INTERLEAVE IN PARENT router(router_id);
 
@@ -360,9 +360,9 @@ CREATE TABLE IF NOT EXISTS subnet_vni_vlan (
   vlan_id INT NOT NULL CHECK (vlan_id >= 0 AND vlan_id <= 4095),
   PRIMARY KEY(facility_id, vni, vlan_id),
   UNIQUE(subnet_id, facility_id),
-  CONSTRAINT vni_id_fk FOREIGN KEY(vni, facility_id) REFERENCES vnis(vni, facility_id),
+  CONSTRAINT vni_id_fk FOREIGN KEY(vni, facility_id) REFERENCES vni(vni, facility_id),
   CONSTRAINT subnet_id_fk FOREIGN KEY(subnet_id) REFERENCES subnet(id)
-) INTERLEAVE IN PARENT vnis(facility_id, vni);
+) INTERLEAVE IN PARENT vni(facility_id, vni);
 
 -- Compute Node ("CN") is the physical server responsible for hosting VMs.
 CREATE TABLE IF NOT EXISTS cn (
