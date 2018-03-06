@@ -30,6 +30,7 @@ var Cmd = &command.Command{
 
 	Cobra: &cobra.Command{
 		Use:          _CmdName,
+		Aliases:      []string{"ls"},
 		Short:        "list counts of each VPC type",
 		SilenceUsage: true,
 		Args:         cobra.NoArgs,

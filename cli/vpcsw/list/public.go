@@ -21,6 +21,7 @@ var Cmd = &command.Command{
 
 	Cobra: &cobra.Command{
 		Use:          _CmdName,
+		Aliases:      []string{"ls"},
 		Short:        "list interfaces",
 		SilenceUsage: true,
 		Args:         cobra.NoArgs,
