@@ -8,11 +8,11 @@ set -u
 
 vpc switch create --switch-id=${VPCSW0_ID} --vni=${VNI}
 
-vpc vmnic create --vmnic-id=${VMNIC1_ID}
+vpc vmnic create --vmnic-id=${VMNIC0_ID}
 vpc switch port add --switch-id=${VPCSW0_ID} --port-id=${VPCP0_ID}
 vpc switch port connect --port-id=${VPCP0_ID} --interface-id=${VMNIC0_ID}
 
-vpc vmnic create --vmnic-id=${VMNIC0_ID}
+vpc vmnic create --vmnic-id=${VMNIC1_ID}
 vpc switch port add --switch-id=${VPCSW0_ID} --port-id=${VPCP1_ID}
 vpc switch port connect --port-id=${VPCP1_ID} --interface-id=${VMNIC1_ID}
 
