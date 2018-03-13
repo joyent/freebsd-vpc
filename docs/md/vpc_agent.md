@@ -1,22 +1,26 @@
 ---
 date: 2018-02-28T23:59:59Z
-title: "vpc db"
-slug: vpc_db
-url: /command/vpc_db
+title: "vpc agent"
+slug: vpc_agent
+url: /command/vpc_agent
 ---
-## vpc db
+## vpc agent
 
-Interaction with the VPC database
+Run vpc
 
 ### Synopsis
 
 
-Interaction with the VPC database
+Run vpc
+
+```
+vpc agent [flags]
+```
 
 ### Options
 
 ```
-  -h, --help   help for db
+  -h, --help   help for agent
 ```
 
 ### Options inherited from parent commands
@@ -31,6 +35,4 @@ Interaction with the VPC database
 
 ### SEE ALSO
 * [vpc](/command/vpc)	 - vpc configures and manages VPCs
-* [vpc db migrate](/command/vpc_db_migrate)	 - Migrate vpc schema
-* [vpc db ping](/command/vpc_db_ping)	 - ping the database to ensure connectivity
 

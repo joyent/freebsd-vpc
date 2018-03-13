@@ -89,6 +89,8 @@ func Setup(v *viper.Viper) error {
 		return fmt.Errorf("unsupported log format: %q", logFmt)
 	}
 
+	zlog.Hook(closeConWriterHook{})
+
 	log.Logger = zlog
 
 	stdlog.SetFlags(0)
@@ -105,4 +107,14 @@ func Setup(v *viper.Viper) error {
 	}
 
 	return nil
+}
+
+type closeConWriterHook struct{}
+
+func (h closeConWriterHook) Run(e *zerolog.Event, level zerolog.Level, msg string) {
+	if level != zerolog.FatalLevel {
+		return
+	}
+
+	conswriter.GetTerminal().Close()
 }

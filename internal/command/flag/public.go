@@ -233,3 +233,25 @@ func GetSwitchID(v *viper.Viper, key string) (id vpc.ID, err error) {
 
 	return id, nil
 }
+
+// AddID adds the ID flag to a given command.
+func AddID(cmd *command.Command, keyName string, required bool) error {
+	key := keyName
+	const (
+		longName     = "id"
+		shortName    = "I"
+		defaultValue = ""
+		description  = "Specify the ID for a VPC Switch operation"
+	)
+
+	flags := cmd.Cobra.Flags()
+	flags.StringP(longName, shortName, defaultValue, description)
+	if required {
+		cmd.Cobra.MarkFlagRequired(longName)
+	}
+
+	viper.BindPFlag(key, flags.Lookup(longName))
+	viper.SetDefault(key, defaultValue)
+
+	return nil
+}
