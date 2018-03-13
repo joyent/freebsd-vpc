@@ -13,6 +13,7 @@
 # Vagrant-related items
 /.vagrant/
 vagrant/guest_disks/
+vagrant/boxes/
 
 # System related items
 .DS_Store
