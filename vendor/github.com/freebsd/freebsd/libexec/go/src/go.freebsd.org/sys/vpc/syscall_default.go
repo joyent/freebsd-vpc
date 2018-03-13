@@ -42,7 +42,7 @@ import (
 // Create flag is set and the id is found, Open returns EEXIST.  If an invalid
 // Flag is set, Open returns EINVAL.  If the HandleType is out of bounds, Open
 // returns EOPNOTSUPP.
-func Open(id ID, ht HandleType, flags Flags) (Handle, error) {
+func Open(id ID, ht HandleType, flags OpenFlags) (Handle, error) {
 	return ErrorHandle, errors.New("not implemented")
 }
 
