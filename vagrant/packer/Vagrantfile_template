@@ -5,7 +5,7 @@ Vagrant.configure("2") do |config|
 	config.ssh.sudo_command = 'sudo -E -H %c'
 	config.ssh.shell = "/bin/sh"
 
-	config.vm.guest = :freebsd
+	config.vm.guest = "freebsd"
 
 	config.vm.synced_folder ".", "/vagrant",
 		type: "nfs",
@@ -13,7 +13,7 @@ Vagrant.configure("2") do |config|
 		freebsd__nfs_options: ['nolockd'],
 		disable_usable_check: true
 
-	["vwmare_fusion", "vmware_workstation"].each do |p|
+	["vmware_fusion", "vmware_workstation"].each do |p|
 		config.vm.provider p do |v|
 			v.vmx["ethernet0.virtualDev"]  = "vmxnet3"
 			v.vmx["ethernet0.pciSlotNumber"] = "32"
