@@ -22,7 +22,7 @@ Vagrant.configure("2") do |config|
 
 		vmCfg.vm.network "private_network", ip: "172.27.10.5"
 
-		["vwmare_fusion", "vmware_workstation"].each do |p|
+		["vmware_fusion", "vmware_workstation"].each do |p|
 			vmCfg.vm.provider p do |v|
 				v.vmx["memsize"] = "1024"
 				v.vmx["numvcpus"] = "2"
@@ -35,14 +35,14 @@ Vagrant.configure("2") do |config|
 		hostname = "crdb%d" % [n + 1]
 		ip = "172.27.10.%d" % [n + 11]
 
-		config.vm.define hostname, autostart: false do | vmCfg|
+		config.vm.define hostname, autostart: false do |vmCfg|
 			vmCfg.vm.box = freebsd_box
 			vmCfg.vm.hostname = hostname
 			vmCfg = configureFreeBSDDBProvisioners(vmCfg, hostname, ip)
 		
 			vmCfg.vm.network "private_network", ip: ip
 
-			["vwmare_fusion", "vmware_workstation"].each do |p|
+			["vmware_fusion", "vmware_workstation"].each do |p|
 				vmCfg.vm.provider p do |v|
 					v.vmx["memsize"] = "1024"
 					v.vmx["numvcpus"] = "2"
@@ -60,7 +60,7 @@ Vagrant.configure("2") do |config|
 
 		vmCfg.vm.network "private_network", ip: "172.27.10.20"
 
-		["vwmare_fusion", "vmware_workstation"].each do |p|
+		["vmware_fusion", "vmware_workstation"].each do |p|
 			vmCfg.vm.provider p do |v|
 				v.vmx["memsize"] = "4096"
 				v.vmx["numvcpus"] = "2"
@@ -77,7 +77,7 @@ Vagrant.configure("2") do |config|
 
 		vmCfg.vm.network "private_network", ip: "172.27.10.21"
 
-		["vwmare_fusion", "vmware_workstation"].each do |p|
+		["vmware_fusion", "vmware_workstation"].each do |p|
 			vmCfg.vm.provider p do |v|
 				v.vmx["memsize"] = "4096"
 				v.vmx["numvcpus"] = "2"
@@ -189,7 +189,7 @@ def ensure_disk(vmCfg, dirname, filename)
 		system("cd \"#{dirname}\" && \"#{vdiskmanager}\" -c -s 30GB -a lsilogic -t 1 \"#{filename}\"")
 	end
 
-	["vwmare_fusion", "vmware_workstation"].each do |p|
+	["vmware_fusion", "vmware_workstation"].each do |p|
 		vmCfg.vm.provider p do |v|
 			v.vmx["scsi0:1.filename"] = File.expand_path(completePath)
 			v.vmx["scsi0:1.present"] = 'TRUE'
