@@ -9,7 +9,7 @@ require './vagrant/helper/utils'
 
 Vagrant.configure("2") do |config|
 	config.ssh.extra_args = ["-e", "%"]
-	
+
 	config.vm.define "compile", autostart: true, primary: true do |vmCfg|
 		vmCfg.vm.box = freebsd_box
 		vmCfg.vm.hostname = "freebsd-compile"
@@ -39,7 +39,7 @@ Vagrant.configure("2") do |config|
 			vmCfg.vm.box = freebsd_box
 			vmCfg.vm.hostname = hostname
 			vmCfg = configureFreeBSDDBProvisioners(vmCfg, hostname, ip)
-		
+
 			vmCfg.vm.network "private_network", ip: ip
 
 			["vmware_fusion", "vmware_workstation"].each do |p|
@@ -68,7 +68,7 @@ Vagrant.configure("2") do |config|
 			end
 		end
 	end
-	
+
 	config.vm.define "cn2", autostart: false do |vmCfg|
 		vmCfg.vm.box = freebsd_box
 		vmCfg.vm.hostname = "freebsd-cn2"
@@ -105,6 +105,10 @@ def configureFreeBSDDevProvisioners(vmCfg)
 		privileged: true
 
 	vmCfg.vm.provision "shell",
+		path: './vagrant/scripts/vagrant-freebsd-priv-chrony.sh',
+		privileged: true
+
+	vmCfg.vm.provision "shell",
 		path: './vagrant/scripts/vagrant-freebsd-unpriv-dev-migrate.sh',
 		privileged: false
 
@@ -116,26 +120,30 @@ def configureFreeBSDDBProvisioners(vmCfg, hostname, ip)
 		path: './vagrant/scripts/vagrant-freebsd-priv-db-packages.sh',
 		privileged: true
 
+	vmCfg.vm.provision "shell",
+		path: './vagrant/scripts/vagrant-freebsd-priv-chrony.sh',
+		privileged: true
+
 	vmCfg.vm.provision "file",
 		source: './vagrant/certs/ca/ca.crt',
 		destination: "/home/vagrant/.cockroach-certs/ca.crt"
-	
+
 	vmCfg.vm.provision "file",
 		source: "./vagrant/certs/client/client.root.crt",
 		destination: "/home/vagrant/.cockroach-certs/client.root.crt"
-	
+
 	vmCfg.vm.provision "file",
 		source: "./vagrant/certs/client/client.root.key",
 		destination: "/home/vagrant/.cockroach-certs/client.root.key"
-	
+
 	vmCfg.vm.provision "file",
 		source: './vagrant/certs/ca/ca.crt',
 		destination: "/secrets/crdb/ca.crt"
-	
+
 	vmCfg.vm.provision "file",
 		source: "./vagrant/certs/#{hostname}/node.crt",
 		destination: "/secrets/crdb/node.crt"
-	
+
 	vmCfg.vm.provision "file",
 		source: "./vagrant/certs/#{hostname}/node.key",
 		destination: "/secrets/crdb/node.key"
@@ -160,6 +168,10 @@ def configureFreeBSDProvisioners(vmCfg)
 
 	vmCfg.vm.provision "shell",
 		path: './vagrant/scripts/vagrant-freebsd-priv-packages.sh',
+		privileged: true
+
+	vmCfg.vm.provision "shell",
+		path: './vagrant/scripts/vagrant-freebsd-priv-chrony.sh',
 		privileged: true
 
 	vmCfg.vm.provision "shell",
