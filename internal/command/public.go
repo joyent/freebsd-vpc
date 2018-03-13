@@ -32,8 +32,10 @@ func (cmd *Command) Register(subCommands Commands) (err error) {
 			return errors.Errorf("%q[%d].%q is missing a Cobra instance", cmd.Name, i, subCommand.Name)
 		}
 
-		if err := subCommand.Setup(subCommand); err != nil {
-			return errors.Wrapf(err, "unable to register %q subcommands", subCommand.Name)
+		if subCommand.Setup != nil {
+			if err := subCommand.Setup(subCommand); err != nil {
+				return errors.Wrapf(err, "unable to register %q subcommands", subCommand.Name)
+			}
 		}
 
 		cmd.Cobra.DisableAutoGenTag = true

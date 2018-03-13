@@ -5,7 +5,6 @@ import (
 
 	"github.com/rs/zerolog/log"
 	"github.com/sean-/conswriter"
-	"github.com/sean-/vpc/cli"
 	"github.com/sean-/vpc/internal/buildtime"
 )
 
@@ -28,7 +27,7 @@ func main() {
 		p.Wait()
 	}()
 
-	if err := cli.Execute(); err != nil {
+	if err := Execute(); err != nil {
 		log.Error().Err(err).Msg("unable to run")
 		os.Exit(1)
 	}

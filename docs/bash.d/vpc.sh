@@ -226,6 +226,32 @@ __handle_word()
     __handle_word
 }
 
+_vpc_agent()
+{
+    last_command="vpc_agent"
+    commands=()
+
+    flags=()
+    two_word_flags=()
+    local_nonpersistent_flags=()
+    flags_with_completion=()
+    flags_completion=()
+
+    flags+=("--log-format=")
+    two_word_flags+=("-F")
+    flags+=("--log-level=")
+    two_word_flags+=("-l")
+    flags+=("--use-color")
+    flags+=("--use-pager")
+    flags+=("-P")
+    flags+=("--utc")
+    flags+=("-Z")
+
+    must_have_one_flag=()
+    must_have_one_noun=()
+    noun_aliases=()
+}
+
 _vpc_db_migrate()
 {
     last_command="vpc_db_migrate"
@@ -237,11 +263,6 @@ _vpc_db_migrate()
     flags_with_completion=()
     flags_completion=()
 
-    flags+=("--db-host=")
-    flags+=("--db-name=")
-    flags+=("--db-password=")
-    flags+=("--db-port=")
-    flags+=("--db-username=")
     flags+=("--log-format=")
     two_word_flags+=("-F")
     flags+=("--log-level=")
@@ -268,11 +289,6 @@ _vpc_db_ping()
     flags_with_completion=()
     flags_completion=()
 
-    flags+=("--db-host=")
-    flags+=("--db-name=")
-    flags+=("--db-password=")
-    flags+=("--db-port=")
-    flags+=("--db-username=")
     flags+=("--log-format=")
     two_word_flags+=("-F")
     flags+=("--log-level=")
@@ -301,11 +317,6 @@ _vpc_db()
     flags_with_completion=()
     flags_completion=()
 
-    flags+=("--db-host=")
-    flags+=("--db-name=")
-    flags+=("--db-password=")
-    flags+=("--db-port=")
-    flags+=("--db-username=")
     flags+=("--log-format=")
     two_word_flags+=("-F")
     flags+=("--log-level=")
@@ -569,37 +580,6 @@ _vpc_list()
     flags+=("--sort-by=")
     two_word_flags+=("-s")
     local_nonpersistent_flags+=("--sort-by=")
-    flags+=("--log-format=")
-    two_word_flags+=("-F")
-    flags+=("--log-level=")
-    two_word_flags+=("-l")
-    flags+=("--use-color")
-    flags+=("--use-pager")
-    flags+=("-P")
-    flags+=("--utc")
-    flags+=("-Z")
-
-    must_have_one_flag=()
-    must_have_one_noun=()
-    noun_aliases=()
-}
-
-_vpc_run()
-{
-    last_command="vpc_run"
-    commands=()
-
-    flags=()
-    two_word_flags=()
-    local_nonpersistent_flags=()
-    flags_with_completion=()
-    flags_completion=()
-
-    flags+=("--db-host=")
-    flags+=("--db-name=")
-    flags+=("--db-password=")
-    flags+=("--db-port=")
-    flags+=("--db-username=")
     flags+=("--log-format=")
     two_word_flags+=("-F")
     flags+=("--log-level=")
@@ -1204,12 +1184,12 @@ _vpc()
 {
     last_command="vpc"
     commands=()
+    commands+=("agent")
     commands+=("db")
     commands+=("doc")
     commands+=("ethlink")
     commands+=("interface")
     commands+=("list")
-    commands+=("run")
     commands+=("shell")
     commands+=("switch")
     commands+=("version")

@@ -42,13 +42,19 @@ check:
 install:
 	govvv install ./cmd/vpc
 
-get-tools::
+get-tools:
 	go get -u github.com/ahmetb/govvv
 	go get -u github.com/jteeuwen/go-bindata/...
 	go get -u github.com/golang/dep/cmd/dep
+	go get -u github.com/sean-/cfgt
+	go get -u github.com/hashicorp/packer
 	go get -u github.com/alecthomas/gometalinter
 	gometalinter --install
 
+vagrant-box:
+	cd vagrant/packer && cfgt --in template.json5 | \
+		packer build -
+	
 DATA_DIR=`go env GOPATH`/src/github.com/sean-/vpc/crdb
 CERT_DIR=`go env GOPATH`/src/github.com/sean-/vpc/crdb/certs
 KEY_DIR=$(CERT_DIR)/keys

@@ -4,8 +4,7 @@ import (
 	"context"
 
 	"github.com/pkg/errors"
-	"github.com/sean-/vpc/agent/db"
-	"github.com/sean-/vpc/config"
+	"github.com/sean-/vpc/db"
 )
 
 type Agent struct {
@@ -14,25 +13,22 @@ type Agent struct {
 	shutdown    func()
 }
 
-func New(cfg *config.Config) (agent *Agent, err error) {
-	a := &Agent{}
+func New(pool *db.Pool) (agent *Agent, err error) {
+	if pool == nil {
+		return nil, errors.New("DBPool must be initialized")
+	}
 
-	{
-		pgPool, err := db.New(cfg)
-		if err != nil {
-			return nil, errors.Wrap(err, "unable to create a new DB connection pool")
-		}
+	a := &Agent{
+		dbPool: pool,
+	}
 
-		a.dbPool = pgPool
+	if err := a.dbPool.Ping(); err != nil {
+		return nil, errors.Wrap(err, "unable to ping database")
 	}
 
 	a.shutdownCtx, a.shutdown = context.WithCancel(context.Background())
 
 	return a, nil
-}
-
-func (a *Agent) Pool() *db.Pool {
-	return a.dbPool
 }
 
 func (a *Agent) Start() error {
