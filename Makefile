@@ -20,6 +20,25 @@ build: generate
 	bin/vpc docs man | cat
 	bin/vpc docs md | cat
 
+check:
+	gometalinter \
+		--deadline 10m \
+		--vendor \
+		--sort="path" \
+		--aggregate \
+		--enable-gc \
+		--disable-all \
+		--enable goimports \
+		--enable misspell \
+		--enable vet \
+		--enable deadcode \
+		--enable varcheck \
+		--enable ineffassign \
+		--enable structcheck \
+		--enable unconvert \
+		--enable gofmt \
+		./...
+
 install:
 	govvv install ./cmd/vpc
 
@@ -29,12 +48,13 @@ get-tools:
 	go get -u github.com/golang/dep/cmd/dep
 	go get -u github.com/sean-/cfgt
 	go get -u github.com/hashicorp/packer
+	go get -u github.com/alecthomas/gometalinter
+	gometalinter --install
 
 vagrant-box:
 	cd vagrant/packer && cfgt --in template.json5 | \
 		packer build -
 	
-
 DATA_DIR=`go env GOPATH`/src/github.com/sean-/vpc/crdb
 CERT_DIR=`go env GOPATH`/src/github.com/sean-/vpc/crdb/certs
 KEY_DIR=$(CERT_DIR)/keys
