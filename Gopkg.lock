@@ -190,6 +190,12 @@
   revision = "e2103e2c35297fb7e17febb81e49b312087a2372"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/sean-/sysexits"
+  packages = ["."]
+  revision = "598690305aaad5eed500b654afd2d1502b26450d"
+
+[[projects]]
   name = "github.com/spf13/afero"
   packages = [
     ".",
