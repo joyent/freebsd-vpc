@@ -1,12 +1,12 @@
 package port
 
 import (
+	"github.com/joyent/freebsd-vpc/cmd/vpc/vpcsw/port/add"
+	"github.com/joyent/freebsd-vpc/cmd/vpc/vpcsw/port/connect"
+	"github.com/joyent/freebsd-vpc/cmd/vpc/vpcsw/port/disconnect"
+	"github.com/joyent/freebsd-vpc/cmd/vpc/vpcsw/port/remove"
+	"github.com/joyent/freebsd-vpc/internal/command"
 	"github.com/pkg/errors"
-	"github.com/sean-/vpc/cmd/vpc/vpcsw/port/add"
-	"github.com/sean-/vpc/cmd/vpc/vpcsw/port/connect"
-	"github.com/sean-/vpc/cmd/vpc/vpcsw/port/disconnect"
-	"github.com/sean-/vpc/cmd/vpc/vpcsw/port/remove"
-	"github.com/sean-/vpc/internal/command"
 	"github.com/spf13/cobra"
 )
 

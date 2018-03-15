@@ -1,7 +1,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-freebsd_box = 'jen20/FreeBSD-12.0-CURRENT-VPC'
+freebsd_box = 'joyent/FreeBSD-12.0-CURRENT-VPC'
 guest_disk_path = "#{File.dirname(__FILE__)}/vagrant/guest_disks"
 
 require './vagrant/helper/core'
@@ -16,7 +16,7 @@ Vagrant.configure("2") do |config|
 		vmCfg = configureFreeBSDDevProvisioners(vmCfg)
 
 		vmCfg = configureSyncedDir(vmCfg, '.',
-			'/opt/gopath/src/github.com/sean-/vpc')
+			'/opt/gopath/src/github.com/joyent/freebsd-vpc')
 
 		vmCfg = addPrivateNICOptions(vmCfg, "172.27.10.5")
 		vmCfg = configureMachineSize(vmCfg, 2, 1024)

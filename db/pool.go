@@ -13,10 +13,10 @@ import (
 
 	"github.com/jackc/pgx"
 	"github.com/jackc/pgx/stdlib"
+	"github.com/joyent/freebsd-vpc/internal/buildtime"
+	"github.com/joyent/freebsd-vpc/internal/logger"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
-	"github.com/sean-/vpc/internal/buildtime"
-	"github.com/sean-/vpc/internal/logger"
 )
 
 type Pool struct {

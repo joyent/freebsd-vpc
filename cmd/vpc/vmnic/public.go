@@ -1,13 +1,13 @@
 package vmnic
 
 import (
+	"github.com/joyent/freebsd-vpc/cmd/vpc/vmnic/create"
+	"github.com/joyent/freebsd-vpc/cmd/vpc/vmnic/destroy"
+	"github.com/joyent/freebsd-vpc/cmd/vpc/vmnic/get"
+	"github.com/joyent/freebsd-vpc/cmd/vpc/vmnic/list"
+	"github.com/joyent/freebsd-vpc/cmd/vpc/vmnic/set"
+	"github.com/joyent/freebsd-vpc/internal/command"
 	"github.com/pkg/errors"
-	"github.com/sean-/vpc/cmd/vpc/vmnic/create"
-	"github.com/sean-/vpc/cmd/vpc/vmnic/destroy"
-	"github.com/sean-/vpc/cmd/vpc/vmnic/get"
-	"github.com/sean-/vpc/cmd/vpc/vmnic/list"
-	"github.com/sean-/vpc/cmd/vpc/vmnic/set"
-	"github.com/sean-/vpc/internal/command"
 	"github.com/spf13/cobra"
 )
 

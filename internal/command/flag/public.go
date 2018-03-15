@@ -4,8 +4,8 @@ import (
 	"net"
 
 	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc"
+	"github.com/joyent/freebsd-vpc/internal/command"
 	"github.com/pkg/errors"
-	"github.com/sean-/vpc/internal/command"
 	"github.com/spf13/viper"
 )
 

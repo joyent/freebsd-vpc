@@ -1,16 +1,16 @@
 package migrate
 
 import (
+	"github.com/joyent/freebsd-vpc/cmd/vpc/config"
+	"github.com/joyent/freebsd-vpc/db"
+	"github.com/joyent/freebsd-vpc/db/migrations"
+	"github.com/joyent/freebsd-vpc/internal/buildtime"
+	"github.com/joyent/freebsd-vpc/internal/command"
 	"github.com/mattes/migrate"
 	"github.com/mattes/migrate/database/postgres"
 	"github.com/mattes/migrate/source/go-bindata"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
-	"github.com/sean-/vpc/cmd/vpc/config"
-	"github.com/sean-/vpc/db"
-	"github.com/sean-/vpc/db/migrations"
-	"github.com/sean-/vpc/internal/buildtime"
-	"github.com/sean-/vpc/internal/command"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )

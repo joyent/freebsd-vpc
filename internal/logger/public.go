@@ -8,12 +8,12 @@ import (
 	"os"
 	"time"
 
-	isatty "github.com/mattn/go-isatty"
+	"github.com/joyent/freebsd-vpc/internal/config"
+	"github.com/mattn/go-isatty"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/sean-/conswriter"
-	"github.com/sean-/vpc/internal/config"
 	"github.com/spf13/viper"
 )
 

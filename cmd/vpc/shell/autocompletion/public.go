@@ -1,9 +1,9 @@
 package autocompletion
 
 import (
+	"github.com/joyent/freebsd-vpc/cmd/vpc/shell/autocompletion/bash"
+	"github.com/joyent/freebsd-vpc/internal/command"
 	"github.com/rs/zerolog/log"
-	"github.com/sean-/vpc/cmd/vpc/shell/autocompletion/bash"
-	"github.com/sean-/vpc/internal/command"
 	"github.com/spf13/cobra"
 )
 

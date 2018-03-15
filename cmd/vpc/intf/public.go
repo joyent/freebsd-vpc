@@ -1,9 +1,9 @@
 package intf
 
 import (
+	"github.com/joyent/freebsd-vpc/cmd/vpc/intf/list"
+	"github.com/joyent/freebsd-vpc/internal/command"
 	"github.com/rs/zerolog/log"
-	"github.com/sean-/vpc/cmd/vpc/intf/list"
-	"github.com/sean-/vpc/internal/command"
 	"github.com/spf13/cobra"
 )
 

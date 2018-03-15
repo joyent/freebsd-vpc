@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/sean-/vpc/internal/config"
+	"github.com/joyent/freebsd-vpc/internal/config"
 	"github.com/spf13/viper"
 )
 
 type Format uint
 
 const (
-	FormatAuto Format = iota
+	FormatAuto    Format = iota
 	FormatZerolog
 	FormatHuman
 )
