@@ -5,6 +5,7 @@ import (
 
 	"github.com/rs/zerolog/log"
 	"github.com/sean-/conswriter"
+	"github.com/sean-/sysexits"
 	"github.com/sean-/vpc/internal/buildtime"
 )
 
@@ -19,7 +20,7 @@ var (
 	GitSummary string
 )
 
-func main() {
+func realmain() int {
 	exportBuildtimeConsts()
 
 	defer func() {
@@ -29,8 +30,14 @@ func main() {
 
 	if err := Execute(); err != nil {
 		log.Error().Err(err).Msg("unable to run")
-		os.Exit(1)
+		os.Exit(sysexits.Software)
 	}
+
+	return sysexits.OK
+}
+
+func main() {
+	os.Exit(realmain())
 }
 
 func exportBuildtimeConsts() {
