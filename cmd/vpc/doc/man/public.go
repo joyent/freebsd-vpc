@@ -6,6 +6,7 @@ import (
 	"path"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
@@ -33,10 +34,17 @@ in the "docs/man" directory under the current directory.`,
 		},
 
 		RunE: func(cmd *cobra.Command, args []string) error {
+			now, err := time.Parse(time.RFC3339, buildtime.DocsDate)
+			if err != nil {
+				log.Warn().Err(err).Msg("unable to parse docsdate")
+				now = time.Now()
+			}
+
 			header := &doc.GenManHeader{
 				Manual:  buildtime.PROGNAME,
 				Section: strconv.Itoa(config.ManSect),
 				Source:  strings.Join([]string{buildtime.PROGNAME, buildtime.Version}, " "),
+				Date:    &now,
 			}
 
 			manDir := viper.GetString(config.KeyDocManDir)
@@ -51,7 +59,7 @@ in the "docs/man" directory under the current directory.`,
 			cmd.Root().DisableAutoGenTag = true
 			log.Info().Str("MANDIR", manDir).Int("section", config.ManSect).Msg("Installing man(1) pages")
 
-			err := doc.GenManTree(cmd.Root(), header, manSectDir)
+			err = doc.GenManTree(cmd.Root(), header, manSectDir)
 			if err != nil {
 				return errors.Wrap(err, "unable to generate man(1) pages")
 			}
