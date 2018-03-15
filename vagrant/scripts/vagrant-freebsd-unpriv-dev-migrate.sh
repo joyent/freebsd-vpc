@@ -11,7 +11,7 @@ cat > ~/.config/vpc/vpc.toml <<EOF
 host = "172.27.10.11"
 EOF
 
-cd /opt/gopath/src/github.com/sean-/vpc
+cd /opt/gopath/src/github.com/joyent/freebsd-vpc
 make get-tools
 make
 bin/vpc db migrate

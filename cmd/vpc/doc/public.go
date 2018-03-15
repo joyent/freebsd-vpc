@@ -1,11 +1,11 @@
 package doc
 
 import (
+	"github.com/joyent/freebsd-vpc/cmd/vpc/doc/man"
+	"github.com/joyent/freebsd-vpc/cmd/vpc/doc/md"
+	"github.com/joyent/freebsd-vpc/internal/buildtime"
+	"github.com/joyent/freebsd-vpc/internal/command"
 	"github.com/rs/zerolog/log"
-	"github.com/sean-/vpc/cmd/vpc/doc/man"
-	"github.com/sean-/vpc/cmd/vpc/doc/md"
-	"github.com/sean-/vpc/internal/buildtime"
-	"github.com/sean-/vpc/internal/command"
 	"github.com/spf13/cobra"
 )
 

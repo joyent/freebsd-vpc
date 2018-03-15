@@ -1,10 +1,10 @@
 package ethlink
 
 import (
+	"github.com/joyent/freebsd-vpc/cmd/vpc/ethlink/destroy"
+	"github.com/joyent/freebsd-vpc/cmd/vpc/ethlink/list"
+	"github.com/joyent/freebsd-vpc/internal/command"
 	"github.com/pkg/errors"
-	"github.com/sean-/vpc/cmd/vpc/ethlink/destroy"
-	"github.com/sean-/vpc/cmd/vpc/ethlink/list"
-	"github.com/sean-/vpc/internal/command"
 	"github.com/spf13/cobra"
 )
 

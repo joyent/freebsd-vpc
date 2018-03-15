@@ -56,8 +56,8 @@ vagrant-box:
 	cd vagrant/packer && cfgt --in template.json5 | \
 		packer build -
 	
-DATA_DIR=`go env GOPATH`/src/github.com/sean-/vpc/crdb
-CERT_DIR=`go env GOPATH`/src/github.com/sean-/vpc/crdb/certs
+DATA_DIR=`go env GOPATH`/src/github.com/joyent/freebsd-vpc/crdb
+CERT_DIR=`go env GOPATH`/src/github.com/joyent/freebsd-vpc/crdb/certs
 KEY_DIR=$(CERT_DIR)/keys
 
 CRDB_HOST?=127.0.0.1

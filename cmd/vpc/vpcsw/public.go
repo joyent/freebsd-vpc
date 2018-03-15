@@ -1,12 +1,12 @@
 package vpcsw
 
 import (
+	"github.com/joyent/freebsd-vpc/cmd/vpc/vpcsw/create"
+	"github.com/joyent/freebsd-vpc/cmd/vpc/vpcsw/destroy"
+	"github.com/joyent/freebsd-vpc/cmd/vpc/vpcsw/list"
+	"github.com/joyent/freebsd-vpc/cmd/vpc/vpcsw/port"
+	"github.com/joyent/freebsd-vpc/internal/command"
 	"github.com/pkg/errors"
-	"github.com/sean-/vpc/cmd/vpc/vpcsw/create"
-	"github.com/sean-/vpc/cmd/vpc/vpcsw/destroy"
-	"github.com/sean-/vpc/cmd/vpc/vpcsw/list"
-	"github.com/sean-/vpc/cmd/vpc/vpcsw/port"
-	"github.com/sean-/vpc/internal/command"
 	"github.com/spf13/cobra"
 )
 

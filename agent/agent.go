@@ -3,8 +3,8 @@ package agent
 import (
 	"context"
 
+	"github.com/joyent/freebsd-vpc/db"
 	"github.com/pkg/errors"
-	"github.com/sean-/vpc/db"
 )
 
 type Agent struct {

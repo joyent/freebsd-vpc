@@ -1,10 +1,10 @@
 package db
 
 import (
+	"github.com/joyent/freebsd-vpc/cmd/vpc/db/migrate"
+	"github.com/joyent/freebsd-vpc/cmd/vpc/db/ping"
+	"github.com/joyent/freebsd-vpc/internal/command"
 	"github.com/rs/zerolog/log"
-	"github.com/sean-/vpc/cmd/vpc/db/migrate"
-	"github.com/sean-/vpc/cmd/vpc/db/ping"
-	"github.com/sean-/vpc/internal/command"
 	"github.com/spf13/cobra"
 )
 

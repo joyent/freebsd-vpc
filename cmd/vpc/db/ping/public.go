@@ -3,11 +3,11 @@ package ping
 import (
 	"time"
 
+	"github.com/joyent/freebsd-vpc/cmd/vpc/config"
+	"github.com/joyent/freebsd-vpc/db"
+	"github.com/joyent/freebsd-vpc/internal/command"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
-	"github.com/sean-/vpc/cmd/vpc/config"
-	"github.com/sean-/vpc/db"
-	"github.com/sean-/vpc/internal/command"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )

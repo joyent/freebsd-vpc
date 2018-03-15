@@ -84,7 +84,7 @@ func _1517299952_initDownSql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "1517299952_init.down.sql", size: 786, mode: os.FileMode(420), modTime: time.Unix(1520743874, 0)}
+	info := bindataFileInfo{name: "1517299952_init.down.sql", size: 786, mode: os.FileMode(420), modTime: time.Unix(1521137742, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -104,7 +104,7 @@ func _1517299952_initUpSql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "1517299952_init.up.sql", size: 16035, mode: os.FileMode(420), modTime: time.Unix(1520743874, 0)}
+	info := bindataFileInfo{name: "1517299952_init.up.sql", size: 16035, mode: os.FileMode(420), modTime: time.Unix(1521137742, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -162,7 +162,7 @@ func AssetNames() []string {
 // _bindata is a table, holding each asset generator, mapped to its name.
 var _bindata = map[string]func() (*asset, error){
 	"1517299952_init.down.sql": _1517299952_initDownSql,
-	"1517299952_init.up.sql": _1517299952_initUpSql,
+	"1517299952_init.up.sql":   _1517299952_initUpSql,
 }
 
 // AssetDir returns the file names below a certain
@@ -204,9 +204,10 @@ type bintree struct {
 	Func     func() (*asset, error)
 	Children map[string]*bintree
 }
+
 var _bintree = &bintree{nil, map[string]*bintree{
 	"1517299952_init.down.sql": &bintree{_1517299952_initDownSql, map[string]*bintree{}},
-	"1517299952_init.up.sql": &bintree{_1517299952_initUpSql, map[string]*bintree{}},
+	"1517299952_init.up.sql":   &bintree{_1517299952_initUpSql, map[string]*bintree{}},
 }}
 
 // RestoreAsset restores an asset under the given directory
@@ -255,4 +256,3 @@ func _filePath(dir, name string) string {
 	cannonicalName := strings.Replace(name, "\\", "/", -1)
 	return filepath.Join(append([]string{dir}, strings.Split(cannonicalName, "/")...)...)
 }
-

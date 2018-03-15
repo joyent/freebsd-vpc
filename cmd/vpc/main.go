@@ -3,10 +3,10 @@ package main
 import (
 	"os"
 
+	"github.com/joyent/freebsd-vpc/internal/buildtime"
 	"github.com/rs/zerolog/log"
 	"github.com/sean-/conswriter"
 	"github.com/sean-/sysexits"
-	"github.com/sean-/vpc/internal/buildtime"
 )
 
 var (

@@ -6,7 +6,7 @@ chown vagrant:wheel \
        /opt/gopath \
        /opt/gopath/src \
        /opt/gopath/src/github.com \
-       /opt/gopath/src/github.com/sean-
+       /opt/gopath/src/github.com/joyent
 
 export ASSUME_ALWAYS_YES=yes
 
@@ -28,6 +28,6 @@ cat <<EOT >> /home/vagrant/.profile
 export GOPATH=/opt/gopath
 export PATH=\$GOPATH/bin:\$PATH
 
-cd /opt/gopath/src/github.com/sean-/vpc
+cd /opt/gopath/src/github.com/joyent/freebsd-vpc
 EOT
 

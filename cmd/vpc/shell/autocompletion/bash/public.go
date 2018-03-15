@@ -4,11 +4,11 @@ import (
 	"os"
 	"path"
 
+	"github.com/joyent/freebsd-vpc/internal/buildtime"
+	"github.com/joyent/freebsd-vpc/internal/command"
+	"github.com/joyent/freebsd-vpc/internal/config"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
-	"github.com/sean-/vpc/internal/buildtime"
-	"github.com/sean-/vpc/internal/command"
-	"github.com/sean-/vpc/internal/config"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )

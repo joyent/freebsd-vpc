@@ -1,7 +1,7 @@
 package list
 
 import (
-	"github.com/sean-/vpc/internal/command"
+	"github.com/joyent/freebsd-vpc/internal/command"
 	"github.com/spf13/cobra"
 )
 
