@@ -15,19 +15,11 @@ Vagrant.configure("2") do |config|
 		vmCfg.vm.hostname = "freebsd-compile"
 		vmCfg = configureFreeBSDDevProvisioners(vmCfg)
 
-		vmCfg.vm.synced_folder '.',
-			'/opt/gopath/src/github.com/sean-/vpc',
-			type: "nfs",
-			bsd__nfs_options: ['noatime']
+		vmCfg = configureSyncedDir(vmCfg, '.',
+			'/opt/gopath/src/github.com/sean-/vpc')
 
 		vmCfg = addPrivateNICOptions(vmCfg, "172.27.10.5")
-
-		["vmware_fusion", "vmware_workstation"].each do |p|
-			vmCfg.vm.provider p do |v|
-				v.vmx["memsize"] = "1024"
-				v.vmx["numvcpus"] = "2"
-			end
-		end
+		vmCfg = configureMachineSize(vmCfg, 2, 1024)
 	end
 
 	3.times do |n|
@@ -40,13 +32,7 @@ Vagrant.configure("2") do |config|
 			vmCfg = configureFreeBSDDBProvisioners(vmCfg, hostname, ip)
 
 			vmCfg = addPrivateNICOptions(vmCfg, ip)
-
-			["vmware_fusion", "vmware_workstation"].each do |p|
-				vmCfg.vm.provider p do |v|
-					v.vmx["memsize"] = "1024"
-					v.vmx["numvcpus"] = "2"
-				end
-			end
+			vmCfg = configureMachineSize(vmCfg, 2, 1024)
 		end
 	end
 
@@ -57,13 +43,7 @@ Vagrant.configure("2") do |config|
 		vmCfg = ensure_disk(vmCfg, guest_disk_path, 'cn1_guests.vmdk')
 
 		vmCfg = addPrivateNICOptions(vmCfg, "172.27.10.20")
-
-		["vmware_fusion", "vmware_workstation"].each do |p|
-			vmCfg.vm.provider p do |v|
-				v.vmx["memsize"] = "4096"
-				v.vmx["numvcpus"] = "2"
-			end
-		end
+		vmCfg = configureMachineSize(vmCfg, 2, 4096)
 	end
 
 	config.vm.define "cn2", autostart: false do |vmCfg|
@@ -73,13 +53,7 @@ Vagrant.configure("2") do |config|
 		vmCfg = ensure_disk(vmCfg, guest_disk_path, 'cn2_guests.vmdk')
 		
 		vmCfg = addPrivateNICOptions(vmCfg, "172.27.10.21")
-
-		["vmware_fusion", "vmware_workstation"].each do |p|
-			vmCfg.vm.provider p do |v|
-				v.vmx["memsize"] = "4096"
-				v.vmx["numvcpus"] = "2"
-			end
-		end
+		vmCfg = configureMachineSize(vmCfg, 2, 4096)
 	end
 end
 
@@ -91,6 +65,34 @@ def addPrivateNICOptions(vmCfg, ip)
 			v.vmx["ethernet1.virtualdev"] = "vmxnet3"
 			v.vmx["ethernet1.pcislotnumber"] = "192"
 		end
+	end
+
+	return vmCfg
+end
+
+def configureMachineSize(vmCfg, vcpuCount, memSize)
+	["vmware_fusion", "vmware_workstation"].each do |p|
+		vmCfg.vm.provider p do |v|
+			v.vmx["memsize"] = "1024"
+			v.vmx["numvcpus"] = "2"
+		end
+	end
+
+	return vmCfg
+end
+
+def configureSyncedDir(vmCfg, hostSource, guestTarget)
+	if Vagrant::Util::Platform::windows?
+		vmCfg.vm.synced_folder hostSource,
+			guestTarget,
+			type: "nfs",
+			mount_options: ['nfsv3', 'mntudp', 'vers=3', 
+				'udp', 'noatime']
+	else
+		vmCfg.vm.synced_folder hostSource,
+			guestTarget,
+			type: "nfs",
+			bsd__nfs_options: ['noatime']
 	end
 
 	return vmCfg
@@ -114,10 +116,6 @@ def configureFreeBSDDevProvisioners(vmCfg)
 		privileged: true
 
 	vmCfg.vm.provision "shell",
-		path: './vagrant/scripts/vagrant-freebsd-priv-chrony.sh',
-		privileged: true
-
-	vmCfg.vm.provision "shell",
 		path: './vagrant/scripts/vagrant-freebsd-unpriv-dev-migrate.sh',
 		privileged: false
 
@@ -127,10 +125,6 @@ end
 def configureFreeBSDDBProvisioners(vmCfg, hostname, ip)
 	vmCfg.vm.provision "shell",
 		path: './vagrant/scripts/vagrant-freebsd-priv-db-packages.sh',
-		privileged: true
-
-	vmCfg.vm.provision "shell",
-		path: './vagrant/scripts/vagrant-freebsd-priv-chrony.sh',
 		privileged: true
 
 	vmCfg.vm.provision "file",
@@ -177,10 +171,6 @@ def configureFreeBSDProvisioners(vmCfg)
 
 	vmCfg.vm.provision "shell",
 		path: './vagrant/scripts/vagrant-freebsd-priv-packages.sh',
-		privileged: true
-
-	vmCfg.vm.provision "shell",
-		path: './vagrant/scripts/vagrant-freebsd-priv-chrony.sh',
 		privileged: true
 
 	vmCfg.vm.provision "shell",
