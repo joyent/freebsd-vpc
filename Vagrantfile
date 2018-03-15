@@ -88,8 +88,8 @@ def addPrivateNICOptions(vmCfg, ip)
 
 	["vmware_fusion", "vmware_workstation"].each do |p|
 		vmCfg.vm.provider p do |v|
-			v.vmx["ethernet1.virtualDev"] = "vmxnet3"
-			v.vmx["ethernet1.virtualDev"] = "51"
+			v.vmx["ethernet1.virtualdev"] = "vmxnet3"
+			v.vmx["ethernet1.pcislotnumber"] = "192"
 		end
 	end
 
