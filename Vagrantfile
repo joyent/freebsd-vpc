@@ -20,13 +20,12 @@ Vagrant.configure("2") do |config|
 			type: "nfs",
 			bsd__nfs_options: ['noatime']
 
-		vmCfg.vm.network "private_network", ip: "172.27.10.5"
+		vmCfg = addPrivateNICOptions(vmCfg, "172.27.10.5")
 
 		["vmware_fusion", "vmware_workstation"].each do |p|
 			vmCfg.vm.provider p do |v|
 				v.vmx["memsize"] = "1024"
 				v.vmx["numvcpus"] = "2"
-				v.vmx["ethernet1.virtualDev"] = "vmxnet3"
 			end
 		end
 	end
@@ -40,13 +39,12 @@ Vagrant.configure("2") do |config|
 			vmCfg.vm.hostname = hostname
 			vmCfg = configureFreeBSDDBProvisioners(vmCfg, hostname, ip)
 
-			vmCfg.vm.network "private_network", ip: ip
+			vmCfg = addPrivateNICOptions(vmCfg, ip)
 
 			["vmware_fusion", "vmware_workstation"].each do |p|
 				vmCfg.vm.provider p do |v|
 					v.vmx["memsize"] = "1024"
 					v.vmx["numvcpus"] = "2"
-					v.vmx["ethernet1.virtualDev"] = "vmxnet3"
 				end
 			end
 		end
@@ -58,13 +56,12 @@ Vagrant.configure("2") do |config|
 		vmCfg = configureFreeBSDProvisioners(vmCfg)
 		vmCfg = ensure_disk(vmCfg, guest_disk_path, 'cn1_guests.vmdk')
 
-		vmCfg.vm.network "private_network", ip: "172.27.10.20"
+		vmCfg = addPrivateNICOptions(vmCfg, "172.27.10.20")
 
 		["vmware_fusion", "vmware_workstation"].each do |p|
 			vmCfg.vm.provider p do |v|
 				v.vmx["memsize"] = "4096"
 				v.vmx["numvcpus"] = "2"
-				v.vmx["ethernet1.virtualDev"] = "vmxnet3"
 			end
 		end
 	end
@@ -74,17 +71,29 @@ Vagrant.configure("2") do |config|
 		vmCfg.vm.hostname = "freebsd-cn2"
 		vmCfg = configureFreeBSDProvisioners(vmCfg)
 		vmCfg = ensure_disk(vmCfg, guest_disk_path, 'cn2_guests.vmdk')
-
-		vmCfg.vm.network "private_network", ip: "172.27.10.21"
+		
+		vmCfg = addPrivateNICOptions(vmCfg, "172.27.10.21")
 
 		["vmware_fusion", "vmware_workstation"].each do |p|
 			vmCfg.vm.provider p do |v|
 				v.vmx["memsize"] = "4096"
 				v.vmx["numvcpus"] = "2"
-				v.vmx["ethernet1.virtualDev"] = "vmxnet3"
 			end
 		end
 	end
+end
+
+def addPrivateNICOptions(vmCfg, ip)
+	vmCfg.vm.network "private_network", ip: ip
+
+	["vmware_fusion", "vmware_workstation"].each do |p|
+		vmCfg.vm.provider p do |v|
+			v.vmx["ethernet1.virtualDev"] = "vmxnet3"
+			v.vmx["ethernet1.virtualDev"] = "51"
+		end
+	end
+
+	return vmCfg
 end
 
 def configureFreeBSDDevProvisioners(vmCfg)

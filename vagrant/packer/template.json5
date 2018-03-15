@@ -3,8 +3,8 @@
 		name: "FreeBSD-12.0-CURRENT",
 		hostname: "freebsd",
 
-		cpus: "1",
-		memory: "512",
+		cpus: "2",
+		memory: "2048",
 		root_volume_size: "16384",
 
 		iso_url: "{{ env `ISO_URL` }}",
@@ -36,7 +36,7 @@
 			"vpmc.enable": "TRUE",
 			"tools.syncTime": "FALSE",
 			"ethernet0.virtualDev": "vmxnet3",
-			"ethernet0.pciSlotNumber": "32",
+			"ethernet0.pciSlotNumber": "50",
 		},
 
 		communicator: "ssh",

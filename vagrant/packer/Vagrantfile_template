@@ -16,16 +16,8 @@ Vagrant.configure("2") do |config|
 	["vmware_fusion", "vmware_workstation"].each do |p|
 		config.vm.provider p do |v|
 			v.vmx["ethernet0.virtualDev"]  = "vmxnet3"
-			v.vmx["ethernet0.pciSlotNumber"] = "32"
+			v.vmx["ethernet0.pciSlotNumber"] = "50"
 			v.whitelist_verified = true
 		end
-	end
-
-	config.vm.provider "virtualbox" do |v, override|
-		override.vm.network "private_network", type: "dhcp"
-
-		v.customize ["modifyvm", :id, "--audio", "none"]
-		v.customize ["modifyvm", :id, "--hwvirtex", "on"]
-		v.customize ["modifyvm", :id, "--ioapic", "on"]
 	end
 end
