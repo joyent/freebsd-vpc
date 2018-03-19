@@ -47,12 +47,12 @@ get-tools:
 	go get -u github.com/ahmetb/govvv
 	go get -u github.com/jteeuwen/go-bindata/...
 	go get -u github.com/golang/dep/cmd/dep
-	go get -u github.com/sean-/cfgt
-	go get -u github.com/hashicorp/packer
 	go get -u github.com/alecthomas/gometalinter
 	gometalinter --install
 
 vagrant-box:
+	go get -u github.com/sean-/cfgt
+	go get -u github.com/hashicorp/packer
 	cd vagrant/packer && cfgt --in template.json5 | \
 		packer build -
 	
