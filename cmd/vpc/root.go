@@ -160,14 +160,16 @@ $ vpc list
 
 func Execute() error {
 	rootCmd.Setup(rootCmd)
-	conswriter.UsePager(viper.GetBool(config.KeyUsePager))
+	//TODO(jen20) fix this up
+	if os.Getenv("USE_PAGER") != "" {
+		conswriter.UsePager(viper.GetBool(config.KeyUsePager))
+	}
 
 	if err := logger.Setup(viper.GetViper()); err != nil {
 		return err
 	}
 
 	// Always enable the gops agent
-	//
 	// TODO(seanc@): add if viper.GetBool("debug.enable-agent") {
 	if err := gopsagent.Listen(&gopsagent.Options{}); err != nil {
 		log.Fatal().Err(err).Msg("unable to start gops agent")
