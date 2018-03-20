@@ -13,6 +13,7 @@ import (
 	"github.com/joyent/freebsd-vpc/cmd/vpc/list"
 	"github.com/joyent/freebsd-vpc/cmd/vpc/shell"
 	"github.com/joyent/freebsd-vpc/cmd/vpc/version"
+	"github.com/joyent/freebsd-vpc/cmd/vpc/vm"
 	"github.com/joyent/freebsd-vpc/cmd/vpc/vmnic"
 	"github.com/joyent/freebsd-vpc/cmd/vpc/vpcsw"
 	"github.com/joyent/freebsd-vpc/internal/buildtime"
@@ -39,6 +40,7 @@ var subCommands = command.Commands{
 	agent.Cmd,
 	shell.Cmd,
 	version.Cmd,
+	vm.Cmd,
 	vmnic.Cmd,
 	vpcsw.Cmd,
 }

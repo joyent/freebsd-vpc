@@ -4,10 +4,12 @@ import (
 	"context"
 	"net"
 	"net/http"
+	"os"
 
 	"github.com/joyent/freebsd-vpc/db"
 	"github.com/pkg/errors"
 	log "github.com/rs/zerolog"
+	"github.com/rs/zerolog/hlog"
 )
 
 type Agent struct {
@@ -26,13 +28,15 @@ func New(config Config) (agent *Agent, err error) {
 		return nil, errors.Wrap(err, "unable to create database pool")
 	}
 
-	rpcListener, err := net.Listen("unix", config.AgentConfig.RPCAddress)
+	rpcListener, err := net.Listen("unix", config.AgentConfig.Addresses.Internal)
 	if err != nil {
 		return nil, errors.Wrap(err, "error creating RPC listener")
 	}
 
 	rpcServer := &http.Server{
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			hlog.FromRequest(r).Info().Msg("got request")
+
 			w.WriteHeader(200)
 			w.Write([]byte("Hello World"))
 		}),
@@ -45,12 +49,14 @@ func New(config Config) (agent *Agent, err error) {
 	}, nil
 }
 
-func (a *Agent) Run() error {
+func (a *Agent) Start() error {
 	if err := a.dbPool.Ping(); err != nil {
 		return errors.Wrap(err, "unable to ping database")
 	}
 
-	return a.rpcServer.Serve(a.rpcListener)
+	go a.rpcServer.Serve(a.rpcListener)
+
+	return nil
 }
 
 func (a *Agent) Shutdown() error {
@@ -65,6 +71,12 @@ func (a *Agent) Shutdown() error {
 	if err := a.dbPool.Close(); err != nil {
 		a.logger.Warn().Err(err).Msg("error closing database pool")
 	}
+
+	if err := os.Remove(a.config.AgentConfig.Addresses.Internal); err != nil {
+		a.logger.Warn().Err(err).Msg("error removing domain socket file")
+	}
+
+	a.logger.Info().Msg("graceful shutdown complete")
 
 	return nil
 }
