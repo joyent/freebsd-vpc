@@ -173,7 +173,9 @@ func Execute() error {
 
 	// Always enable the gops agent
 	// TODO(seanc@): add if viper.GetBool("debug.enable-agent") {
-	if err := gopsagent.Listen(&gopsagent.Options{}); err != nil {
+	if err := gopsagent.Listen(&gopsagent.Options{
+		NoShutdownCleanup: true,
+	}); err != nil {
 		log.Fatal().Err(err).Msg("unable to start gops agent")
 	}
 
