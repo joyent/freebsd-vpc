@@ -18,6 +18,7 @@ pkg install -y \
 	lang/go \
 	security/ca_root_nss \
 	shells/bash \
+	sysutils/grub2-bhyve \
 	sysutils/tmux \
 	sysutils/tree
 

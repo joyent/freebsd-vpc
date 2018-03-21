@@ -5,12 +5,6 @@ set -o errexit
 export GOPATH="/opt/gopath"
 export PATH="/opt/gopath/bin:$PATH"
 
-mkdir -p ~/.config/vpc
-cat > ~/.config/vpc/vpc.toml <<EOF
-[db]
-host = "172.27.10.11"
-EOF
-
 cd /opt/gopath/src/github.com/joyent/freebsd-vpc
 make get-tools
 make
