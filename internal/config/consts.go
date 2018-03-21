@@ -50,8 +50,9 @@ const (
 	KeySWCreateVNI       = "switch.create.vni"
 	KeySWDestroySwitchID = "switch.destroy.switch-id"
 
-	KeyUsePager = "general.use-pager"
-	KeyUseUTC   = "general.utc"
+	KeyUseGoogleAgent = "general.enable-agent"
+	KeyUsePager       = "general.use-pager"
+	KeyUseUTC         = "general.utc"
 
 	KeyVMNICCreateID    = "vmnic.create.id"
 	KeyVMNICCreateMAC   = "vmnic.create.mac"
