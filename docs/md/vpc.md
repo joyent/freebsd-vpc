@@ -58,5 +58,6 @@ $ vpc list
 * [vpc shell](/command/vpc_shell)	 - shell commands
 * [vpc switch](/command/vpc_switch)	 - VPC switch management
 * [vpc version](/command/vpc_version)	 - Version vpc schema
+* [vpc vm](/command/vpc_vm)	 - Interaction with the VM agent
 * [vpc vmnic](/command/vpc_vmnic)	 - VM network interface management
 

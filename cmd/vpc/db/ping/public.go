@@ -3,7 +3,6 @@ package ping
 import (
 	"time"
 
-	"github.com/joyent/freebsd-vpc/cmd/vpc/config"
 	"github.com/joyent/freebsd-vpc/db"
 	"github.com/joyent/freebsd-vpc/internal/command"
 	"github.com/pkg/errors"
@@ -28,7 +27,9 @@ var Cmd = &command.Command{
 		RunE: func(cmd *cobra.Command, args []string) error {
 			log.Info().Str("command", "ping").Msg("")
 
-			var config config.Config
+			var config struct {
+				DBConfig db.Config `mapstructure:"db"`
+			}
 			err := viper.Unmarshal(&config)
 			if err != nil {
 				log.Fatal().Err(err).Msg("unable to decode config into struct")
