@@ -33,6 +33,7 @@ VM network interface management
 * [vpc](/command/vpc)	 - vpc configures and manages VPCs
 * [vpc vmnic create](/command/vpc_vmnic_create)	 - create a VM NIC
 * [vpc vmnic destroy](/command/vpc_vmnic_destroy)	 - destroy a VM NIC
+* [vpc vmnic genmac](/command/vpc_vmnic_genmac)	 - generate a random VPC ID and MAC address
 * [vpc vmnic get](/command/vpc_vmnic_get)	 - get VMNIC information
 * [vpc vmnic list](/command/vpc_vmnic_list)	 - list VM NICs
 * [vpc vmnic set](/command/vpc_vmnic_set)	 - set VM NIC information
