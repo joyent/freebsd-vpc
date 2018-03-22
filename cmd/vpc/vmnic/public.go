@@ -3,6 +3,7 @@ package vmnic
 import (
 	"github.com/joyent/freebsd-vpc/cmd/vpc/vmnic/create"
 	"github.com/joyent/freebsd-vpc/cmd/vpc/vmnic/destroy"
+	"github.com/joyent/freebsd-vpc/cmd/vpc/vmnic/genmac"
 	"github.com/joyent/freebsd-vpc/cmd/vpc/vmnic/get"
 	"github.com/joyent/freebsd-vpc/cmd/vpc/vmnic/list"
 	"github.com/joyent/freebsd-vpc/cmd/vpc/vmnic/set"
@@ -26,6 +27,7 @@ var Cmd = &command.Command{
 		subCommands := command.Commands{
 			create.Cmd,
 			destroy.Cmd,
+			genmac.Cmd,
 			get.Cmd,
 			list.Cmd,
 			set.Cmd,
