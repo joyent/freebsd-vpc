@@ -35,8 +35,8 @@
     "internal",
     "signal"
   ]
-  revision = "57e77c5c37da1f4e1af49f9d1fe760f146c1579e"
-  version = "v0.3.2"
+  revision = "0e2aa5d22efec1603f7ded7097c500e9a36a13b3"
+  version = "v0.3.3"
 
 [[projects]]
   branch = "master"
@@ -265,6 +265,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "076f466c25fe4c3f4e30bdd3f8f4a1e66c623ec5015ba0a8d6235ede85d30332"
+  inputs-digest = "6a07db4b86c9a759af090534554e660cdb34ed60762e8e8443544d3768cbbfa1"
   solver-name = "gps-cdcl"
   solver-version = 1

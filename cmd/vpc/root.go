@@ -75,6 +75,22 @@ $ vpc list
 	Setup: func(self *command.Command) error {
 		{
 			const (
+				key          = config.KeyUseGoogleAgent
+				longName     = "enable-gops"
+				shortName    = ""
+				description  = "Enable the Google gops(1) socket"
+				defaultValue = true
+			)
+
+			flags := self.Cobra.PersistentFlags()
+			flags.BoolP(longName, shortName, defaultValue, description)
+			viper.BindPFlag(key, flags.Lookup(longName))
+			viper.SetDefault(key, defaultValue)
+			flags.MarkHidden(longName)
+		}
+
+		{
+			const (
 				key         = config.KeyUsePager
 				longName    = "use-pager"
 				shortName   = "P"
@@ -166,11 +182,15 @@ func Execute() error {
 		return err
 	}
 
-	// Always enable the gops agent
-	//
-	// TODO(seanc@): add if viper.GetBool("debug.enable-agent") {
-	if err := gopsagent.Listen(&gopsagent.Options{}); err != nil {
-		log.Fatal().Err(err).Msg("unable to start gops agent")
+	if !viper.GetBool(config.KeyUseGoogleAgent) {
+		log.Debug().Msg("gops(1) agent disabled by request")
+	} else {
+		go func() {
+			log.Debug().Msg("starting gops(1) agent")
+			if err := gopsagent.Listen(gopsagent.Options{}); err != nil {
+				log.Fatal().Err(err).Msg("unable to start gops agent")
+			}
+		}()
 	}
 
 	if secure, err := seed.Init(); !secure {
