@@ -11,10 +11,27 @@ list counts of each VPC type
 ### Synopsis
 
 
-list counts of each VPC type
+The list operation of vpc(8) is used to display all VPC objects in the system
+and their respective VPC IDs.
 
 ```
 vpc list [flags]
+```
+
+### Examples
+
+```
+% vpc list
+ TYPE     ID                                    UNIT NAME
+ ethlink  5c4acd32-1b8d-11e8-b408-0cc47a6c7d1e  ethlink0
+ vmnic    07f95a11-6788-2ae7-c306-ba95cff1db38  vmnic0
+ vmnic    a774ba3a-1f77-11e8-8006-0cc47a6c7d1e  vmnic1
+ vpcp     0ebf50e1-1f79-11e8-8002-0cc47a6c7d1e  vpcp1
+ vpcp     ea58b648-203b-a707-cd02-7a552c8d5295  vpcp2
+ vpcp     fd436f9c-1f77-11e8-8002-0cc47a6c7d1e  vpcp0
+ vpcsw    da64c3f3-095d-91e5-df01-5aabcfc52468  vpcsw0
+
+   TOTAL                    7
 ```
 
 ### Options
