@@ -1,4 +1,5 @@
 RELEASE_DATE?=2018-02-28T23:59:59Z
+RELEASE_EPOCH_TIME?=1519862399
 GOPATH?=`go env GOPATH`
 
 # NOTES:
@@ -70,6 +71,7 @@ generate:
 	cd db/migrations && \
 		$(GOPATH)/bin/go-bindata \
 			-o bindata.go \
+			-modtime $(RELEASE_EPOCH_TIME) \
 			-pkg migrations \
 			-ignore '(~|\.bak)$$' \
 			-prefix crdb crdb/
