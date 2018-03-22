@@ -42,7 +42,7 @@ check:
 		./...
 
 install:
-	govvv install ./cmd/vpc
+	govvv install -ldflags "-X main.DocsDate=$(RELEASE_DATE)" ./cmd/vpc
 
 get-tools:
 	go get -u github.com/ahmetb/govvv
