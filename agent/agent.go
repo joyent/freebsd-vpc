@@ -2,59 +2,70 @@ package agent
 
 import (
 	"context"
+	"net"
+	"net/http"
 
 	"github.com/joyent/freebsd-vpc/db"
 	"github.com/pkg/errors"
+	"github.com/rs/zerolog/log"
 )
 
 type Agent struct {
-	dbPool      *db.Pool
-	shutdownCtx context.Context
-	shutdown    func()
+	config Config
+
+	dbPool *db.Pool
+
+	rpcListener net.Listener
+	rpcServer   *http.Server
 }
 
-func New(pool *db.Pool) (agent *Agent, err error) {
-	if pool == nil {
-		return nil, errors.New("DBPool must be initialized")
+func New(config Config) (agent *Agent, err error) {
+	dbPool, err := db.New(config.DBConfig)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to create database pool")
 	}
 
-	a := &Agent{
-		dbPool: pool,
+	rpcListener, err := net.Listen("unix", config.AgentConfig.Addresses.Internal)
+	if err != nil {
+		return nil, errors.Wrap(err, "error creating RPC listener")
 	}
 
-	if err := a.dbPool.Ping(); err != nil {
-		return nil, errors.Wrap(err, "unable to ping database")
+	rpcServer := &http.Server{
+		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(200)
+			w.Write([]byte("Hello World"))
+		}),
 	}
 
-	a.shutdownCtx, a.shutdown = context.WithCancel(context.Background())
-
-	return a, nil
+	return &Agent{
+		dbPool:      dbPool,
+		rpcListener: rpcListener,
+		rpcServer:   rpcServer,
+	}, nil
 }
 
 func (a *Agent) Start() error {
-	return nil
-}
-
-func (a *Agent) Stop() error {
-	if err := a.Shutdown(); err != nil {
-		return errors.Wrap(err, "shutdown failed while stopping agent")
+	if err := a.dbPool.Ping(); err != nil {
+		return errors.Wrap(err, "unable to ping database")
 	}
+
+	go a.rpcServer.Serve(a.rpcListener)
 
 	return nil
 }
 
 func (a *Agent) Shutdown() error {
-	if a.dbPool != nil {
-		a.dbPool.Close()
+	if err := a.rpcListener.Close(); err != nil {
+		log.Warn().Err(err).Msg("error during RPC listener shutdown")
 	}
 
-	return nil
-}
+	if err := a.rpcServer.Shutdown(context.Background()); err != nil {
+		log.Warn().Err(err).Msg("error during RPC server shutdown")
+	}
 
-// 5. Listen on the socket for UDP packets
-// 6. Parse packet
-// 7. Look up the results in the database
-// 8. Respond to packet
-func (a *Agent) Run() error {
+	if err := a.dbPool.Close(); err != nil {
+		log.Warn().Err(err).Msg("error closing database pool")
+	}
+
 	return nil
 }
