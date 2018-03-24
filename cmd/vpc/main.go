@@ -3,7 +3,6 @@ package main
 import (
 	"os"
 
-	"github.com/joyent/freebsd-vpc/internal/buildtime"
 	"github.com/rs/zerolog/log"
 	"github.com/sean-/conswriter"
 	"github.com/sean-/sysexits"
@@ -21,8 +20,6 @@ var (
 )
 
 func realmain() int {
-	exportBuildtimeConsts()
-
 	defer func() {
 		p := conswriter.GetTerminal()
 		p.Wait()
@@ -38,18 +35,4 @@ func realmain() int {
 
 func main() {
 	os.Exit(realmain())
-}
-
-func exportBuildtimeConsts() {
-	buildtime.GitCommit = GitCommit
-	buildtime.GitBranch = GitBranch
-	buildtime.GitState = GitState
-	buildtime.GitSummary = GitSummary
-	buildtime.BuildDate = BuildDate
-	if DocsDate != "" {
-		buildtime.DocsDate = DocsDate
-	} else {
-		buildtime.DocsDate = BuildDate
-	}
-	buildtime.Version = Version
 }

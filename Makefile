@@ -1,6 +1,13 @@
 RELEASE_DATE?=2018-02-28T23:59:59Z
 RELEASE_EPOCH_TIME?=1519862399
+
 GOPATH?=`go env GOPATH`
+
+PROJECT_NAME?=github.com/joyent/freebsd-vpc
+BUILDTIME_PATH?=$(PROJECT_NAME)/internal/buildtime
+VPC_CMD_PATH=$(PROJECT_NAME)/cmd/vpc
+GOVVV_FLAGS!=govvv -flags -pkg $(BUILDTIME_PATH)
+GO_LDFLAGS?=-ldflags="$(VPC_CMD_PATH)=$(GOVVV_FLAGS) -X $(BUILDTIME_PATH).DocsDate=$(RELEASE_DATE)"
 
 # NOTES:
 #
@@ -17,7 +24,7 @@ GOPATH?=`go env GOPATH`
 
 build: generate
 	mkdir -p ./bin
-	govvv build -ldflags "-X main.DocsDate=$(RELEASE_DATE)" -o bin/vpc ./cmd/vpc
+	go build $(GO_LDFLAGS) -o bin/vpc $(VPC_CMD_PATH)
 	bin/vpc shell autocomplete bash -d docs/bash.d/ | cat
 	bin/vpc docs man | cat
 	bin/vpc docs md | cat
@@ -42,7 +49,7 @@ check:
 		./...
 
 install:
-	govvv install -ldflags "-X main.DocsDate=$(RELEASE_DATE)" ./cmd/vpc
+	go install $(GO_LDFLAGS) $(VPC_CMD_PATH)
 
 get-tools:
 	go get -u github.com/ahmetb/govvv
@@ -56,7 +63,7 @@ vagrant-box:
 	go get -u github.com/hashicorp/packer
 	cd vagrant/packer && cfgt --in template.json5 | \
 		packer build -
-	
+
 DATA_DIR=`go env GOPATH`/src/github.com/joyent/freebsd-vpc/crdb
 CERT_DIR=`go env GOPATH`/src/github.com/joyent/freebsd-vpc/crdb/certs
 KEY_DIR=$(CERT_DIR)/keys
