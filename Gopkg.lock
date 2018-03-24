@@ -19,7 +19,7 @@
     "libexec/go/src/go.freebsd.org/sys/vpc/vpcsw",
     "libexec/go/src/go.freebsd.org/sys/vpc/vpctest"
   ]
-  revision = "6a886fe0abbc0175b43bbfce90453a6ace7c54c2"
+  revision = "94103b6e9fe18553e1c23679d6cc30e0f1b8f46d"
   source = "github.com/joyent/freebsd/libexec/go/src/go.freebsd.org/sys/vpc"
 
 [[projects]]
@@ -265,6 +265,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "6a07db4b86c9a759af090534554e660cdb34ed60762e8e8443544d3768cbbfa1"
+  inputs-digest = "2918ad861f19c9fe96740bebefff9e91fe2290b6b256ffcb34a5a03e4777d581"
   solver-name = "gps-cdcl"
   solver-version = 1

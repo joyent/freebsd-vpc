@@ -32,9 +32,9 @@ package vpcsw
 import (
 	"net"
 
-	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
+	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc"
 )
 
 // DeviceNamePrefix is the prefix of the device name (i.e. "vpcsw0").
@@ -126,4 +126,15 @@ func Open(cfg Config) (*VPCSW, error) {
 		ht: ht,
 		id: cfg.ID,
 	}, nil
+}
+
+// PortAdd adds a new VPC Port to this VPC Switch.
+func (sw *VPCSW) PortAdd() error {
+	// TODO(seanc@): Test to see make sure the descriptor has the mutate bit set.
+
+	if err := vpc.Ctl(sw.h, vpc.Cmd(_PortAddCmd), nil, nil); err != nil {
+		return errors.Wrap(err, "unable to add a VPC Port to VPC Switch")
+	}
+
+	return nil
 }
