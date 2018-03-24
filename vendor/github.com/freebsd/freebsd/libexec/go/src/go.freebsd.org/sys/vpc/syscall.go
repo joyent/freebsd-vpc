@@ -38,7 +38,6 @@ import (
 	"encoding/binary"
 	"encoding/hex"
 	"fmt"
-	"syscall"
 
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
@@ -291,12 +290,5 @@ func (h *Handle) Close() error {
 		return nil
 	}
 
-	// TODO(seanc@): verify that we don't need to wrap this close in a loop
-	if err := syscall.Close(int(h.fd)); err != nil {
-		return errors.Wrap(err, "unable to close VPC handle")
-	}
-
-	h.fd = HandleClosedFD
-
-	return nil
+	return h.closeHandle()
 }
