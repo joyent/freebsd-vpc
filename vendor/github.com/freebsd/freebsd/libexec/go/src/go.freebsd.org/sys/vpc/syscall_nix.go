@@ -1,4 +1,4 @@
-// Go interface to VPC syscalls on non-FreeBSD systems.
+// Go interface to VPC syscalls on *NIX-like systems.
 //
 // SPDX-License-Identifier: BSD-2-Clause-FreeBSD
 //
@@ -27,38 +27,22 @@
 // OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 // SUCH DAMAGE.
 
-// +build android darwin dragonfly linux nacl netbsd openbsd plan9 solaris windows
+// +build android darwin dragonfly freebsd linux nacl netbsd openbsd plan9 solaris
 
 package vpc
 
 import (
 	"github.com/pkg/errors"
+	"golang.org/x/sys/unix"
 )
 
-// Open obtains a VPC handle to a given object type.  Obtaining an open Handle
-// affords no privilges beyond validating that an ID exists on this system.  In
-// all other cases Open returns a handle to a resource.  If the id can not be
-// found, Open returns ENOENT unless the Create flag is set in flags.  If the
-// Create flag is set and the id is found, Open returns EEXIST.  If an invalid
-// Flag is set, Open returns EINVAL.  If the HandleType is out of bounds, Open
-// returns EOPNOTSUPP.
-func Open(id ID, ht HandleType, flags OpenFlags) (*Handle, error) {
-	return nil, errors.New("not implemented")
-}
-
-// Ctl manipulates the Handle based on the args
-func Ctl(h *Handle, cmd Cmd, in []byte, out []byte) error {
-	return errors.New("not implemented")
-}
-
-func ctl(h *Handle, cmd Cmd, in []byte, out []byte) error {
-	// Implementation sanity checking
-	switch {
-	case cmd.In() && len(in) == 0:
-		return errors.New("operation requires non-zero length input")
-	case cmd.Out() && out == nil:
-		return errors.New("operation requires non-nil output")
+func (h *Handle) closeHandle() error {
+	// TODO(seanc@): verify that we don't need to wrap this close in a loop
+	if err := unix.Close(int(h.fd)); err != nil {
+		return errors.Wrap(err, "unable to close VPC handle")
 	}
 
-	return errors.New("not implemented")
+	h.fd = HandleClosedFD
+
+	return nil
 }

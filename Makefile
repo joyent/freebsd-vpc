@@ -29,6 +29,9 @@ build: generate
 	bin/vpc docs man | cat
 	bin/vpc docs md | cat
 
+universe:
+	@goreleaser --snapshot --skip-validate --rm-dist
+
 check:
 	gometalinter \
 		--deadline 10m \
@@ -53,6 +56,7 @@ install:
 
 get-tools:
 	go get -u github.com/ahmetb/govvv
+	go get -u github.com/goreleaser/goreleaser
 	go get -u github.com/jteeuwen/go-bindata/...
 	go get -u github.com/golang/dep/cmd/dep
 	go get -u github.com/alecthomas/gometalinter

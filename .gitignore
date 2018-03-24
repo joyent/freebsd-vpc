@@ -99,3 +99,4 @@ vagrant/boxes/
 
 # Image building tools
 /iso/*.iso
+/dist/

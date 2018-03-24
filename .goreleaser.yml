@@ -1,0 +1,116 @@
+project_name: vpc
+
+builds:
+  -
+    binary: vpc
+    env:
+    - CGO_ENABLED=0
+
+    # Custom build tags.
+    flags: -tags dev
+
+    # GOOS list to build in.
+    # For more info refer to https://golang.org/doc/install/source#environment
+    goos:
+      - darwin
+      - freebsd
+      - linux
+      - solaris
+
+    # GOARCH to build in.
+    # For more info refer to https://golang.org/doc/install/source#environment
+    goarch:
+      - amd64
+      # - i386
+      # - arm
+      # - arm64
+
+    # Custom ldflags template.
+    # This is parsed with Golang template engine and the following variables
+    # are available:
+    # - Date
+    # - Commit
+    # - Tag
+    # - Version (Tag with the `v` prefix stripped)
+    # The default is `-s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}}`
+    # Date format is `2006-01-02_15:04:05`
+    ldflags: github.com/joyent/freebsd-vpc/cmd/vpc=-X github.com/joyent/freebsd-vpc/internal/buildtime.BuildDate={{.Date}} -X github.com/joyent/freebsd-vpc/internal/buildtime.GitCommit={{.Commit}} -X github.com/joyent/freebsd-vpc/internal/buildtime.GitBranch={{.Tag}} -X github.com/joyent/freebsd-vpc/internal/buildtime.GitState={{.Tag}} -X github.com/joyent/freebsd-vpc/internal/buildtime.GitSummary={{.Commit}} -X github.com/joyent/freebsd-vpc/internal/buildtime.Version={{.Version}} -X github.com/joyent/freebsd-vpc/internal/buildtime.DocsDate={{.Date}}"
+    main: ./cmd/vpc/
+
+    # Hooks can be used to customize the final binary, for example, to run
+    # generator or whatever you want.
+    # Default is both hooks empty.
+    hooks:
+      pre:
+      post:
+
+archive:
+  # You can change the name of the archive.
+  # This is parsed with Golang template engine and the following variables
+  # are available:
+  # - ProjectName
+  # - Tag
+  # - Version (Tag with the `v` prefix stripped)
+  # - Os
+  # - Arch
+  # - Arm (ARM version)
+  # The default is `{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}`
+  name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+
+  # Archive format. Valid options are `tar.gz`, `zip` and `binary`.
+  # If format is `binary` no archives are created and the binaries are instead uploaded directly.
+  # In that case name_template the below specified files are ignored.
+  # Default is `tar.gz`
+  format: tar.gz
+
+  # Replacements for GOOS and GOARCH on the archive name.
+  # The keys should be valid GOOS or GOARCH values followed by your custom
+  # replacements.
+  replacements:
+    amd64: 64-bit
+    386: 32-bit
+    darwin: macOS
+    freebsd: FreeBSD
+    linux: Linux
+    solaris: Illumos
+
+  # Additional files/globs you want to add to the archive.
+  # Defaults are any files matching `LICENCE*`, `LICENSE*`,
+  # `README*` and `CHANGELOG*` (case-insensitive)
+  files:
+    - docs/bash.d/*.sh
+    - docs/examples/*.sh
+    - docs/man/man8/*.8
+    - docs/md/vpc*.md
+    - LICENSE
+    - README
+
+release:
+  # Repo in which the release will be created.
+  # Default is extracted from the origin remote URL.
+  github:
+    owner: joyent
+    name: freebsd-vpc
+
+  # If set to true, will not auto-publish the release.
+  # Default is false
+  draft: true
+
+snapshot:
+  # Allows you to change the name of the generated snapshot
+  # releases. The following variables are available:
+  # - Commit
+  # - Tag
+  # - Timestamp
+  # Default: SNAPSHOT-{{.Commit}}
+  name_template: SNAPSHOT-{{.Commit}}
+
+checksum:
+  # You can change the name of the checksums file.
+  # This is parsed with Golang template engine and the following variables
+  # are available:
+  # - ProjectName
+  # - Tag
+  # - Version (Tag with the `v` prefix stripped)
+  # The default is `{{ .ProjectName }}_{{ .Version }}_checksums.txt`
+  name_template: "{{ .ProjectName }}_checksums.txt"
