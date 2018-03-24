@@ -83,7 +83,7 @@ archive:
     - docs/man/man8/*.8
     - docs/md/vpc*.md
     - LICENSE
-    - README
+    - README.md
 
 release:
   # Repo in which the release will be created.
