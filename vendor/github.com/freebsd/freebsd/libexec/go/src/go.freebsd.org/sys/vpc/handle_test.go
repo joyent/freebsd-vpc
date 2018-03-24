@@ -34,9 +34,9 @@ import (
 	"testing"
 	"unsafe"
 
+	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc"
 	"github.com/kylelemons/godebug/pretty"
 	"github.com/sean-/seed"
-	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc"
 )
 
 func init() {
@@ -94,7 +94,7 @@ func TestHandleTypeVersion(t *testing.T) {
 		{
 			in:         0x6005000000000000,
 			outVersion: 6,
-			outObjType: vpc.ObjTypeLinkVPC,
+			outObjType: vpc.ObjTypeMux,
 		},
 		{
 			in:         0x7006000000000000,
@@ -164,7 +164,7 @@ func TestHandleTypeVersion(t *testing.T) {
 			vpc.ObjTypeSwitchPort,
 			vpc.ObjTypeRouter,
 			vpc.ObjTypeNAT,
-			vpc.ObjTypeLinkVPC,
+			vpc.ObjTypeMux,
 			vpc.ObjTypeNICVM,
 			vpc.ObjTypeMgmt,
 			vpc.ObjTypeLinkEth,

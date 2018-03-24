@@ -226,7 +226,7 @@ const (
 	ObjTypeSwitchPort ObjType = 2
 	ObjTypeRouter     ObjType = 3
 	ObjTypeNAT        ObjType = 4
-	ObjTypeLinkVPC    ObjType = 5
+	ObjTypeMux        ObjType = 5
 	ObjTypeNICVM      ObjType = 6
 	ObjTypeMgmt       ObjType = 7
 	ObjTypeLinkEth    ObjType = 8
@@ -242,7 +242,7 @@ func ObjTypes() []ObjType {
 		ObjTypeSwitchPort,
 		ObjTypeRouter,
 		ObjTypeNAT,
-		ObjTypeLinkVPC,
+		ObjTypeMux,
 		ObjTypeNICVM,
 		ObjTypeMgmt,
 		ObjTypeLinkEth,
@@ -264,8 +264,8 @@ func (obj ObjType) String() string {
 		return "vpcrtr"
 	case ObjTypeNAT:
 		return "vpcnat"
-	case ObjTypeLinkVPC:
-		return "vpc-link"
+	case ObjTypeMux:
+		return "vpcmux"
 	case ObjTypeNICVM:
 		return "vmnic"
 	case ObjTypeMgmt:

@@ -39,7 +39,7 @@ vpc list [flags]
 ```
   -h, --help              help for list
   -c, --obj-counts        list the number of objects per type
-  -t, --obj-type string   List objects of a given type. Valid types: ethlink, mgmt, vmnic, vpc-link, vpcnat, vpcp, vpcrtr, vpcsw (default "all")
+  -t, --obj-type string   List objects of a given type. Valid types: ethlink, mgmt, vmnic, vpcmux, vpcnat, vpcp, vpcrtr, vpcsw (default "all")
   -s, --sort-by string    Change the sort order within a given type: id, name (default "id")
 ```
 
