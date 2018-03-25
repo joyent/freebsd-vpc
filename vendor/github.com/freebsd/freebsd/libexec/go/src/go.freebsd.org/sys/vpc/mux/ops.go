@@ -136,3 +136,15 @@ func (m *Mux) Disconnect() error {
 
 	return nil
 }
+
+// Listen instructs the VPC Mux to listen at the given address (host:port) for
+// VPC Mux'ed traffic (RFC 7348 VXLAN encapsulated).
+func (m *Mux) Listen(addr string) error {
+	// TODO(seanc@): Test to see make sure the descriptor has the mutate bit set.
+
+	if err := vpc.Ctl(m.h, vpc.Cmd(_MuxListenCmd), []byte(addr), nil); err != nil {
+		return errors.Wrap(err, "unable to listen for VPC Mux traffic")
+	}
+
+	return nil
+}
