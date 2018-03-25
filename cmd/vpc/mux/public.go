@@ -5,6 +5,7 @@ import (
 	"github.com/joyent/freebsd-vpc/cmd/vpc/mux/create"
 	"github.com/joyent/freebsd-vpc/cmd/vpc/mux/destroy"
 	"github.com/joyent/freebsd-vpc/cmd/vpc/mux/disconnect"
+	"github.com/joyent/freebsd-vpc/cmd/vpc/mux/fte"
 	"github.com/joyent/freebsd-vpc/cmd/vpc/mux/listen"
 	"github.com/joyent/freebsd-vpc/cmd/vpc/mux/show"
 	"github.com/joyent/freebsd-vpc/internal/command"
@@ -28,6 +29,7 @@ var Cmd = &command.Command{
 			connect.Cmd,
 			disconnect.Cmd,
 			destroy.Cmd,
+			fte.Cmd,
 			listen.Cmd,
 			show.Cmd,
 		}
