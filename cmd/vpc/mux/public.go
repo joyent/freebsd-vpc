@@ -1,6 +1,7 @@
 package mux
 
 import (
+	"github.com/joyent/freebsd-vpc/cmd/vpc/mux/connect"
 	"github.com/joyent/freebsd-vpc/cmd/vpc/mux/create"
 	"github.com/joyent/freebsd-vpc/cmd/vpc/mux/destroy"
 	"github.com/joyent/freebsd-vpc/internal/command"
@@ -21,6 +22,7 @@ var Cmd = &command.Command{
 	Setup: func(self *command.Command) error {
 		subCommands := command.Commands{
 			create.Cmd,
+			connect.Cmd,
 			destroy.Cmd,
 		}
 

@@ -775,6 +775,42 @@ _vpc_list()
     noun_aliases=()
 }
 
+_vpc_mux_connect()
+{
+    last_command="vpc_mux_connect"
+    commands=()
+
+    flags=()
+    two_word_flags=()
+    local_nonpersistent_flags=()
+    flags_with_completion=()
+    flags_completion=()
+
+    flags+=("--interface-id=")
+    two_word_flags+=("-I")
+    local_nonpersistent_flags+=("--interface-id=")
+    flags+=("--mux-id=")
+    two_word_flags+=("-M")
+    local_nonpersistent_flags+=("--mux-id=")
+    flags+=("--log-format=")
+    two_word_flags+=("-F")
+    flags+=("--log-level=")
+    two_word_flags+=("-l")
+    flags+=("--use-color")
+    flags+=("--use-pager")
+    flags+=("-P")
+    flags+=("--utc")
+    flags+=("-Z")
+
+    must_have_one_flag=()
+    must_have_one_flag+=("--interface-id=")
+    must_have_one_flag+=("-I")
+    must_have_one_flag+=("--mux-id=")
+    must_have_one_flag+=("-M")
+    must_have_one_noun=()
+    noun_aliases=()
+}
+
 _vpc_mux_create()
 {
     last_command="vpc_mux_create"
@@ -837,6 +873,7 @@ _vpc_mux()
 {
     last_command="vpc_mux"
     commands=()
+    commands+=("connect")
     commands+=("create")
     commands+=("destroy")
 

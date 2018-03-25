@@ -100,6 +100,17 @@ func (m *Mux) Commit() error {
 	return nil
 }
 
+// Connect a VPC Mux to a VPC Interface.
+func (m *Mux) Connect(interfaceID vpc.ID) error {
+	// TODO(seanc@): Test to see make sure the descriptor has the mutate bit set.
+
+	if err := vpc.Ctl(m.h, vpc.Cmd(_MuxUnderlayConnectCmd), interfaceID.Bytes(), nil); err != nil {
+		return errors.Wrap(err, "unable to connect VPC Mux to to VPC Interface")
+	}
+
+	return nil
+}
+
 // Destroy decrements the refcount of the VPC Mux and destroys the object.  The
 // Mux resources are cleaned up when the VPC Handle is closed, however the
 // object will stop processing traffic when the destroy command is issued.

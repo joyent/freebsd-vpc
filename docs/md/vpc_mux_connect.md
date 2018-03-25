@@ -1,22 +1,28 @@
 ---
 date: 2018-02-28T23:59:59Z
-title: "vpc mux"
-slug: vpc_mux
-url: /command/vpc_mux
+title: "vpc mux connect"
+slug: vpc_mux_connect
+url: /command/vpc_mux_connect
 ---
-## vpc mux
+## vpc mux connect
 
-VPC packet multiplexing configuration
+connect a VPC Mux to a VPC EthLink
 
 ### Synopsis
 
 
-VPC packet multiplexing configuration
+connect a VPC Mux to a VPC EthLink
+
+```
+vpc mux connect [flags]
+```
 
 ### Options
 
 ```
-  -h, --help   help for mux
+  -h, --help                  help for connect
+  -I, --interface-id string   Specify the VPC Interface ID
+  -M, --mux-id string         Specify the VPC Mux ID
 ```
 
 ### Options inherited from parent commands
@@ -30,8 +36,5 @@ VPC packet multiplexing configuration
 ```
 
 ### SEE ALSO
-* [vpc](/command/vpc)	 - vpc configures and manages VPCs
-* [vpc mux connect](/command/vpc_mux_connect)	 - connect a VPC Mux to a VPC EthLink
-* [vpc mux create](/command/vpc_mux_create)	 - Create a VPC mux interface
-* [vpc mux destroy](/command/vpc_mux_destroy)	 - Destroy a VPC mux interface
+* [vpc mux](/command/vpc_mux)	 - VPC packet multiplexing configuration
 
