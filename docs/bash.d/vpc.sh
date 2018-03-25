@@ -775,6 +775,62 @@ _vpc_list()
     noun_aliases=()
 }
 
+_vpc_mux_create()
+{
+    last_command="vpc_mux_create"
+    commands=()
+
+    flags=()
+    two_word_flags=()
+    local_nonpersistent_flags=()
+    flags_with_completion=()
+    flags_completion=()
+
+    flags+=("--mux-id=")
+    two_word_flags+=("-M")
+    local_nonpersistent_flags+=("--mux-id=")
+    flags+=("--log-format=")
+    two_word_flags+=("-F")
+    flags+=("--log-level=")
+    two_word_flags+=("-l")
+    flags+=("--use-color")
+    flags+=("--use-pager")
+    flags+=("-P")
+    flags+=("--utc")
+    flags+=("-Z")
+
+    must_have_one_flag=()
+    must_have_one_noun=()
+    noun_aliases=()
+}
+
+_vpc_mux()
+{
+    last_command="vpc_mux"
+    commands=()
+    commands+=("create")
+
+    flags=()
+    two_word_flags=()
+    local_nonpersistent_flags=()
+    flags_with_completion=()
+    flags_completion=()
+
+    flags+=("--log-format=")
+    two_word_flags+=("-F")
+    flags+=("--log-level=")
+    two_word_flags+=("-l")
+    flags+=("--use-color")
+    flags+=("--use-pager")
+    flags+=("-P")
+    flags+=("--utc")
+    flags+=("-Z")
+
+    must_have_one_flag=()
+    must_have_one_noun=()
+    noun_aliases=()
+}
+
 _vpc_shell_autocomplete_bash()
 {
     last_command="vpc_shell_autocomplete_bash"
@@ -1451,6 +1507,7 @@ _vpc()
     commands+=("hostif")
     commands+=("interface")
     commands+=("list")
+    commands+=("mux")
     commands+=("shell")
     commands+=("switch")
     commands+=("version")
