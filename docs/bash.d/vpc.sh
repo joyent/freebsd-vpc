@@ -869,6 +869,37 @@ _vpc_mux_destroy()
     noun_aliases=()
 }
 
+_vpc_mux_disconnect()
+{
+    last_command="vpc_mux_disconnect"
+    commands=()
+
+    flags=()
+    two_word_flags=()
+    local_nonpersistent_flags=()
+    flags_with_completion=()
+    flags_completion=()
+
+    flags+=("--mux-id=")
+    two_word_flags+=("-M")
+    local_nonpersistent_flags+=("--mux-id=")
+    flags+=("--log-format=")
+    two_word_flags+=("-F")
+    flags+=("--log-level=")
+    two_word_flags+=("-l")
+    flags+=("--use-color")
+    flags+=("--use-pager")
+    flags+=("-P")
+    flags+=("--utc")
+    flags+=("-Z")
+
+    must_have_one_flag=()
+    must_have_one_flag+=("--mux-id=")
+    must_have_one_flag+=("-M")
+    must_have_one_noun=()
+    noun_aliases=()
+}
+
 _vpc_mux()
 {
     last_command="vpc_mux"
@@ -876,6 +907,7 @@ _vpc_mux()
     commands+=("connect")
     commands+=("create")
     commands+=("destroy")
+    commands+=("disconnect")
 
     flags=()
     two_word_flags=()

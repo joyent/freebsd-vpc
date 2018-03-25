@@ -34,4 +34,5 @@ VPC packet multiplexing configuration
 * [vpc mux connect](/command/vpc_mux_connect)	 - connect a VPC Mux to a VPC EthLink
 * [vpc mux create](/command/vpc_mux_create)	 - Create a VPC mux interface
 * [vpc mux destroy](/command/vpc_mux_destroy)	 - Destroy a VPC mux interface
+* [vpc mux disconnect](/command/vpc_mux_disconnect)	 - disconnect a VPC Mux from its VPC Interface
 

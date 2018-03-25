@@ -67,7 +67,7 @@ const (
 	_MuxFTEDelCmd             _MuxCmd = _MuxCmd(vpc.InBit|vpc.PrivBit|vpc.MutateBit|(vpc.Cmd(vpc.ObjTypeMux)<<16)) | _MuxCmd(_OpMuxFTEDel)
 	_MuxFTEListCmd            _MuxCmd = _MuxCmd(vpc.InBit|(vpc.Cmd(vpc.ObjTypeMux)<<16)) | _MuxCmd(_OpMuxFTEList)
 	_MuxUnderlayConnectCmd    _MuxCmd = _MuxCmd(vpc.InBit|vpc.PrivBit|vpc.MutateBit|(vpc.Cmd(vpc.ObjTypeMux)<<16)) | _MuxCmd(_OpMuxUnderlayConnect)
-	_MuxUnderlayDisconnectCmd _MuxCmd = _MuxCmd(vpc.InBit|vpc.PrivBit|vpc.MutateBit|(vpc.Cmd(vpc.ObjTypeMux)<<16)) | _MuxCmd(_OpMuxUnderlayDisconnect)
+	_MuxUnderlayDisconnectCmd _MuxCmd = _MuxCmd(vpc.PrivBit|vpc.MutateBit|(vpc.Cmd(vpc.ObjTypeMux)<<16)) | _MuxCmd(_OpMuxUnderlayDisconnect)
 	_MuxConnectedIDGetCmd     _MuxCmd = _MuxCmd(vpc.InBit|vpc.OutBit|(vpc.Cmd(vpc.ObjTypeMux)<<16)) | _MuxCmd(_OpMuxConnectedIDGet)
 )
 
@@ -121,6 +121,17 @@ func (m *Mux) Destroy() error {
 
 	if err := m.h.Destroy(); err != nil {
 		return errors.Wrap(err, "unable to destroy VPC Mux")
+	}
+
+	return nil
+}
+
+// Disconnect a VPC Mux from a VPC Interface.
+func (m *Mux) Disconnect() error {
+	// TODO(seanc@): Test to see make sure the descriptor has the mutate bit set.
+
+	if err := vpc.Ctl(m.h, vpc.Cmd(_MuxUnderlayDisconnectCmd), nil, nil); err != nil {
+		return errors.Wrap(err, "unable to disconnect VPC Mux to to VPC Interface")
 	}
 
 	return nil

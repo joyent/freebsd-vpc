@@ -4,6 +4,7 @@ import (
 	"github.com/joyent/freebsd-vpc/cmd/vpc/mux/connect"
 	"github.com/joyent/freebsd-vpc/cmd/vpc/mux/create"
 	"github.com/joyent/freebsd-vpc/cmd/vpc/mux/destroy"
+	"github.com/joyent/freebsd-vpc/cmd/vpc/mux/disconnect"
 	"github.com/joyent/freebsd-vpc/internal/command"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -23,6 +24,7 @@ var Cmd = &command.Command{
 		subCommands := command.Commands{
 			create.Cmd,
 			connect.Cmd,
+			disconnect.Cmd,
 			destroy.Cmd,
 		}
 
