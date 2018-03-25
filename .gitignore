@@ -14,6 +14,7 @@
 /.vagrant/
 vagrant/guest_disks/
 vagrant/boxes/
+iso/
 
 # System related items
 .DS_Store

@@ -28,8 +28,8 @@ end
 def configureMachineSize(vmCfg, vcpuCount, memSize)
 	["vmware_fusion", "vmware_workstation"].each do |p|
 		vmCfg.vm.provider p do |v|
-			v.vmx["memsize"] = "1024"
-			v.vmx["numvcpus"] = "2"
+			v.vmx["memsize"] = memSize
+			v.vmx["numvcpus"] = vcpuCount
 		end
 	end
 
