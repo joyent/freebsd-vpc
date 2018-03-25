@@ -1,27 +1,31 @@
-.TH "VPC\-MUX" "8" "Feb 2018" "vpc 0.0.1" "vpc" 
+.TH "VPC\-MUX\-DESTROY" "8" "Feb 2018" "vpc 0.0.1" "vpc" 
 .nh
 .ad l
 
 
 .SH NAME
 .PP
-vpc\-mux \- VPC packet multiplexing configuration
+vpc\-mux\-destroy \- Destroy a VPC mux interface
 
 
 .SH SYNOPSIS
 .PP
-\fBvpc mux [flags]\fP
+\fBvpc mux destroy [flags]\fP
 
 
 .SH DESCRIPTION
 .PP
-VPC packet multiplexing configuration
+Destroy a VPC mux interface
 
 
 .SH OPTIONS
 .PP
 \fB\-h\fP, \fB\-\-help\fP[=false]
-    help for mux
+    help for destroy
+
+.PP
+\fB\-M\fP, \fB\-\-mux\-id\fP=""
+    Specify the VPC Mux ID
 
 
 .SH OPTIONS INHERITED FROM PARENT COMMANDS
@@ -48,4 +52,4 @@ VPC packet multiplexing configuration
 
 .SH SEE ALSO
 .PP
-\fBvpc(8)\fP, \fBvpc\-mux\-create(8)\fP, \fBvpc\-mux\-destroy(8)\fP
+\fBvpc\-mux(8)\fP

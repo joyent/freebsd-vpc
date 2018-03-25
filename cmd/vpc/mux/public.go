@@ -2,6 +2,7 @@ package mux
 
 import (
 	"github.com/joyent/freebsd-vpc/cmd/vpc/mux/create"
+	"github.com/joyent/freebsd-vpc/cmd/vpc/mux/destroy"
 	"github.com/joyent/freebsd-vpc/internal/command"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -20,6 +21,7 @@ var Cmd = &command.Command{
 	Setup: func(self *command.Command) error {
 		subCommands := command.Commands{
 			create.Cmd,
+			destroy.Cmd,
 		}
 
 		if err := self.Register(subCommands); err != nil {

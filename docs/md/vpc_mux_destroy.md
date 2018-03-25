@@ -1,22 +1,27 @@
 ---
 date: 2018-02-28T23:59:59Z
-title: "vpc mux"
-slug: vpc_mux
-url: /command/vpc_mux
+title: "vpc mux destroy"
+slug: vpc_mux_destroy
+url: /command/vpc_mux_destroy
 ---
-## vpc mux
+## vpc mux destroy
 
-VPC packet multiplexing configuration
+Destroy a VPC mux interface
 
 ### Synopsis
 
 
-VPC packet multiplexing configuration
+Destroy a VPC mux interface
+
+```
+vpc mux destroy [flags]
+```
 
 ### Options
 
 ```
-  -h, --help   help for mux
+  -h, --help            help for destroy
+  -M, --mux-id string   Specify the VPC Mux ID
 ```
 
 ### Options inherited from parent commands
@@ -30,7 +35,5 @@ VPC packet multiplexing configuration
 ```
 
 ### SEE ALSO
-* [vpc](/command/vpc)	 - vpc configures and manages VPCs
-* [vpc mux create](/command/vpc_mux_create)	 - Create a VPC mux interface
-* [vpc mux destroy](/command/vpc_mux_destroy)	 - Destroy a VPC mux interface
+* [vpc mux](/command/vpc_mux)	 - VPC packet multiplexing configuration
 

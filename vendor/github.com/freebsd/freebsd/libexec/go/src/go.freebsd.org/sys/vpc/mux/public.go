@@ -75,48 +75,6 @@ func Create(cfg Config) (*Mux, error) {
 	}, nil
 }
 
-// Close closes the VPC descriptor.
-func (m *Mux) Close() error {
-	if m.h.FD() <= 0 {
-		return nil
-	}
-
-	if err := m.h.Close(); err != nil {
-		return errors.Wrap(err, "unable to close VPC Mux handle")
-	}
-
-	return nil
-}
-
-// Commit increments the refcount of the VPC Mux in order to ensure the Mux
-// lives beyond the life of the current process and is not automatically cleaned
-// up when the Mux handle is closed.
-func (m *Mux) Commit() error {
-	if m.h.FD() <= 0 {
-		return nil
-	}
-
-	if err := m.h.Commit(); err != nil {
-		return errors.Wrap(err, "unable to commit VPC Mux")
-	}
-
-	return nil
-}
-
-// Destroy decrements the refcount of the VPC Mux and destroys the object.  The
-// Mux resources are cleaned up when the VPC Handle is closed.
-func (m *Mux) Destroy() error {
-	if m.h.FD() <= 0 {
-		return nil
-	}
-
-	if err := m.h.Destroy(); err != nil {
-		return errors.Wrap(err, "unable to destroy VPC Mux")
-	}
-
-	return nil
-}
-
 // Open opens an existing VPC Mux using the Config parameters.  Callers are
 // expected to Close a given Mux.
 func Open(cfg Config) (*Mux, error) {

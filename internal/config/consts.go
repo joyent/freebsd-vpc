@@ -35,7 +35,8 @@ const (
 	KeyHostifCreateID  = "hostif.create.id"
 	KeyHostifDestroyID = "hostif.destroy.id"
 
-	KeyMuxCreateMuxID = "mux.create.mux-id"
+	KeyMuxCreateMuxID  = "mux.create.mux-id"
+	KeyMuxDestroyMuxID = "mux.destroy.mux-id"
 
 	KeySWPortAddEthLinkID          = "switch.port.add.ethlink-id"
 	KeySWPortAddID                 = "switch.port.add.id"
