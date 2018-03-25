@@ -30,6 +30,10 @@
 package mux
 
 import (
+	"bytes"
+	"encoding/binary"
+	"net"
+
 	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc"
 	"github.com/pkg/errors"
 )
@@ -57,12 +61,14 @@ const (
 	_OpMuxUnderlayConnect    = vpc.Op(5)
 	_OpMuxUnderlayDisconnect = vpc.Op(6)
 	_OpMuxConnectedIDGet     = vpc.Op(7)
+	_OpMuxListenAddrGet      = vpc.Op(8)
 )
 
 // Template commands that can be passed to vpc.Ctl() with a valid VPC Mux
 // Handle.
 const (
 	_MuxListenCmd             _MuxCmd = _MuxCmd(vpc.InBit|vpc.PrivBit|vpc.MutateBit|(vpc.Cmd(vpc.ObjTypeMux)<<16)) | _MuxCmd(_OpMuxListen)
+	_MuxListenAddrCmd         _MuxCmd = _MuxCmd(vpc.OutBit|(vpc.Cmd(vpc.ObjTypeMux)<<16)) | _MuxCmd(_OpMuxListenAddrGet)
 	_MuxFTESetCmd             _MuxCmd = _MuxCmd(vpc.InBit|vpc.PrivBit|vpc.MutateBit|(vpc.Cmd(vpc.ObjTypeMux)<<16)) | _MuxCmd(_OpMuxFTESet)
 	_MuxFTEDelCmd             _MuxCmd = _MuxCmd(vpc.InBit|vpc.PrivBit|vpc.MutateBit|(vpc.Cmd(vpc.ObjTypeMux)<<16)) | _MuxCmd(_OpMuxFTEDel)
 	_MuxFTEListCmd            _MuxCmd = _MuxCmd(vpc.InBit|(vpc.Cmd(vpc.ObjTypeMux)<<16)) | _MuxCmd(_OpMuxFTEList)
@@ -111,6 +117,23 @@ func (m *Mux) Connect(interfaceID vpc.ID) error {
 	return nil
 }
 
+// ConnectedID returns the VPC ID of the connected interface to this VPC Mux.
+func (m *Mux) ConnectedID() (id vpc.ID, err error) {
+	// TODO(seanc@): Test to see make sure the descriptor has the mutate bit set.
+
+	out := make([]byte, vpc.IDSize)
+	if err := vpc.Ctl(m.h, vpc.Cmd(_MuxConnectedIDGetCmd), nil, out); err != nil {
+		return vpc.ID{}, errors.Wrap(err, "unable to get VPC Mux's connected ID")
+	}
+
+	buf := bytes.NewReader(out[:])
+	if err = binary.Read(buf, binary.LittleEndian, &id); err != nil {
+		return vpc.ID{}, errors.Wrap(err, "failed to read VPC ID")
+	}
+
+	return id, nil
+}
+
 // Destroy decrements the refcount of the VPC Mux and destroys the object.  The
 // Mux resources are cleaned up when the VPC Handle is closed, however the
 // object will stop processing traffic when the destroy command is issued.
@@ -147,4 +170,23 @@ func (m *Mux) Listen(addr string) error {
 	}
 
 	return nil
+}
+
+// ListenAddr returns the IP and port being used by this VPC Mux to listen for
+// muxed traffic (RFC 7348 VXLAN encapsulated). If the Mux is not listening, it
+// will return an empty string for the host and port.
+func (m *Mux) ListenAddr() (host, port string, err error) {
+	// TODO(seanc@): Test to see make sure the descriptor has the mutate bit set.
+	const maxListenAddrSize = 128
+	out := make([]byte, maxListenAddrSize)
+	if err := vpc.Ctl(m.h, vpc.Cmd(_MuxListenAddrCmd), nil, out); err != nil {
+		return "", "", errors.Wrap(err, "unable to get the listening address from the VPC Mux")
+	}
+
+	host, port, err = net.SplitHostPort(string(out))
+	if err != nil {
+		return "", "", errors.Wrap(err, "unable to find host/port in listening address")
+	}
+
+	return host, port, nil
 }

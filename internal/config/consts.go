@@ -42,6 +42,7 @@ const (
 	KeyMuxDisconnectMuxID    = "mux.disconnect.mux-id"
 	KeyMuxListenAddr         = "mux.listen.addr"
 	KeyMuxListenMuxID        = "mux.listen.mux-id"
+	KeyMuxShowMuxID          = "mux.show.mux-id"
 
 	KeySWPortAddEthLinkID          = "switch.port.add.ethlink-id"
 	KeySWPortAddID                 = "switch.port.add.id"
