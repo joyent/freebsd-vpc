@@ -31,6 +31,28 @@ func AddEthLinkID(cmd *command.Command, keyName string, required bool) error {
 	return nil
 }
 
+// AddHostlinkID adds the Hostlink ID to a given command.
+func AddHostlinkID(cmd *command.Command, keyName string, required bool) error {
+	key := keyName
+	const (
+		longName     = "hostlink-id"
+		shortName    = "H"
+		defaultValue = ""
+		description  = "Specify the VPC Hostlink ID"
+	)
+
+	flags := cmd.Cobra.Flags()
+	flags.StringP(longName, shortName, defaultValue, description)
+	if required {
+		cmd.Cobra.MarkFlagRequired(longName)
+	}
+
+	viper.BindPFlag(key, flags.Lookup(longName))
+	viper.SetDefault(key, defaultValue)
+
+	return nil
+}
+
 // AddInterfaceID adds the Interface ID to a given command.
 func AddInterfaceID(cmd *command.Command, keyName string, required bool) error {
 	key := keyName

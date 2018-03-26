@@ -1,0 +1,67 @@
+.TH "VPC\-HOSTLINK\-SET" "8" "Feb 2018" "vpc 0.0.1" "vpc" 
+.nh
+.ad l
+
+
+.SH NAME
+.PP
+vpc\-hostlink\-set \- set VM NIC information
+
+
+.SH SYNOPSIS
+.PP
+\fBvpc hostlink set [flags]\fP
+
+
+.SH DESCRIPTION
+.PP
+set VM NIC information
+
+
+.SH OPTIONS
+.PP
+\fB\-E\fP, \fB\-\-freeze\fP[=false]
+    freeze the VM NIC configuration
+
+.PP
+\fB\-h\fP, \fB\-\-help\fP[=false]
+    help for set
+
+.PP
+\fB\-n\fP, \fB\-\-num\-queues\fP=0
+    set the number of hardware queues for a given VM NIC
+
+.PP
+\fB\-\-unfreeze\fP[=false]
+    freeze the VM NIC configuration
+
+.PP
+\fB\-N\fP, \fB\-\-vmnic\-id\fP=""
+    Specify the VM NIC ID
+
+
+.SH OPTIONS INHERITED FROM PARENT COMMANDS
+.PP
+\fB\-F\fP, \fB\-\-log\-format\fP="auto"
+    Specify the log format ("auto", "zerolog", or "human")
+
+.PP
+\fB\-l\fP, \fB\-\-log\-level\fP="INFO"
+    Change the log level being sent to stdout
+
+.PP
+\fB\-\-use\-color\fP[=false]
+    Use ASCII colors
+
+.PP
+\fB\-P\fP, \fB\-\-use\-pager\fP[=false]
+    Use a pager to read the output (defaults to $PAGER, less(1), or more(1))
+
+.PP
+\fB\-Z\fP, \fB\-\-utc\fP[=false]
+    Display times in UTC
+
+
+.SH SEE ALSO
+.PP
+\fBvpc\-hostlink(8)\fP

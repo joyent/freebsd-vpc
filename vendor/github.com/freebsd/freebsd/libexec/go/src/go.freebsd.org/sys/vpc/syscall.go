@@ -231,6 +231,7 @@ const (
 	ObjTypeLinkEth    ObjType = 8
 	ObjTypeMeta       ObjType = 9
 	ObjTypeAny        ObjType = 10
+	ObjTypeHostlink   ObjType = 11
 )
 
 // ObjTypes returns a lits of supported Object Types
@@ -247,6 +248,7 @@ func ObjTypes() []ObjType {
 		ObjTypeLinkEth,
 		// ObjTypeMeta, // Not a queriable type
 		// ObjTypeAny, // Not a queriable type
+		ObjTypeHostlink,
 	}
 }
 
@@ -275,6 +277,8 @@ func (obj ObjType) String() string {
 		return "meta"
 	case ObjTypeAny:
 		return "any"
+	case ObjTypeHostlink:
+		return "hostlink"
 	default:
 		panic(fmt.Sprintf("unsupported object type: 0x%02x", uint8(obj)))
 	}
