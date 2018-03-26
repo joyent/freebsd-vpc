@@ -170,8 +170,8 @@ var Cmd = &command.Command{
 					return errors.Wrap(err, "unable to create VPC EthLink")
 				}
 
-				if err := el.Attach(); err != nil {
-					return errors.Wrapf(err, "unable to attach L2 link to device %q", l2Name)
+				if err := el.Connect(); err != nil {
+					return errors.Wrapf(err, "unable to connect L2 link to device %q", l2Name)
 				}
 				commitFuncs = append(commitFuncs, func() error {
 					if err := el.Commit(); err != nil {

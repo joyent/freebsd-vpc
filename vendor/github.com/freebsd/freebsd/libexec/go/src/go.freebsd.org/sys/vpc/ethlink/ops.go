@@ -30,8 +30,11 @@
 package ethlink
 
 import (
-	"github.com/pkg/errors"
+	"encoding/binary"
+	"fmt"
+
 	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc"
+	"github.com/pkg/errors"
 )
 
 // _EthLinkCmd is the encoded type of operations that can be performed on a VPC
@@ -49,32 +52,19 @@ const (
 
 // Ops that can be encoded into a vpc.Cmd
 const (
-	_OpInvalid = vpc.Op(0)
-	_OpAttach  = vpc.Op(1)
+	_OpInvalid          = vpc.Op(0)
+	_OpConnect          = vpc.Op(1)
+	_OpCloneAttach      = vpc.Op(2)
+	_OpDevCtl           = vpc.Op(3)
+	_OpDisconnect       = vpc.Op(4)
+	_OpConnectedNameGet = vpc.Op(5)
+	_OpVTagGet          = vpc.Op(6)
+	_OpVTagSet          = vpc.Op(7)
 
-	// _OpReset         = vpc.Op(7)
-
-	_AttachCmd _EthLinkCmd = _EthLinkCmd(vpc.InBit|vpc.PrivBit|vpc.MutateBit|(vpc.Cmd(vpc.ObjTypeLinkEth)<<16)) | _EthLinkCmd(_OpAttach)
+	_ConnectCmd _EthLinkCmd = _EthLinkCmd(vpc.InBit|vpc.PrivBit|vpc.MutateBit|(vpc.Cmd(vpc.ObjTypeLinkEth)<<16)) | _EthLinkCmd(_OpConnect)
+	_VTagGetCmd _EthLinkCmd = _EthLinkCmd(vpc.OutBit|(vpc.Cmd(vpc.ObjTypeLinkEth)<<16)) | _EthLinkCmd(_OpVTagGet)
+	_VTagSetCmd _EthLinkCmd = _EthLinkCmd(vpc.InBit|vpc.PrivBit|vpc.MutateBit|(vpc.Cmd(vpc.ObjTypeLinkEth)<<16)) | _EthLinkCmd(_OpVTagSet)
 )
-
-// Template commands that can be passed to vpc.Ctl() with a valid VM NIC
-// Handle.
-// var (
-// 	_ResetCmd _EthLinkCmd
-// )
-
-// Attach attaches the named physical device or cloned interface to this VPC
-// EthLink.  The name of the device must be specified in the EthLink Config and
-// passed in at Create time.
-func (el *EthLink) Attach() error {
-	// TODO(seanc@): Test to see make sure the descriptor has the mutate bit set.
-
-	if err := vpc.Ctl(el.h, vpc.Cmd(_AttachCmd), []byte(el.name), nil); err != nil {
-		return errors.Wrap(err, "unable to attach VPC EthLink to a physical NIC")
-	}
-
-	return nil
-}
 
 // Close closes the VPC Handle.  Created EthLink will not be destroyed when the
 // EthLink is closed if the EthLink has been Committed.
@@ -105,6 +95,19 @@ func (el *EthLink) Commit() error {
 	return nil
 }
 
+// Connect attaches the named physical device or cloned interface to this VPC
+// EthLink.  The name of the device must be specified in the EthLink Config and
+// passed in at Create time.
+func (el *EthLink) Connect() error {
+	// TODO(seanc@): Test to see make sure the descriptor has the mutate bit set.
+
+	if err := vpc.Ctl(el.h, vpc.Cmd(_ConnectCmd), []byte(el.name), nil); err != nil {
+		return errors.Wrap(err, "unable to connect VPC EthLink to a physical NIC")
+	}
+
+	return nil
+}
+
 // Destroy decrements the refcount of the VPC EthLink.  This EthLlink will be
 // cleaned up when this VPC Handle is closed, however the object is destroyed
 // before this call returns.  Some operations may still be performed on the open
@@ -116,6 +119,46 @@ func (el *EthLink) Destroy() error {
 
 	if err := el.h.Destroy(); err != nil {
 		return errors.Wrap(err, "unable to destroy VPC EthLink")
+	}
+
+	return nil
+}
+
+// VTagGet returns the VTag (VLAN ID) associated with this EthLink interface.
+func (el *EthLink) VTagGet() (vpc.VTag, error) {
+	out := make([]byte, binary.MaxVarintLen64)
+	if err := vpc.Ctl(el.h, vpc.Cmd(_VTagGetCmd), nil, out); err != nil {
+		return 0, errors.Wrap(err, "unable to get VTag from EthLink")
+	}
+
+	vtagID, n := binary.Uvarint(out)
+	if n > 0 && n <= 2 {
+		switch {
+		case vtagID < vpc.VTagMin:
+			return 0, errors.Errorf("vtag value less than min: %d < %d", vtagID, vpc.VTagMin)
+		case vtagID > vpc.VTagMax:
+			return 0, errors.Errorf("vtag value greater than max: %d > %d", vtagID, vpc.VTagMax)
+		default:
+			return vpc.VTag(vtagID), nil
+		}
+	}
+
+	panic(fmt.Sprintf("invariant: num vtag bytes read too big for kernel interface output (want/got: 2/%d", n))
+}
+
+// VTagSet sets the VTag (VLAN ID) on a given EthLink interface.  Setting the
+// value to 0 clears the VTag.
+func (el *EthLink) VTagSet(vtagID vpc.VTag) error {
+	in := make([]byte, binary.MaxVarintLen64)
+	n := binary.PutUvarint(in, uint64(vtagID))
+	if n < 2 {
+		in = in[:2]
+	} else {
+		panic(fmt.Sprintf("invariant: vtag size too big for kernel interface input (want/got: 2/%d", n))
+	}
+
+	if err := vpc.Ctl(el.h, vpc.Cmd(_VTagSetCmd), in, nil); err != nil {
+		return errors.Wrap(err, "unable to set the VTag for EthLink NIC")
 	}
 
 	return nil

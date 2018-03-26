@@ -479,12 +479,50 @@ _vpc_ethlink_list()
     noun_aliases=()
 }
 
+_vpc_ethlink_vtag()
+{
+    last_command="vpc_ethlink_vtag"
+    commands=()
+
+    flags=()
+    two_word_flags=()
+    local_nonpersistent_flags=()
+    flags_with_completion=()
+    flags_completion=()
+
+    flags+=("--ethlink-id=")
+    two_word_flags+=("-E")
+    local_nonpersistent_flags+=("--ethlink-id=")
+    flags+=("--get-vtag")
+    flags+=("-g")
+    local_nonpersistent_flags+=("--get-vtag")
+    flags+=("--set-vtag=")
+    two_word_flags+=("-s")
+    local_nonpersistent_flags+=("--set-vtag=")
+    flags+=("--log-format=")
+    two_word_flags+=("-F")
+    flags+=("--log-level=")
+    two_word_flags+=("-l")
+    flags+=("--use-color")
+    flags+=("--use-pager")
+    flags+=("-P")
+    flags+=("--utc")
+    flags+=("-Z")
+
+    must_have_one_flag=()
+    must_have_one_flag+=("--ethlink-id=")
+    must_have_one_flag+=("-E")
+    must_have_one_noun=()
+    noun_aliases=()
+}
+
 _vpc_ethlink()
 {
     last_command="vpc_ethlink"
     commands=()
     commands+=("destroy")
     commands+=("list")
+    commands+=("vtag")
 
     flags=()
     two_word_flags=()

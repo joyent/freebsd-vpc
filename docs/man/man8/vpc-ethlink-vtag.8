@@ -1,27 +1,39 @@
-.TH "VPC\-ETHLINK" "8" "Feb 2018" "vpc 0.0.1" "vpc" 
+.TH "VPC\-ETHLINK\-VTAG" "8" "Feb 2018" "vpc 0.0.1" "vpc" 
 .nh
 .ad l
 
 
 .SH NAME
 .PP
-vpc\-ethlink \- VPC EthLink management
+vpc\-ethlink\-vtag \- Get or set the VTag on a VPC EthLink
 
 
 .SH SYNOPSIS
 .PP
-\fBvpc ethlink [flags]\fP
+\fBvpc ethlink vtag [flags]\fP
 
 
 .SH DESCRIPTION
 .PP
-VPC EthLink management
+Get or set the VTag on a VPC EthLink
 
 
 .SH OPTIONS
 .PP
+\fB\-E\fP, \fB\-\-ethlink\-id\fP=""
+    Specify the EthLink ID
+
+.PP
+\fB\-g\fP, \fB\-\-get\-vtag\fP[=true]
+    get the VTag for a given VPC EthLink NIC
+
+.PP
 \fB\-h\fP, \fB\-\-help\fP[=false]
-    help for ethlink
+    help for vtag
+
+.PP
+\fB\-s\fP, \fB\-\-set\-vtag\fP=\-1
+    set the VTag for a given VPC EthLink NIC
 
 
 .SH OPTIONS INHERITED FROM PARENT COMMANDS
@@ -48,4 +60,4 @@ VPC EthLink management
 
 .SH SEE ALSO
 .PP
-\fBvpc(8)\fP, \fBvpc\-ethlink\-destroy(8)\fP, \fBvpc\-ethlink\-list(8)\fP, \fBvpc\-ethlink\-vtag(8)\fP
+\fBvpc\-ethlink(8)\fP
