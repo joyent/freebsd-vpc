@@ -38,7 +38,7 @@ import (
 // DeviceNamePrefix is the prefix of the device name (i.e. "hostlink0").
 const DeviceNamePrefix = "hostlink"
 
-// Config is the configuration used to populate a given VM NIC.
+// Config is the configuration used to populate a given Hostlink NIC.
 type Config struct {
 	ID        vpc.ID
 	Writeable bool
@@ -79,7 +79,7 @@ func Create(cfg Config) (*Hostlink, error) {
 	}, nil
 }
 
-// Open opens an existing VM NIC using the Config parameters.  Callers are
+// Open opens an existing Hostlink NIC using the Config parameters.  Callers are
 // expected to Close a given Hostlink.
 func Open(cfg Config) (*Hostlink, error) {
 	ht, err := vpc.NewHandleType(vpc.HandleTypeInput{

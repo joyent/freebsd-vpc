@@ -39,7 +39,7 @@ import (
 type _HostlinkCmd vpc.Cmd
 
 // Close closes the VPC Handle descriptor.  Created Hostlinkn NICs will not be
-// destroyed when the Hostlink is closed if the VM NIC has been Committed.
+// destroyed when the Hostlink is closed if the Hostlink NIC has been Committed.
 func (hl *Hostlink) Close() error {
 	if hl.h.FD() <= 0 {
 		return nil
