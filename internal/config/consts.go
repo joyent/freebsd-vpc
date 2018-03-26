@@ -13,6 +13,9 @@ const (
 
 	KeyEthLinkDestroyID  = "ethlink.destroy.ethlink-id"
 	KeyEthLinkListSortBy = "ethlink.list.sort-by"
+	KeyEthLinkVTagID     = "ethlink.vtag.ethlink-id"
+	KeyEthLinkGetVTag    = "ethlink.vtag.get-vtag"
+	KeyEthLinkSetVTag    = "ethlink.vtag.set-vtag"
 
 	KeyListObjCounts = "list.obj-counts"
 	KeyListObjSortBy = "list.sort-by"

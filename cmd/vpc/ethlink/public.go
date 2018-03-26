@@ -3,6 +3,7 @@ package ethlink
 import (
 	"github.com/joyent/freebsd-vpc/cmd/vpc/ethlink/destroy"
 	"github.com/joyent/freebsd-vpc/cmd/vpc/ethlink/list"
+	"github.com/joyent/freebsd-vpc/cmd/vpc/ethlink/vtag"
 	"github.com/joyent/freebsd-vpc/internal/command"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -26,6 +27,7 @@ var Cmd = &command.Command{
 		subCommands := command.Commands{
 			destroy.Cmd,
 			list.Cmd,
+			vtag.Cmd,
 		}
 
 		if err := self.Register(subCommands); err != nil {

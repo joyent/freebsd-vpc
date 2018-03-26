@@ -48,15 +48,30 @@ import (
 type VNI int32
 
 const (
-	// IDSize is the sizeof(ID)
-	IDSize = 16
-
 	// VNIMax is the largest permitted VNI
 	VNIMax VNI = (1 << 24) - 1
 
 	// VNIMin is the smallest permitted VNI.  NOTE: a VNI of 0 implies
 	// un-encapsulated frames.
 	VNIMin VNI = 0
+)
+
+// VTag is the VLAN ID ("VNI").  A VTag of 0 means unencapsulated traffic.  The
+// max VTag value is 4096.
+type VTag uint16
+
+const (
+	// VTagMax is the largest permitted VTag/VLAN ID
+	VTagMax = (1 << 12) - 1
+
+	// VTagMin is the smallest permitted VTag.  NOTE: a VTag of 0 implies
+	// un-encapsulated frames.
+	VTagMin = 0
+)
+
+const (
+	// IDSize is the sizeof(ID)
+	IDSize = 16
 )
 
 // Byter ensures objects can be converted to binary

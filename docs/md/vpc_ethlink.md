@@ -33,4 +33,5 @@ VPC EthLink management
 * [vpc](/command/vpc)	 - vpc configures and manages VPCs
 * [vpc ethlink destroy](/command/vpc_ethlink_destroy)	 - destroy a VPC EthLink
 * [vpc ethlink list](/command/vpc_ethlink_list)	 - list VPC EthLink interfaces
+* [vpc ethlink vtag](/command/vpc_ethlink_vtag)	 - Get or set the VTag on a VPC EthLink
 
