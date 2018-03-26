@@ -507,6 +507,148 @@ _vpc_ethlink()
     noun_aliases=()
 }
 
+_vpc_hostlink_create()
+{
+    last_command="vpc_hostlink_create"
+    commands=()
+
+    flags=()
+    two_word_flags=()
+    local_nonpersistent_flags=()
+    flags_with_completion=()
+    flags_completion=()
+
+    flags+=("--hostlink-id=")
+    two_word_flags+=("-H")
+    local_nonpersistent_flags+=("--hostlink-id=")
+    flags+=("--log-format=")
+    two_word_flags+=("-F")
+    flags+=("--log-level=")
+    two_word_flags+=("-l")
+    flags+=("--use-color")
+    flags+=("--use-pager")
+    flags+=("-P")
+    flags+=("--utc")
+    flags+=("-Z")
+
+    must_have_one_flag=()
+    must_have_one_noun=()
+    noun_aliases=()
+}
+
+_vpc_hostlink_destroy()
+{
+    last_command="vpc_hostlink_destroy"
+    commands=()
+
+    flags=()
+    two_word_flags=()
+    local_nonpersistent_flags=()
+    flags_with_completion=()
+    flags_completion=()
+
+    flags+=("--hostlink-id=")
+    two_word_flags+=("-H")
+    local_nonpersistent_flags+=("--hostlink-id=")
+    flags+=("--log-format=")
+    two_word_flags+=("-F")
+    flags+=("--log-level=")
+    two_word_flags+=("-l")
+    flags+=("--use-color")
+    flags+=("--use-pager")
+    flags+=("-P")
+    flags+=("--utc")
+    flags+=("-Z")
+
+    must_have_one_flag=()
+    must_have_one_flag+=("--hostlink-id=")
+    must_have_one_flag+=("-H")
+    must_have_one_noun=()
+    noun_aliases=()
+}
+
+_vpc_hostlink_genmac()
+{
+    last_command="vpc_hostlink_genmac"
+    commands=()
+
+    flags=()
+    two_word_flags=()
+    local_nonpersistent_flags=()
+    flags_with_completion=()
+    flags_completion=()
+
+    flags+=("--log-format=")
+    two_word_flags+=("-F")
+    flags+=("--log-level=")
+    two_word_flags+=("-l")
+    flags+=("--use-color")
+    flags+=("--use-pager")
+    flags+=("-P")
+    flags+=("--utc")
+    flags+=("-Z")
+
+    must_have_one_flag=()
+    must_have_one_noun=()
+    noun_aliases=()
+}
+
+_vpc_hostlink_list()
+{
+    last_command="vpc_hostlink_list"
+    commands=()
+
+    flags=()
+    two_word_flags=()
+    local_nonpersistent_flags=()
+    flags_with_completion=()
+    flags_completion=()
+
+    flags+=("--log-format=")
+    two_word_flags+=("-F")
+    flags+=("--log-level=")
+    two_word_flags+=("-l")
+    flags+=("--use-color")
+    flags+=("--use-pager")
+    flags+=("-P")
+    flags+=("--utc")
+    flags+=("-Z")
+
+    must_have_one_flag=()
+    must_have_one_noun=()
+    noun_aliases=()
+}
+
+_vpc_hostlink()
+{
+    last_command="vpc_hostlink"
+    commands=()
+    commands+=("create")
+    commands+=("destroy")
+    commands+=("genmac")
+    commands+=("list")
+
+    flags=()
+    two_word_flags=()
+    local_nonpersistent_flags=()
+    flags_with_completion=()
+    flags_completion=()
+
+    flags+=("--log-format=")
+    two_word_flags+=("-F")
+    flags+=("--log-level=")
+    two_word_flags+=("-l")
+    flags+=("--use-color")
+    flags+=("--use-pager")
+    flags+=("-P")
+    flags+=("--utc")
+    flags+=("-Z")
+
+    must_have_one_flag=()
+    must_have_one_noun=()
+    noun_aliases=()
+}
+
 _vpc_interface_list()
 {
     last_command="vpc_interface_list"
@@ -1268,6 +1410,7 @@ _vpc()
     commands+=("db")
     commands+=("doc")
     commands+=("ethlink")
+    commands+=("hostlink")
     commands+=("interface")
     commands+=("list")
     commands+=("shell")
