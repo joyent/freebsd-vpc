@@ -30,8 +30,8 @@
 package ethlink
 
 import (
+	"bytes"
 	"encoding/binary"
-	"fmt"
 
 	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc"
 	"github.com/pkg/errors"
@@ -131,33 +131,30 @@ func (el *EthLink) VTagGet() (vpc.VTag, error) {
 		return 0, errors.Wrap(err, "unable to get VTag from EthLink")
 	}
 
-	vtagID, n := binary.Uvarint(out)
-	if n > 0 && n <= 2 {
-		switch {
-		case vtagID < vpc.VTagMin:
-			return 0, errors.Errorf("vtag value less than min: %d < %d", vtagID, vpc.VTagMin)
-		case vtagID > vpc.VTagMax:
-			return 0, errors.Errorf("vtag value greater than max: %d > %d", vtagID, vpc.VTagMax)
-		default:
-			return vpc.VTag(vtagID), nil
-		}
+	var vtagID uint64
+	buf := bytes.NewReader(out)
+	err := binary.Read(buf, binary.BigEndian, &vtagID)
+	if err != nil {
+		return 0, errors.Wrap(err, "unable to read VPC EthLink VTag")
 	}
 
-	panic(fmt.Sprintf("invariant: num vtag bytes read too big for kernel interface output (want/got: 2/%d", n))
+	switch {
+	case vtagID < vpc.VTagMin:
+		return 0, errors.Errorf("vtag value less than min: %d < %d", vtagID, vpc.VTagMin)
+	case vtagID > vpc.VTagMax:
+		return 0, errors.Errorf("vtag value greater than max: %d > %d", vtagID, vpc.VTagMax)
+	default:
+		return vpc.VTag(vtagID), nil
+	}
 }
 
 // VTagSet sets the VTag (VLAN ID) on a given EthLink interface.  Setting the
 // value to 0 clears the VTag.
 func (el *EthLink) VTagSet(vtagID vpc.VTag) error {
-	in := make([]byte, binary.MaxVarintLen64)
-	n := binary.PutUvarint(in, uint64(vtagID))
-	if n < 2 {
-		in = in[:2]
-	} else {
-		panic(fmt.Sprintf("invariant: vtag size too big for kernel interface input (want/got: 2/%d", n))
-	}
+	in := [2]byte{}
+	binary.BigEndian.PutUint16(in[:], uint16(vtagID))
 
-	if err := vpc.Ctl(el.h, vpc.Cmd(_VTagSetCmd), in, nil); err != nil {
+	if err := vpc.Ctl(el.h, vpc.Cmd(_VTagSetCmd), in[:], nil); err != nil {
 		return errors.Wrap(err, "unable to set the VTag for EthLink NIC")
 	}
 
