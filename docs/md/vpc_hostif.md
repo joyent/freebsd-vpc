@@ -1,10 +1,10 @@
 ---
 date: 2018-02-28T23:59:59Z
-title: "vpc hostlink"
-slug: vpc_hostlink
-url: /command/vpc_hostlink
+title: "vpc hostif"
+slug: vpc_hostif
+url: /command/vpc_hostif
 ---
-## vpc hostlink
+## vpc hostif
 
 Host network stack interface
 
@@ -16,7 +16,7 @@ Host network stack interface
 ### Options
 
 ```
-  -h, --help   help for hostlink
+  -h, --help   help for hostif
 ```
 
 ### Options inherited from parent commands
@@ -31,8 +31,8 @@ Host network stack interface
 
 ### SEE ALSO
 * [vpc](/command/vpc)	 - vpc configures and manages VPCs
-* [vpc hostlink create](/command/vpc_hostlink_create)	 - create a Hostlink interface
-* [vpc hostlink destroy](/command/vpc_hostlink_destroy)	 - destroy a Hostlink NIC
-* [vpc hostlink genmac](/command/vpc_hostlink_genmac)	 - generate a random VPC ID and MAC address for a VPC Hostlink Interface
-* [vpc hostlink list](/command/vpc_hostlink_list)	 - list VPC Hostlink NICs
+* [vpc hostif create](/command/vpc_hostif_create)	 - create a Hostif interface
+* [vpc hostif destroy](/command/vpc_hostif_destroy)	 - destroy a Hostif NIC
+* [vpc hostif genmac](/command/vpc_hostif_genmac)	 - generate a random VPC ID and MAC address for a VPC Hostif Interface
+* [vpc hostif list](/command/vpc_hostif_list)	 - list VPC Hostif NICs
 

@@ -1,43 +1,27 @@
-.TH "VPC\-HOSTLINK\-SET" "8" "Feb 2018" "vpc 0.0.1" "vpc" 
+.TH "VPC\-HOSTIF\-LIST" "8" "Feb 2018" "vpc 0.0.1" "vpc" 
 .nh
 .ad l
 
 
 .SH NAME
 .PP
-vpc\-hostlink\-set \- set VM NIC information
+vpc\-hostif\-list \- list VPC Hostif NICs
 
 
 .SH SYNOPSIS
 .PP
-\fBvpc hostlink set [flags]\fP
+\fBvpc hostif list [flags]\fP
 
 
 .SH DESCRIPTION
 .PP
-set VM NIC information
+list VPC Hostif NICs
 
 
 .SH OPTIONS
 .PP
-\fB\-E\fP, \fB\-\-freeze\fP[=false]
-    freeze the VM NIC configuration
-
-.PP
 \fB\-h\fP, \fB\-\-help\fP[=false]
-    help for set
-
-.PP
-\fB\-n\fP, \fB\-\-num\-queues\fP=0
-    set the number of hardware queues for a given VM NIC
-
-.PP
-\fB\-\-unfreeze\fP[=false]
-    freeze the VM NIC configuration
-
-.PP
-\fB\-N\fP, \fB\-\-vmnic\-id\fP=""
-    Specify the VM NIC ID
+    help for list
 
 
 .SH OPTIONS INHERITED FROM PARENT COMMANDS
@@ -64,4 +48,4 @@ set VM NIC information
 
 .SH SEE ALSO
 .PP
-\fBvpc\-hostlink(8)\fP
+\fBvpc\-hostif(8)\fP

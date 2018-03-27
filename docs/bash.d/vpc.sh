@@ -545,9 +545,9 @@ _vpc_ethlink()
     noun_aliases=()
 }
 
-_vpc_hostlink_create()
+_vpc_hostif_create()
 {
-    last_command="vpc_hostlink_create"
+    last_command="vpc_hostif_create"
     commands=()
 
     flags=()
@@ -574,9 +574,9 @@ _vpc_hostlink_create()
     noun_aliases=()
 }
 
-_vpc_hostlink_destroy()
+_vpc_hostif_destroy()
 {
-    last_command="vpc_hostlink_destroy"
+    last_command="vpc_hostif_destroy"
     commands=()
 
     flags=()
@@ -605,9 +605,9 @@ _vpc_hostlink_destroy()
     noun_aliases=()
 }
 
-_vpc_hostlink_genmac()
+_vpc_hostif_genmac()
 {
-    last_command="vpc_hostlink_genmac"
+    last_command="vpc_hostif_genmac"
     commands=()
 
     flags=()
@@ -631,9 +631,9 @@ _vpc_hostlink_genmac()
     noun_aliases=()
 }
 
-_vpc_hostlink_list()
+_vpc_hostif_list()
 {
-    last_command="vpc_hostlink_list"
+    last_command="vpc_hostif_list"
     commands=()
 
     flags=()
@@ -657,9 +657,9 @@ _vpc_hostlink_list()
     noun_aliases=()
 }
 
-_vpc_hostlink()
+_vpc_hostif()
 {
-    last_command="vpc_hostlink"
+    last_command="vpc_hostif"
     commands=()
     commands+=("create")
     commands+=("destroy")
@@ -1448,7 +1448,7 @@ _vpc()
     commands+=("db")
     commands+=("doc")
     commands+=("ethlink")
-    commands+=("hostlink")
+    commands+=("hostif")
     commands+=("interface")
     commands+=("list")
     commands+=("shell")

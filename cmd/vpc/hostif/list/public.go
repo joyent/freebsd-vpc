@@ -1,17 +1,20 @@
-package genmac
+package list
 
 import (
-	"net"
+	"strconv"
+	"strings"
 
-	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc"
+	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc/hostif"
+	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc/vpctest"
 	"github.com/joyent/freebsd-vpc/internal/command"
 	"github.com/olekukonko/tablewriter"
+	"github.com/pkg/errors"
 	"github.com/sean-/conswriter"
 	"github.com/spf13/cobra"
 )
 
 const (
-	cmdName = "genmac"
+	cmdName = "list"
 )
 
 var Cmd = &command.Command{
@@ -19,7 +22,8 @@ var Cmd = &command.Command{
 
 	Cobra: &cobra.Command{
 		Use:          cmdName,
-		Short:        "generate a random VPC ID and MAC address for a VPC Hostlink Interface",
+		Aliases:      []string{"ls"},
+		Short:        "list VPC Hostif NICs",
 		SilenceUsage: true,
 		Args:         cobra.NoArgs,
 		PreRunE: func(cmd *cobra.Command, args []string) error {
@@ -28,6 +32,11 @@ var Cmd = &command.Command{
 
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cons := conswriter.GetTerminal()
+
+			existingIfaces, err := vpctest.GetAllInterfaces()
+			if err != nil {
+				return errors.Wrapf(err, "unable to get all interfaces")
+			}
 
 			table := tablewriter.NewWriter(cons)
 			table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
@@ -40,15 +49,25 @@ var Cmd = &command.Command{
 			table.SetColumnSeparator("")
 			table.SetRowSeparator("")
 
-			table.SetHeader([]string{"id", "mac"})
+			table.SetHeader([]string{"name", "index", "mtu", "mac", "flags"})
 
-			id := vpc.GenID(vpc.ObjTypeHostlink)
-			var macAddr net.HardwareAddr = id.Node[:]
+			var numInterfaces int64
+			for _, iface := range existingIfaces {
+				if !strings.HasPrefix(iface.Name, hostif.DeviceNamePrefix) {
+					continue
+				}
 
-			table.Append([]string{
-				id.String(),
-				macAddr.String(),
-			})
+				table.Append([]string{
+					iface.Name,
+					strconv.FormatInt(int64(iface.Index), 10),
+					strconv.FormatInt(int64(iface.MTU), 10),
+					iface.HardwareAddr.String(),
+					iface.Flags.String(),
+				})
+				numInterfaces++
+			}
+
+			table.SetFooter([]string{"total", strconv.FormatInt(numInterfaces, 10), "", "", ""})
 
 			table.Render()
 

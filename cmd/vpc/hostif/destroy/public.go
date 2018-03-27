@@ -3,7 +3,7 @@ package destroy
 import (
 	"fmt"
 
-	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc/hostlink"
+	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc/hostif"
 	"github.com/joyent/freebsd-vpc/internal/command"
 	"github.com/joyent/freebsd-vpc/internal/command/flag"
 	"github.com/joyent/freebsd-vpc/internal/config"
@@ -16,7 +16,7 @@ import (
 
 const (
 	cmdName         = "destroy"
-	_KeyInterfaceID = config.KeyHostlinkDestroyID
+	_KeyInterfaceID = config.KeyHostifDestroyID
 )
 
 var Cmd = &command.Command{
@@ -25,7 +25,7 @@ var Cmd = &command.Command{
 		Use:              cmdName,
 		Aliases:          []string{"rm", "del", "delete"},
 		TraverseChildren: true,
-		Short:            "destroy a Hostlink NIC",
+		Short:            "destroy a Hostif NIC",
 		SilenceUsage:     true,
 		Args:             cobra.NoArgs,
 
@@ -37,8 +37,8 @@ var Cmd = &command.Command{
 	},
 
 	Setup: func(self *command.Command) error {
-		if err := flag.AddHostlinkID(self, _KeyInterfaceID, true); err != nil {
-			return errors.Wrap(err, "unable to register VPC Hostlink ID flag on VPC Hostlink destroy")
+		if err := flag.AddHostifID(self, _KeyInterfaceID, true); err != nil {
+			return errors.Wrap(err, "unable to register VPC Hostif ID flag on VPC Hostif destroy")
 		}
 
 		return nil
@@ -48,29 +48,29 @@ var Cmd = &command.Command{
 func runE(cmd *cobra.Command, args []string) error {
 	cons := conswriter.GetTerminal()
 
-	cons.Write([]byte(fmt.Sprintf("Destroying VPC Hostlink...")))
+	cons.Write([]byte(fmt.Sprintf("Destroying VPC Hostif...")))
 
 	id, err := flag.GetID(viper.GetViper(), _KeyInterfaceID)
 	if err != nil {
-		return errors.Wrap(err, "unable to get Hostlink VPC ID")
+		return errors.Wrap(err, "unable to get Hostif VPC ID")
 	}
 
-	hostlinkCfg := hostlink.Config{
+	hostifCfg := hostif.Config{
 		ID:        id,
 		Writeable: true,
 	}
 
-	// TODO(seanc@): Go back and add hostlink/vmnic/vpcsw to other commands
-	log.Info().Object("cfg", hostlinkCfg).Str("op", "destroy").Msg("vpc_ctl")
+	// TODO(seanc@): Go back and add hostif/vmnic/vpcsw to other commands
+	log.Info().Object("cfg", hostifCfg).Str("op", "destroy").Msg("vpc_ctl")
 
-	hostlinkNIC, err := hostlink.Open(hostlinkCfg)
+	hostifNIC, err := hostif.Open(hostifCfg)
 	if err != nil {
-		return errors.Wrap(err, "unable to open VPC Hostlink NIC")
+		return errors.Wrap(err, "unable to open VPC Hostif NIC")
 	}
-	defer hostlinkNIC.Close()
+	defer hostifNIC.Close()
 
-	if err := hostlinkNIC.Destroy(); err != nil {
-		return errors.Wrap(err, "unable to destroy VPC Hostlink NIC")
+	if err := hostifNIC.Destroy(); err != nil {
+		return errors.Wrap(err, "unable to destroy VPC Hostif NIC")
 	}
 
 	cons.Write([]byte("done.\n"))

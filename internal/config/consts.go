@@ -32,8 +32,8 @@ const (
 	KeyPGHost     = "db.host"
 	KeyPGPort     = "db.port"
 
-	KeyHostlinkCreateID  = "hostlink.create.id"
-	KeyHostlinkDestroyID = "hostlink.destroy.id"
+	KeyHostifCreateID  = "hostif.create.id"
+	KeyHostifDestroyID = "hostif.destroy.id"
 
 	KeySWPortAddEthLinkID          = "switch.port.add.ethlink-id"
 	KeySWPortAddID                 = "switch.port.add.id"

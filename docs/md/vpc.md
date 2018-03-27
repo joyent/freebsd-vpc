@@ -53,7 +53,7 @@ $ vpc list
 * [vpc db](/command/vpc_db)	 - Interaction with the VPC database
 * [vpc doc](/command/vpc_doc)	 - Documentation for vpc
 * [vpc ethlink](/command/vpc_ethlink)	 - VPC EthLink management
-* [vpc hostlink](/command/vpc_hostlink)	 - Host network stack interface
+* [vpc hostif](/command/vpc_hostif)	 - Host network stack interface
 * [vpc interface](/command/vpc_interface)	 - VPC interface management
 * [vpc list](/command/vpc_list)	 - list counts of each VPC type
 * [vpc shell](/command/vpc_shell)	 - shell commands

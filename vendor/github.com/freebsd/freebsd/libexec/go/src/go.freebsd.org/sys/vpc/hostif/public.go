@@ -1,4 +1,4 @@
-// Go interface to VPC Hostlink objects.
+// Go interface to VPC Hostif objects.
 //
 // SPDX-License-Identifier: BSD-2-Clause-FreeBSD
 //
@@ -27,7 +27,7 @@
 // OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 // SUCH DAMAGE.
 
-package hostlink
+package hostif
 
 import (
 	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc"
@@ -35,10 +35,10 @@ import (
 	"github.com/rs/zerolog"
 )
 
-// DeviceNamePrefix is the prefix of the device name (i.e. "hostlink0").
-const DeviceNamePrefix = "hostlink"
+// DeviceNamePrefix is the prefix of the device name (i.e. "hostif0").
+const DeviceNamePrefix = "hostif"
 
-// Config is the configuration used to populate a given Hostlink NIC.
+// Config is the configuration used to populate a given Hostif NIC.
 type Config struct {
 	ID        vpc.ID
 	Writeable bool
@@ -48,46 +48,46 @@ func (c Config) MarshalZerologObject(e *zerolog.Event) {
 	e.Str("id", c.ID.String())
 }
 
-// Hostlink is an opaque struct representing a VPC Hostlink NIC.
-type Hostlink struct {
+// Hostif is an opaque struct representing a VPC Hostif NIC.
+type Hostif struct {
 	h  *vpc.Handle
 	ht vpc.HandleType
 	id vpc.ID
 }
 
-// Create creates a new VPC Hostlink NIC using the Config parameters.  Callers
-// are expected to Close a given Hostlink (otherwise a file descriptor would
+// Create creates a new VPC Hostif NIC using the Config parameters.  Callers
+// are expected to Close a given Hostif (otherwise a file descriptor would
 // leak).
-func Create(cfg Config) (*Hostlink, error) {
+func Create(cfg Config) (*Hostif, error) {
 	ht, err := vpc.NewHandleType(vpc.HandleTypeInput{
 		Version: 1,
-		Type:    vpc.ObjTypeHostlink,
+		Type:    vpc.ObjTypeHostif,
 	})
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to create a new Hostlink NIC handle type")
+		return nil, errors.Wrap(err, "unable to create a new Hostif NIC handle type")
 	}
 
 	h, err := vpc.Open(cfg.ID, ht, vpc.FlagCreate|vpc.FlagWrite)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to open Hostlink NIC handle")
+		return nil, errors.Wrap(err, "unable to open Hostif NIC handle")
 	}
 
-	return &Hostlink{
+	return &Hostif{
 		h:  h,
 		ht: ht,
 		id: cfg.ID,
 	}, nil
 }
 
-// Open opens an existing Hostlink NIC using the Config parameters.  Callers are
-// expected to Close a given Hostlink.
-func Open(cfg Config) (*Hostlink, error) {
+// Open opens an existing Hostif NIC using the Config parameters.  Callers are
+// expected to Close a given Hostif.
+func Open(cfg Config) (*Hostif, error) {
 	ht, err := vpc.NewHandleType(vpc.HandleTypeInput{
 		Version: 1,
-		Type:    vpc.ObjTypeHostlink,
+		Type:    vpc.ObjTypeHostif,
 	})
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to create a new Hostlink NIC handle type")
+		return nil, errors.Wrap(err, "unable to create a new Hostif NIC handle type")
 	}
 
 	flags := vpc.FlagOpen | vpc.FlagRead
@@ -97,10 +97,10 @@ func Open(cfg Config) (*Hostlink, error) {
 
 	h, err := vpc.Open(cfg.ID, ht, flags)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to open Hostlink NIC handle")
+		return nil, errors.Wrap(err, "unable to open Hostif NIC handle")
 	}
 
-	return &Hostlink{
+	return &Hostif{
 		h:  h,
 		ht: ht,
 		id: cfg.ID,

@@ -1,30 +1,27 @@
 ---
 date: 2018-02-28T23:59:59Z
-title: "vpc hostlink set"
-slug: vpc_hostlink_set
-url: /command/vpc_hostlink_set
+title: "vpc hostif destroy"
+slug: vpc_hostif_destroy
+url: /command/vpc_hostif_destroy
 ---
-## vpc hostlink set
+## vpc hostif destroy
 
-set VM NIC information
+destroy a Hostif NIC
 
 ### Synopsis
 
 
-set VM NIC information
+destroy a Hostif NIC
 
 ```
-vpc hostlink set [flags]
+vpc hostif destroy [flags]
 ```
 
 ### Options
 
 ```
-  -E, --freeze            freeze the VM NIC configuration
-  -h, --help              help for set
-  -n, --num-queues int    set the number of hardware queues for a given VM NIC
-      --unfreeze          freeze the VM NIC configuration
-  -N, --vmnic-id string   Specify the VM NIC ID
+  -h, --help                 help for destroy
+  -H, --hostlink-id string   Specify the VPC Hostif ID
 ```
 
 ### Options inherited from parent commands
@@ -38,5 +35,5 @@ vpc hostlink set [flags]
 ```
 
 ### SEE ALSO
-* [vpc hostlink](/command/vpc_hostlink)	 - Host network stack interface
+* [vpc hostif](/command/vpc_hostif)	 - Host network stack interface
 

@@ -1,27 +1,31 @@
-.TH "VPC\-HOSTLINK\-GENMAC" "8" "Feb 2018" "vpc 0.0.1" "vpc" 
+.TH "VPC\-HOSTIF\-DESTROY" "8" "Feb 2018" "vpc 0.0.1" "vpc" 
 .nh
 .ad l
 
 
 .SH NAME
 .PP
-vpc\-hostlink\-genmac \- generate a random VPC ID and MAC address for a VPC Hostlink Interface
+vpc\-hostif\-destroy \- destroy a Hostif NIC
 
 
 .SH SYNOPSIS
 .PP
-\fBvpc hostlink genmac [flags]\fP
+\fBvpc hostif destroy [flags]\fP
 
 
 .SH DESCRIPTION
 .PP
-generate a random VPC ID and MAC address for a VPC Hostlink Interface
+destroy a Hostif NIC
 
 
 .SH OPTIONS
 .PP
 \fB\-h\fP, \fB\-\-help\fP[=false]
-    help for genmac
+    help for destroy
+
+.PP
+\fB\-H\fP, \fB\-\-hostlink\-id\fP=""
+    Specify the VPC Hostif ID
 
 
 .SH OPTIONS INHERITED FROM PARENT COMMANDS
@@ -48,4 +52,4 @@ generate a random VPC ID and MAC address for a VPC Hostlink Interface
 
 .SH SEE ALSO
 .PP
-\fBvpc\-hostlink(8)\fP
+\fBvpc\-hostif(8)\fP

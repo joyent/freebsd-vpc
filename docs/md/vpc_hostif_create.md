@@ -1,27 +1,27 @@
 ---
 date: 2018-02-28T23:59:59Z
-title: "vpc hostlink create"
-slug: vpc_hostlink_create
-url: /command/vpc_hostlink_create
+title: "vpc hostif create"
+slug: vpc_hostif_create
+url: /command/vpc_hostif_create
 ---
-## vpc hostlink create
+## vpc hostif create
 
-create a Hostlink interface
+create a Hostif interface
 
 ### Synopsis
 
 
-create a Hostlink interface
+create a Hostif interface
 
 ```
-vpc hostlink create [flags]
+vpc hostif create [flags]
 ```
 
 ### Options
 
 ```
   -h, --help                 help for create
-  -H, --hostlink-id string   Specify the VPC Hostlink ID
+  -H, --hostlink-id string   Specify the VPC Hostif ID
 ```
 
 ### Options inherited from parent commands
@@ -35,5 +35,5 @@ vpc hostlink create [flags]
 ```
 
 ### SEE ALSO
-* [vpc hostlink](/command/vpc_hostlink)	 - Host network stack interface
+* [vpc hostif](/command/vpc_hostif)	 - Host network stack interface
 

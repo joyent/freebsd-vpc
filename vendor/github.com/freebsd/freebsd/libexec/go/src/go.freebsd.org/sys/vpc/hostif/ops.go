@@ -1,4 +1,4 @@
-// Go interface to Hostlink NIC objects.
+// Go interface to Hostif NIC objects.
 //
 // SPDX-License-Identifier: BSD-2-Clause-FreeBSD
 //
@@ -27,55 +27,55 @@
 // OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 // SUCH DAMAGE.
 
-package hostlink
+package hostif
 
 import (
 	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc"
 	"github.com/pkg/errors"
 )
 
-// _HostlinkCmd is the encoded type of operations that can be performed on a
-// Hostlink NIC.
-type _HostlinkCmd vpc.Cmd
+// _HostifCmd is the encoded type of operations that can be performed on a
+// Hostif NIC.
+type _HostifCmd vpc.Cmd
 
-// Close closes the VPC Handle descriptor.  Created Hostlinkn NICs will not be
-// destroyed when the Hostlink is closed if the Hostlink NIC has been Committed.
-func (hl *Hostlink) Close() error {
+// Close closes the VPC Handle descriptor.  Created Hostif NICs will not be
+// destroyed when the Hostif is closed if the Hostif NIC has been Committed.
+func (hl *Hostif) Close() error {
 	if hl.h.FD() <= 0 {
 		return nil
 	}
 
 	if err := hl.h.Close(); err != nil {
-		return errors.Wrap(err, "unable to close VPC Hostlink handle")
+		return errors.Wrap(err, "unable to close VPC Hostif handle")
 	}
 
 	return nil
 }
 
-// Commit increments the refcount of the VPC Hostlink NIC in order to ensure the
-// Hostlink NIC lives beyond the life of the current process and is not
-// automatically cleaned up when the Hostlink is closed.
-func (hl *Hostlink) Commit() error {
+// Commit increments the refcount of the VPC Hostif NIC in order to ensure the
+// Hostif NIC lives beyond the life of the current process and is not
+// automatically cleaned up when the Hostif is closed.
+func (hl *Hostif) Commit() error {
 	if hl.h.FD() <= 0 {
 		return nil
 	}
 
 	if err := hl.h.Commit(); err != nil {
-		return errors.Wrap(err, "unable to commit VPC Hostlink NIC")
+		return errors.Wrap(err, "unable to commit VPC Hostif NIC")
 	}
 
 	return nil
 }
 
-// Destroy decrements the refcount of the VPC Hostlink NIC in destroy the the
-// Hostlink NIC when the VPC Handle is closed.
-func (hl *Hostlink) Destroy() error {
+// Destroy decrements the refcount of the VPC Hostif NIC in destroy the the
+// Hostif NIC when the VPC Handle is closed.
+func (hl *Hostif) Destroy() error {
 	if hl.h.FD() <= 0 {
 		return nil
 	}
 
 	if err := hl.h.Destroy(); err != nil {
-		return errors.Wrap(err, "unable to destroy VPC Hostlink NIC")
+		return errors.Wrap(err, "unable to destroy VPC Hostif NIC")
 	}
 
 	return nil

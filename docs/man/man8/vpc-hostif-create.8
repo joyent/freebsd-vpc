@@ -1,27 +1,31 @@
-.TH "VPC\-HOSTLINK" "8" "Feb 2018" "vpc 0.0.1" "vpc" 
+.TH "VPC\-HOSTIF\-CREATE" "8" "Feb 2018" "vpc 0.0.1" "vpc" 
 .nh
 .ad l
 
 
 .SH NAME
 .PP
-vpc\-hostlink \- Host network stack interface
+vpc\-hostif\-create \- create a Hostif interface
 
 
 .SH SYNOPSIS
 .PP
-\fBvpc hostlink [flags]\fP
+\fBvpc hostif create [flags]\fP
 
 
 .SH DESCRIPTION
 .PP
-Host network stack interface
+create a Hostif interface
 
 
 .SH OPTIONS
 .PP
 \fB\-h\fP, \fB\-\-help\fP[=false]
-    help for hostlink
+    help for create
+
+.PP
+\fB\-H\fP, \fB\-\-hostlink\-id\fP=""
+    Specify the VPC Hostif ID
 
 
 .SH OPTIONS INHERITED FROM PARENT COMMANDS
@@ -48,4 +52,4 @@ Host network stack interface
 
 .SH SEE ALSO
 .PP
-\fBvpc(8)\fP, \fBvpc\-hostlink\-create(8)\fP, \fBvpc\-hostlink\-destroy(8)\fP, \fBvpc\-hostlink\-genmac(8)\fP, \fBvpc\-hostlink\-list(8)\fP
+\fBvpc\-hostif(8)\fP

@@ -9,7 +9,7 @@ import (
 	"github.com/joyent/freebsd-vpc/cmd/vpc/db"
 	"github.com/joyent/freebsd-vpc/cmd/vpc/doc"
 	"github.com/joyent/freebsd-vpc/cmd/vpc/ethlink"
-	"github.com/joyent/freebsd-vpc/cmd/vpc/hostlink"
+	"github.com/joyent/freebsd-vpc/cmd/vpc/hostif"
 	"github.com/joyent/freebsd-vpc/cmd/vpc/intf"
 	"github.com/joyent/freebsd-vpc/cmd/vpc/list"
 	"github.com/joyent/freebsd-vpc/cmd/vpc/shell"
@@ -37,7 +37,7 @@ var subCommands = command.Commands{
 	doc.Cmd,
 	ethlink.Cmd,
 	intf.Cmd,
-	hostlink.Cmd,
+	hostif.Cmd,
 	list.Cmd,
 	agent.Cmd,
 	shell.Cmd,

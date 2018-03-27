@@ -1,20 +1,20 @@
 ---
 date: 2018-02-28T23:59:59Z
-title: "vpc hostlink genmac"
-slug: vpc_hostlink_genmac
-url: /command/vpc_hostlink_genmac
+title: "vpc hostif genmac"
+slug: vpc_hostif_genmac
+url: /command/vpc_hostif_genmac
 ---
-## vpc hostlink genmac
+## vpc hostif genmac
 
-generate a random VPC ID and MAC address for a VPC Hostlink Interface
+generate a random VPC ID and MAC address for a VPC Hostif Interface
 
 ### Synopsis
 
 
-generate a random VPC ID and MAC address for a VPC Hostlink Interface
+generate a random VPC ID and MAC address for a VPC Hostif Interface
 
 ```
-vpc hostlink genmac [flags]
+vpc hostif genmac [flags]
 ```
 
 ### Options
@@ -34,5 +34,5 @@ vpc hostlink genmac [flags]
 ```
 
 ### SEE ALSO
-* [vpc hostlink](/command/vpc_hostlink)	 - Host network stack interface
+* [vpc hostif](/command/vpc_hostif)	 - Host network stack interface
 

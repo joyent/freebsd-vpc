@@ -1,27 +1,26 @@
 ---
 date: 2018-02-28T23:59:59Z
-title: "vpc hostlink destroy"
-slug: vpc_hostlink_destroy
-url: /command/vpc_hostlink_destroy
+title: "vpc hostif list"
+slug: vpc_hostif_list
+url: /command/vpc_hostif_list
 ---
-## vpc hostlink destroy
+## vpc hostif list
 
-destroy a Hostlink NIC
+list VPC Hostif NICs
 
 ### Synopsis
 
 
-destroy a Hostlink NIC
+list VPC Hostif NICs
 
 ```
-vpc hostlink destroy [flags]
+vpc hostif list [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help                 help for destroy
-  -H, --hostlink-id string   Specify the VPC Hostlink ID
+  -h, --help   help for list
 ```
 
 ### Options inherited from parent commands
@@ -35,5 +34,5 @@ vpc hostlink destroy [flags]
 ```
 
 ### SEE ALSO
-* [vpc hostlink](/command/vpc_hostlink)	 - Host network stack interface
+* [vpc hostif](/command/vpc_hostif)	 - Host network stack interface
 

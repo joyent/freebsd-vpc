@@ -1,16 +1,16 @@
-package hostlink
+package hostif
 
 import (
-	"github.com/joyent/freebsd-vpc/cmd/vpc/hostlink/create"
-	"github.com/joyent/freebsd-vpc/cmd/vpc/hostlink/destroy"
-	"github.com/joyent/freebsd-vpc/cmd/vpc/hostlink/genmac"
-	"github.com/joyent/freebsd-vpc/cmd/vpc/hostlink/list"
+	"github.com/joyent/freebsd-vpc/cmd/vpc/hostif/create"
+	"github.com/joyent/freebsd-vpc/cmd/vpc/hostif/destroy"
+	"github.com/joyent/freebsd-vpc/cmd/vpc/hostif/genmac"
+	"github.com/joyent/freebsd-vpc/cmd/vpc/hostif/list"
 	"github.com/joyent/freebsd-vpc/internal/command"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
-const cmdName = "hostlink"
+const cmdName = "hostif"
 
 var Cmd = &command.Command{
 	Name: cmdName,

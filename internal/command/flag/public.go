@@ -31,14 +31,14 @@ func AddEthLinkID(cmd *command.Command, keyName string, required bool) error {
 	return nil
 }
 
-// AddHostlinkID adds the Hostlink ID to a given command.
-func AddHostlinkID(cmd *command.Command, keyName string, required bool) error {
+// AddHostifID adds the Hostif ID to a given command.
+func AddHostifID(cmd *command.Command, keyName string, required bool) error {
 	key := keyName
 	const (
 		longName     = "hostlink-id"
 		shortName    = "H"
 		defaultValue = ""
-		description  = "Specify the VPC Hostlink ID"
+		description  = "Specify the VPC Hostif ID"
 	)
 
 	flags := cmd.Cobra.Flags()
