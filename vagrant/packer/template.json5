@@ -36,7 +36,7 @@
 			"vpmc.enable": "TRUE",
 			"tools.syncTime": "FALSE",
 			"ethernet0.virtualDev": "vmxnet3",
-			"ethernet0.pciSlotNumber": "50",
+			"ethernet0.pciSlotNumber": "160",
 		},
 
 		communicator: "ssh",
@@ -59,7 +59,8 @@
 
 			// Distribution Select
 			"k<wait><spacebar>", // Disable kernel-dbg
-			"l<wait>l<wait><spacebar>", // Disable lib32
+			// Current builds don't have lib32
+			//"l<wait>l<wait><spacebar>", // Disable lib32
 			// Current builds don't have the ports tree
 			//"p<wait><spacebar>", // Disable ports tree
 			"<enter>",
