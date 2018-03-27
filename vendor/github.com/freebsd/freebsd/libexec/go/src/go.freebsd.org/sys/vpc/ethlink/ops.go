@@ -131,7 +131,7 @@ func (el *EthLink) VTagGet() (vpc.VTag, error) {
 		return 0, errors.Wrap(err, "unable to get VTag from EthLink")
 	}
 
-	var vtagID uint64
+	var vtagID uint16
 	buf := bytes.NewReader(out)
 	err := binary.Read(buf, binary.BigEndian, &vtagID)
 	if err != nil {
