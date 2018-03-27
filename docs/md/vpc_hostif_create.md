@@ -20,8 +20,8 @@ vpc hostif create [flags]
 ### Options
 
 ```
-  -h, --help                 help for create
-  -H, --hostlink-id string   Specify the VPC Hostif ID
+  -h, --help               help for create
+  -H, --hostif-id string   Specify the VPC Hostif ID
 ```
 
 ### Options inherited from parent commands

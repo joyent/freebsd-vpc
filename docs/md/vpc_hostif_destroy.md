@@ -20,8 +20,8 @@ vpc hostif destroy [flags]
 ### Options
 
 ```
-  -h, --help                 help for destroy
-  -H, --hostlink-id string   Specify the VPC Hostif ID
+  -h, --help               help for destroy
+  -H, --hostif-id string   Specify the VPC Hostif ID
 ```
 
 ### Options inherited from parent commands

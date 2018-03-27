@@ -35,7 +35,7 @@ func AddEthLinkID(cmd *command.Command, keyName string, required bool) error {
 func AddHostifID(cmd *command.Command, keyName string, required bool) error {
 	key := keyName
 	const (
-		longName     = "hostlink-id"
+		longName     = "hostif-id"
 		shortName    = "H"
 		defaultValue = ""
 		description  = "Specify the VPC Hostif ID"
