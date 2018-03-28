@@ -10,27 +10,23 @@ require './vagrant/helper/utils'
 Vagrant.configure("2") do |config|
 	config.ssh.extra_args = ["-e", "%"]
 
-	config.vm.define "compile", autostart: true, primary: true do |vmCfg|
-		vmCfg.vm.box = freebsd_box
-		vmCfg.vm.hostname = "freebsd-compile"
+	config.vm.box = freebsd_box
+	config.vm.hostname = "freebsd-compile"
 
-		vmCfg = ensure_disk(vmCfg, guest_disk_path, 'guests.vmdk')
+	config = ensure_disk(config, guest_disk_path, 'guests.vmdk')
 
-		vmCfg = configureFreeBSDDevProvisioners(vmCfg)
+	config = configureFreeBSDDevProvisioners(config)
 
-		vmCfg = configureSyncedDir(vmCfg, '.',
-			'/opt/gopath/src/github.com/joyent/freebsd-vpc')
+	config = configureSyncedDir(config, '.',
+		'/opt/gopath/src/github.com/joyent/freebsd-vpc')
 
-		vmCfg = configureMachineSize(vmCfg, 4, 8192)
-	end
+	config = configureMachineSize(config, 4, 8192)
 end
 
 def configureMachineSize(vmCfg, vcpuCount, memSize)
-	["vmware_fusion", "vmware_workstation"].each do |p|
-		vmCfg.vm.provider p do |v|
-			v.vmx["memsize"] = memSize
-			v.vmx["numvcpus"] = vcpuCount
-		end
+	vmCfg.vm.provider "vmware_desktop" do |v|
+		v.vmx["memsize"] = memSize
+		v.vmx["numvcpus"] = vcpuCount
 	end
 
 	return vmCfg
@@ -93,12 +89,10 @@ def ensure_disk(vmCfg, dirname, filename)
 		system("cd \"#{dirname}\" && \"#{vdiskmanager}\" -c -s 30GB -a lsilogic -t 1 \"#{filename}\"")
 	end
 
-	["vmware_fusion", "vmware_workstation"].each do |p|
-		vmCfg.vm.provider p do |v|
-			v.vmx["scsi0:1.filename"] = File.expand_path(completePath)
-			v.vmx["scsi0:1.present"] = 'TRUE'
-			v.vmx["scsi0:1.redo"] = ''
-		end
+	vmCfg.vm.provider "vmware_desktop" do |v|
+		v.vmx["scsi0:1.filename"] = File.expand_path(completePath)
+		v.vmx["scsi0:1.present"] = 'TRUE'
+		v.vmx["scsi0:1.redo"] = ''
 	end
 
 	return vmCfg
