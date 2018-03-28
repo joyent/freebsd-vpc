@@ -133,7 +133,7 @@ func (el *EthLink) VTagGet() (vpc.VTag, error) {
 
 	var vtagID uint16
 	buf := bytes.NewReader(out)
-	err := binary.Read(buf, binary.BigEndian, &vtagID)
+	err := binary.Read(buf, binary.LittleEndian, &vtagID)
 	if err != nil {
 		return 0, errors.Wrap(err, "unable to read VPC EthLink VTag")
 	}
@@ -152,7 +152,7 @@ func (el *EthLink) VTagGet() (vpc.VTag, error) {
 // value to 0 clears the VTag.
 func (el *EthLink) VTagSet(vtagID vpc.VTag) error {
 	in := [2]byte{}
-	binary.BigEndian.PutUint16(in[:], uint16(vtagID))
+	binary.LittleEndian.PutUint16(in[:], uint16(vtagID))
 
 	if err := vpc.Ctl(el.h, vpc.Cmd(_VTagSetCmd), in[:], nil); err != nil {
 		return errors.Wrap(err, "unable to set the VTag for EthLink NIC")
