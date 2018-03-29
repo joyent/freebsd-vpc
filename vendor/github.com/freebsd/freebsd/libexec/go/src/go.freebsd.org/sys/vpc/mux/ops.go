@@ -198,7 +198,7 @@ func (m *Mux) Listen(addr string) error {
 	if ipv4 == nil {
 		return errors.Wrap(err, "VPC Mux IP address is not an IPv4 address")
 	}
-	if n := copy(sa4.Addr, ipv4); n != syscall.SizeofSockaddrInet4 {
+	if n := copy(sa4.Addr[:], ipv4); n != syscall.SizeofSockaddrInet4 {
 		return errors.Errorf("copied the wrong number of bytes: %d", n)
 	}
 	// Address needs to be in network byte order, too
@@ -206,7 +206,7 @@ func (m *Mux) Listen(addr string) error {
 		sa4.Addr[i] = sa4.Addr[i]
 	}
 
-	sa4Slice := *(*[]byte)(unsafe.Pointer(&sa4))
+	sa4Slice := (*(*[1<<31 - 1]byte)(unsafe.Pointer(&sa4)))[:syscall.SizeofSockaddrInet4]
 
 	if err := vpc.Ctl(m.h, vpc.Cmd(_MuxListenCmd), sa4Slice, nil); err != nil {
 		return errors.Wrap(err, "unable to listen for VPC Mux traffic")
