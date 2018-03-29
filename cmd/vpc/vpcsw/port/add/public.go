@@ -3,11 +3,7 @@ package add
 import (
 	"fmt"
 
-	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc"
-	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc/ethlink"
-	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc/vpcp"
 	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc/vpcsw"
-	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc/vpctest"
 	"github.com/joyent/freebsd-vpc/internal/command"
 	"github.com/joyent/freebsd-vpc/internal/command/flag"
 	"github.com/joyent/freebsd-vpc/internal/config"
@@ -21,7 +17,6 @@ import (
 const (
 	_CmdName      = "add"
 	_KeyEthLinkID = config.KeySWPortAddEthLinkID
-	_KeyL2Name    = config.KeySWPortAddL2Name
 	_KeyPortID    = config.KeySWPortAddID
 	_KeyPortMAC   = config.KeySWPortAddMAC
 	_KeySwitchID  = config.KeySWPortAddSwitchID
@@ -39,34 +34,10 @@ var Cmd = &command.Command{
 		// TraverseChildren: true,
 		Args: cobra.NoArgs,
 		PreRunE: func(cmd *cobra.Command, args []string) error {
-			switch {
-			case viper.GetString(_KeyEthLinkID) != "" && viper.GetString(_KeyL2Name) == "":
-				// TODO(seanc@): convert ethlink-id and l2-name to constants used by
-				// cobra when setting the viper key.
-				return errors.Errorf("ethlink-id requires an l2-name")
-			case viper.GetString(_KeyEthLinkID) == "" && viper.GetString(_KeyL2Name) != "":
-				// TODO(seanc@): convert ethlink-id and l2-name to constants used by
-				// cobra when setting the viper key.
-				return errors.Errorf("l2-name requires an ethlink-id")
-			}
-
-			if l2Name := viper.GetString(_KeyL2Name); l2Name != "" {
-				existingIfaces, err := vpctest.GetAllInterfaces()
-				if err != nil {
-					return errors.Wrapf(err, "unable to get all interfaces")
-				}
-
-				var found bool
-				for _, iface := range existingIfaces {
-					if l2Name == iface.Name {
-						found = true
-						break
-					}
-				}
-
-				if !found {
-					return errors.Errorf("unable to find interface %q", l2Name)
-				}
+			if viper.GetString(_KeyEthLinkID) == "" {
+				// TODO(seanc@): convert ethlink-id to constants used by cobra when
+				// setting the viper key.
+				return errors.Errorf("required ethlink-id parameter missing")
 			}
 
 			return nil
@@ -87,17 +58,10 @@ var Cmd = &command.Command{
 				return errors.Wrap(err, "unable to get VPC Switch Port ID")
 			}
 
-			ethLinkID, err := _GetLinkID(viper.GetViper(), _KeyEthLinkID, true)
-			if err != nil {
-				return errors.Wrap(err, "unable to get ethlink-id")
-			}
-
 			portMAC, err := flag.GetMAC(viper.GetViper(), _KeyPortMAC, nil)
 			if err != nil {
 				return errors.Wrap(err, "unable to get MAC address")
 			}
-
-			l2Name := viper.GetString(_KeyL2Name)
 
 			// Create a stack of commit and undo operations to walk through in the
 			// event of an error.
@@ -149,61 +113,13 @@ var Cmd = &command.Command{
 				return nil
 			})
 
-			// If we have an EthLink, add it to the port
-			switch {
-			case l2Name == "":
-				if err = vpcSwitch.PortAdd(portID, portMAC); err != nil {
-					log.Error().Err(err).
-						Object("port-id", portID).
-						Str("port-mac", portMAC.String()).
-						Object("switch-cfg", switchCfg).
-						Msg("failed to add VPC Switch Port")
-					return errors.Wrap(err, "unable to add a port to VPC Switch")
-				}
-			case l2Name != "":
-				ethLinkCfg := ethlink.Config{
-					ID:   ethLinkID,
-					Name: l2Name,
-				}
-				el, err := ethlink.Create(ethLinkCfg)
-				if err != nil {
-					return errors.Wrap(err, "unable to create VPC EthLink")
-				}
-
-				if err := el.Connect(); err != nil {
-					return errors.Wrapf(err, "unable to connect L2 link to device %q", l2Name)
-				}
-				commitFuncs = append(commitFuncs, func() error {
-					if err := el.Commit(); err != nil {
-						log.Error().Err(err).Object("ethlink", el).Msg("unable to commit VPC EthLink")
-						return errors.Wrap(err, "unable to commit VPC EthLink")
-					}
-					return nil
-				})
-
-				if viper.GetBool(_KeyUplink) {
-					if err := vpcSwitch.PortUplinkSet(portID, portMAC); err != nil {
-						log.Error().Err(err).Object("port-id", portID).Object("switch-cfg", switchCfg).Msg("failed to set VPC Switch Port as an Uplink port")
-						return errors.Wrap(err, "unable to create a VPC Switch Port uplink")
-					}
-				}
-
-				portCfg := vpcp.Config{
-					ID:        portID,
-					Writeable: true,
-				}
-				vpcPort, err := vpcp.Open(portCfg)
-				if err != nil {
-					log.Error().Err(err).Object("port-id", portID).Object("switch-cfg", switchCfg).Msg("failed to connect VPC interface to VPC Switch Port")
-					return errors.Wrap(err, "unable to open VPC Switch Port")
-				}
-
-				if err := vpcPort.Connect(ethLinkCfg.ID); err != nil {
-					log.Error().Err(err).Object("ethlink-cfg", ethLinkCfg).Object("ethlink", el).Object("port-id", portID).Object("switch-cfg", switchCfg).Msg("failed to connect VPC interface to VPC Switch Port")
-					return errors.Wrap(err, "unable to connect VPC Interface to VPC Port")
-				}
-			default:
-				panic("invalid switch port add logic")
+			if err = vpcSwitch.PortAdd(portID, portMAC); err != nil {
+				log.Error().Err(err).
+					Object("port-id", portID).
+					Str("port-mac", portMAC.String()).
+					Object("switch-cfg", switchCfg).
+					Msg("failed to add VPC Switch Port")
+				return errors.Wrap(err, "unable to add a port to VPC Switch")
 			}
 
 			commit = true
@@ -230,38 +146,6 @@ var Cmd = &command.Command{
 
 		{
 			const (
-				key          = _KeyL2Name
-				longName     = "l2-name"
-				shortName    = "n"
-				defaultValue = ""
-				description  = "Name of the underlying L2 interface to be wrapped as a VPC EthLink and used as the uplink in the VPC Switch"
-			)
-
-			flags := self.Cobra.Flags()
-			flags.StringP(longName, shortName, defaultValue, description)
-
-			viper.BindPFlag(key, flags.Lookup(longName))
-			viper.SetDefault(key, defaultValue)
-		}
-
-		{
-			const (
-				key          = _KeyEthLinkID
-				longName     = "ethlink-id"
-				shortName    = ""
-				defaultValue = ""
-				description  = "Specify the ID of the VPC EthLink"
-			)
-
-			flags := self.Cobra.Flags()
-			flags.StringP(longName, shortName, defaultValue, description)
-
-			viper.BindPFlag(key, flags.Lookup(longName))
-			viper.SetDefault(key, defaultValue)
-		}
-
-		{
-			const (
 				key          = _KeyUplink
 				longName     = "uplink"
 				shortName    = "u"
@@ -278,20 +162,4 @@ var Cmd = &command.Command{
 
 		return nil
 	},
-}
-
-func _GetLinkID(v *viper.Viper, key string, optional bool) (id vpc.ID, err error) {
-	ethLinkIDStr := v.GetString(key)
-	switch {
-	case optional && ethLinkIDStr == "":
-		return vpc.ID{}, nil
-	case !optional && ethLinkIDStr == "":
-		return vpc.ID{}, errors.Wrap(err, "missing VPC EthLink ID")
-	}
-
-	if id, err = vpc.ParseID(ethLinkIDStr); err != nil {
-		return vpc.ID{}, errors.Wrapf(err, "unable to parse VPC EthLink ID %q", ethLinkIDStr)
-	}
-
-	return id, nil
 }

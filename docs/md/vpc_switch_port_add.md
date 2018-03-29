@@ -20,12 +20,10 @@ vpc switch port add [flags]
 ### Options
 
 ```
-      --ethlink-id string   Specify the ID of the VPC EthLink
-  -h, --help                help for add
-  -n, --l2-name string      Name of the underlying L2 interface to be wrapped as a VPC EthLink and used as the uplink in the VPC Switch
-      --port-id string      Specify the VPC Port ID
-      --switch-id string    Specify the VPC Switch ID
-  -u, --uplink              make the port ID an uplink for the switch
+  -h, --help               help for add
+      --port-id string     Specify the VPC Port ID
+      --switch-id string   Specify the VPC Switch ID
+  -u, --uplink             make the port ID an uplink for the switch
 ```
 
 ### Options inherited from parent commands

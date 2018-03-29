@@ -98,12 +98,18 @@ func (el *EthLink) Commit() error {
 // Connect attaches the named physical device or cloned interface to this VPC
 // EthLink.  The name of the device must be specified in the EthLink Config and
 // passed in at Create time.
-func (el *EthLink) Connect() error {
+func (el *EthLink) Connect(ifName string) error {
 	// TODO(seanc@): Test to see make sure the descriptor has the mutate bit set.
 
-	if err := vpc.Ctl(el.h, vpc.Cmd(_ConnectCmd), []byte(el.name), nil); err != nil {
+	if ifName == "" {
+		return errors.Errorf("name of target interface for ethlink connect must not be empty")
+	}
+
+	if err := vpc.Ctl(el.h, vpc.Cmd(_ConnectCmd), []byte(ifName), nil); err != nil {
 		return errors.Wrap(err, "unable to connect VPC EthLink to a physical NIC")
 	}
+
+	el.name = ifName
 
 	return nil
 }

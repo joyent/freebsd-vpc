@@ -11,12 +11,14 @@ const (
 	KeyDocMarkdownDir       = "doc.markdown-dir"
 	KeyDocMarkdownURLPrefix = "doc.markdown-url-prefix"
 
-	KeyEthLinkCreateID   = "ethlink.create.id"
-	KeyEthLinkDestroyID  = "ethlink.destroy.ethlink-id"
-	KeyEthLinkListSortBy = "ethlink.list.sort-by"
-	KeyEthLinkVTagID     = "ethlink.vtag.ethlink-id"
-	KeyEthLinkGetVTag    = "ethlink.vtag.get-vtag"
-	KeyEthLinkSetVTag    = "ethlink.vtag.set-vtag"
+	KeyEthLinkConnectID     = "ethlink.connect.id"
+	KeyEthLinkConnectL2Name = "ethlink.connect.l2-name"
+	KeyEthLinkCreateID      = "ethlink.create.id"
+	KeyEthLinkDestroyID     = "ethlink.destroy.ethlink-id"
+	KeyEthLinkListSortBy    = "ethlink.list.sort-by"
+	KeyEthLinkVTagID        = "ethlink.vtag.ethlink-id"
+	KeyEthLinkGetVTag       = "ethlink.vtag.get-vtag"
+	KeyEthLinkSetVTag       = "ethlink.vtag.set-vtag"
 
 	KeyListObjCounts = "list.obj-counts"
 	KeyListObjSortBy = "list.sort-by"
@@ -47,7 +49,6 @@ const (
 
 	KeySWPortAddEthLinkID          = "switch.port.add.ethlink-id"
 	KeySWPortAddID                 = "switch.port.add.id"
-	KeySWPortAddL2Name             = "switch.port.add.l2-name"
 	KeySWPortAddMAC                = "switch.port.add.mac"
 	KeySWPortAddSwitchID           = "switch.port.add.switch-id"
 	KeySWPortAddUplink             = "switch.port.add.uplink"

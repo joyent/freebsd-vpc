@@ -31,6 +31,7 @@ VPC EthLink management
 
 ### SEE ALSO
 * [vpc](/command/vpc)	 - vpc configures and manages VPCs
+* [vpc ethlink connect](/command/vpc_ethlink_connect)	 - connect a VPC EthLink interface to a physical or cloned interface
 * [vpc ethlink create](/command/vpc_ethlink_create)	 - create an EthLink interface
 * [vpc ethlink destroy](/command/vpc_ethlink_destroy)	 - destroy a VPC EthLink
 * [vpc ethlink list](/command/vpc_ethlink_list)	 - list VPC EthLink interfaces
