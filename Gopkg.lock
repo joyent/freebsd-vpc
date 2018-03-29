@@ -21,7 +21,7 @@
     "libexec/go/src/go.freebsd.org/sys/vpc/vpcsw",
     "libexec/go/src/go.freebsd.org/sys/vpc/vpctest"
   ]
-  revision = "4ac795675ac038d07fc841a5b9340c055b54918d"
+  revision = "a27697c27e89f90e40d2503bb79829da639ba12c"
   source = "github.com/joyent/freebsd/libexec/go/src/go.freebsd.org/sys/vpc"
 
 [[projects]]

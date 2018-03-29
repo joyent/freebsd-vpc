@@ -33,6 +33,9 @@ import (
 	"bytes"
 	"encoding/binary"
 	"net"
+	"strconv"
+	"syscall"
+	"unsafe"
 
 	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc"
 	"github.com/pkg/errors"
@@ -165,7 +168,47 @@ func (m *Mux) Disconnect() error {
 func (m *Mux) Listen(addr string) error {
 	// TODO(seanc@): Test to see make sure the descriptor has the mutate bit set.
 
-	if err := vpc.Ctl(m.h, vpc.Cmd(_MuxListenCmd), []byte(addr), nil); err != nil {
+	hostStr, portStr, err := net.SplitHostPort(addr)
+	if err != nil {
+		return errors.Wrap(err, "unable to find a host and port for the VPC Mux to listen on")
+	}
+
+	// FIXME(seanc@): Make Listen() a platform-specific API call ASAP.  These bits
+	// assume platform-specific sockaddr bits.
+	sa4 := syscall.RawSockaddrInet4{
+		Len:    syscall.SizeofSockaddrInet4,
+		Family: syscall.AF_INET,
+	}
+
+	portInt64, err := strconv.ParseInt(portStr, 10, 16)
+	if err != nil {
+		return errors.Wrap(err, "unable to parse VPC Mux port number")
+	}
+	// Byte swap the port
+	sa4.Port = uint16(portInt64)
+	p := (*[2]byte)(unsafe.Pointer(&sa4.Port))
+	p[0] = byte(sa4.Port >> 8)
+	p[1] = byte(sa4.Port)
+
+	ip := net.ParseIP(hostStr)
+	if ip == nil {
+		return errors.Wrap(err, "unable to parse VPC Mux IP address")
+	}
+	ipv4 := ip.To4()
+	if ipv4 == nil {
+		return errors.Wrap(err, "VPC Mux IP address is not an IPv4 address")
+	}
+	if n := copy(sa4.Addr, ipv4); n != syscall.SizeofSockaddrInet4 {
+		return errors.Errorf("copied the wrong number of bytes: %d", n)
+	}
+	// Address needs to be in network byte order, too
+	for i := 0; i < len(sa4.Addr); i++ {
+		sa4.Addr[i] = sa4.Addr[i]
+	}
+
+	sa4Slice := *(*[]byte)(unsafe.Pointer(&sa4))
+
+	if err := vpc.Ctl(m.h, vpc.Cmd(_MuxListenCmd), sa4Slice, nil); err != nil {
 		return errors.Wrap(err, "unable to listen for VPC Mux traffic")
 	}
 
