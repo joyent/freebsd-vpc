@@ -1,27 +1,31 @@
-.TH "VPC\-ETHLINK" "8" "Feb 2018" "vpc 0.0.1" "vpc" 
+.TH "VPC\-ETHLINK\-CREATE" "8" "Feb 2018" "vpc 0.0.1" "vpc" 
 .nh
 .ad l
 
 
 .SH NAME
 .PP
-vpc\-ethlink \- VPC EthLink management
+vpc\-ethlink\-create \- create an EthLink interface
 
 
 .SH SYNOPSIS
 .PP
-\fBvpc ethlink [flags]\fP
+\fBvpc ethlink create [flags]\fP
 
 
 .SH DESCRIPTION
 .PP
-VPC EthLink management
+create an EthLink interface
 
 
 .SH OPTIONS
 .PP
+\fB\-E\fP, \fB\-\-ethlink\-id\fP=""
+    Specify the EthLink ID
+
+.PP
 \fB\-h\fP, \fB\-\-help\fP[=false]
-    help for ethlink
+    help for create
 
 
 .SH OPTIONS INHERITED FROM PARENT COMMANDS
@@ -48,4 +52,4 @@ VPC EthLink management
 
 .SH SEE ALSO
 .PP
-\fBvpc(8)\fP, \fBvpc\-ethlink\-create(8)\fP, \fBvpc\-ethlink\-destroy(8)\fP, \fBvpc\-ethlink\-list(8)\fP, \fBvpc\-ethlink\-vtag(8)\fP
+\fBvpc\-ethlink(8)\fP
