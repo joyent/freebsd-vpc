@@ -198,7 +198,7 @@ func (m *Mux) Listen(addr string) error {
 	if ipv4 == nil {
 		return errors.Wrap(err, "VPC Mux IP address is not an IPv4 address")
 	}
-	if n := copy(sa4.Addr[:], ipv4); n != syscall.SizeofSockaddrInet4 {
+	if n := copy(sa4.Addr[:], ipv4); n != 4 {
 		return errors.Errorf("copied the wrong number of bytes: %d", n)
 	}
 	// Address needs to be in network byte order, too
