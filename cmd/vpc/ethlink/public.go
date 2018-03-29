@@ -1,6 +1,7 @@
 package ethlink
 
 import (
+	"github.com/joyent/freebsd-vpc/cmd/vpc/ethlink/create"
 	"github.com/joyent/freebsd-vpc/cmd/vpc/ethlink/destroy"
 	"github.com/joyent/freebsd-vpc/cmd/vpc/ethlink/list"
 	"github.com/joyent/freebsd-vpc/cmd/vpc/ethlink/vtag"
@@ -25,6 +26,7 @@ var Cmd = &command.Command{
 
 	Setup: func(self *command.Command) error {
 		subCommands := command.Commands{
+			create.Cmd,
 			destroy.Cmd,
 			list.Cmd,
 			vtag.Cmd,

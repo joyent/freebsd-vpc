@@ -419,6 +419,35 @@ _vpc_doc()
     noun_aliases=()
 }
 
+_vpc_ethlink_create()
+{
+    last_command="vpc_ethlink_create"
+    commands=()
+
+    flags=()
+    two_word_flags=()
+    local_nonpersistent_flags=()
+    flags_with_completion=()
+    flags_completion=()
+
+    flags+=("--ethlink-id=")
+    two_word_flags+=("-E")
+    local_nonpersistent_flags+=("--ethlink-id=")
+    flags+=("--log-format=")
+    two_word_flags+=("-F")
+    flags+=("--log-level=")
+    two_word_flags+=("-l")
+    flags+=("--use-color")
+    flags+=("--use-pager")
+    flags+=("-P")
+    flags+=("--utc")
+    flags+=("-Z")
+
+    must_have_one_flag=()
+    must_have_one_noun=()
+    noun_aliases=()
+}
+
 _vpc_ethlink_destroy()
 {
     last_command="vpc_ethlink_destroy"
@@ -520,6 +549,7 @@ _vpc_ethlink()
 {
     last_command="vpc_ethlink"
     commands=()
+    commands+=("create")
     commands+=("destroy")
     commands+=("list")
     commands+=("vtag")
