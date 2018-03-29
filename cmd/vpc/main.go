@@ -8,17 +8,6 @@ import (
 	"github.com/sean-/sysexits"
 )
 
-var (
-	// Variables populated by govvv(1).
-	Version    = "dev"
-	BuildDate  string
-	DocsDate   string
-	GitCommit  string
-	GitBranch  string
-	GitState   string
-	GitSummary string
-)
-
 func realmain() int {
 	defer func() {
 		p := conswriter.GetTerminal()

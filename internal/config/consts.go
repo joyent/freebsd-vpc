@@ -35,6 +35,15 @@ const (
 	KeyHostifCreateID  = "hostif.create.id"
 	KeyHostifDestroyID = "hostif.destroy.id"
 
+	KeyMuxConnectInterfaceID = "mux.connect.interface-id"
+	KeyMuxConnectMuxID       = "mux.connect.mux-id"
+	KeyMuxCreateMuxID        = "mux.create.mux-id"
+	KeyMuxDestroyMuxID       = "mux.destroy.mux-id"
+	KeyMuxDisconnectMuxID    = "mux.disconnect.mux-id"
+	KeyMuxListenAddr         = "mux.listen.addr"
+	KeyMuxListenMuxID        = "mux.listen.mux-id"
+	KeyMuxShowMuxID          = "mux.show.mux-id"
+
 	KeySWPortAddEthLinkID          = "switch.port.add.ethlink-id"
 	KeySWPortAddID                 = "switch.port.add.id"
 	KeySWPortAddL2Name             = "switch.port.add.l2-name"

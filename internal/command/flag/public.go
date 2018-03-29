@@ -100,6 +100,28 @@ func AddMAC(cmd *command.Command, keyName string, required bool) error {
 	return nil
 }
 
+// AddMuxID adds the Mux ID flag to a given command.
+func AddMuxID(cmd *command.Command, keyName string, required bool) error {
+	key := keyName
+	const (
+		longName     = "mux-id"
+		shortName    = "M"
+		defaultValue = ""
+		description  = "Specify the VPC Mux ID"
+	)
+
+	flags := cmd.Cobra.Flags()
+	flags.StringP(longName, shortName, defaultValue, description)
+	if required {
+		cmd.Cobra.MarkFlagRequired(longName)
+	}
+
+	viper.BindPFlag(key, flags.Lookup(longName))
+	viper.SetDefault(key, defaultValue)
+
+	return nil
+}
+
 // AddPortID adds the Port ID flag to a given command.
 func AddPortID(cmd *command.Command, keyName string, required bool) error {
 	key := keyName
@@ -226,6 +248,20 @@ func GetMAC(v *viper.Viper, key string, id *vpc.ID) (mac net.HardwareAddr, err e
 	}
 
 	return mac, nil
+}
+
+// GetMuxID returns the VPC Mux ID found in the Viper key.
+func GetMuxID(v *viper.Viper, key string) (id vpc.ID, err error) {
+	muxIDStr := v.GetString(key)
+	if muxIDStr == "" {
+		return vpc.ID{}, errors.Wrap(err, "missing VPC Mux ID")
+	}
+
+	if id, err = vpc.ParseID(muxIDStr); err != nil {
+		return vpc.ID{}, errors.Wrapf(err, "unable to parse VPC Mux ID %q", muxIDStr)
+	}
+
+	return id, nil
 }
 
 // GetPortID returns the VPC ID found in the Viper key.
