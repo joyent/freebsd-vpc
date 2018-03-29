@@ -5,6 +5,7 @@ import (
 	"github.com/joyent/freebsd-vpc/cmd/vpc/vpcsw/port/connect"
 	"github.com/joyent/freebsd-vpc/cmd/vpc/vpcsw/port/disconnect"
 	"github.com/joyent/freebsd-vpc/cmd/vpc/vpcsw/port/remove"
+	"github.com/joyent/freebsd-vpc/cmd/vpc/vpcsw/port/uplink"
 	"github.com/joyent/freebsd-vpc/internal/command"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -28,6 +29,7 @@ var Cmd = &command.Command{
 			disconnect.Cmd,
 			//list.Cmd,
 			remove.Cmd,
+			uplink.Cmd,
 		}
 
 		if err := self.Register(subCommands); err != nil {
