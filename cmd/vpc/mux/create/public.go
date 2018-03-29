@@ -98,6 +98,11 @@ var Cmd = &command.Command{
 				return nil
 			})
 
+			if err := vpcMux.Commit(); err != nil {
+				log.Error().Err(err).Object("mux-cfg", muxCfg).Msg("vpc mux commit failed")
+				return errors.Wrap(err, "unable to commit VPC Mux")
+			}
+
 			commit = true
 
 			log.Info().Object("mux-id", muxID).Msg("mux created")
