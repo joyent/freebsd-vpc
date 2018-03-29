@@ -15,12 +15,11 @@ import (
 )
 
 const (
-	_CmdName      = "add"
-	_KeyEthLinkID = config.KeySWPortAddEthLinkID
-	_KeyPortID    = config.KeySWPortAddID
-	_KeyPortMAC   = config.KeySWPortAddMAC
-	_KeySwitchID  = config.KeySWPortAddSwitchID
-	_KeyUplink    = config.KeySWPortAddUplink
+	_CmdName     = "add"
+	_KeyPortID   = config.KeySWPortAddID
+	_KeyPortMAC  = config.KeySWPortAddMAC
+	_KeySwitchID = config.KeySWPortAddSwitchID
+	_KeyUplink   = config.KeySWPortAddUplink
 )
 
 var Cmd = &command.Command{
@@ -34,12 +33,6 @@ var Cmd = &command.Command{
 		// TraverseChildren: true,
 		Args: cobra.NoArgs,
 		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if viper.GetString(_KeyEthLinkID) == "" {
-				// TODO(seanc@): convert ethlink-id to constants used by cobra when
-				// setting the viper key.
-				return errors.Errorf("required ethlink-id parameter missing")
-			}
-
 			return nil
 		},
 
