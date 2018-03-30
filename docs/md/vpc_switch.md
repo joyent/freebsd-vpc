@@ -34,5 +34,5 @@ VPC switch management
 * [vpc switch create](/command/vpc_switch_create)	 - create a VPC switch
 * [vpc switch destroy](/command/vpc_switch_destroy)	 - destroy a VPC switch
 * [vpc switch list](/command/vpc_switch_list)	 - list interfaces
-* [vpc switch port](/command/vpc_switch_port)	 - VPC switch management
+* [vpc switch port](/command/vpc_switch_port)	 - VPC switch port management
 

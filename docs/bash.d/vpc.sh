@@ -1358,6 +1358,38 @@ _vpc_switch_port_remove()
     noun_aliases=()
 }
 
+_vpc_switch_port_set()
+{
+    last_command="vpc_switch_port_set"
+    commands=()
+
+    flags=()
+    two_word_flags=()
+    local_nonpersistent_flags=()
+    flags_with_completion=()
+    flags_completion=()
+
+    flags+=("--port-id=")
+    local_nonpersistent_flags+=("--port-id=")
+    flags+=("--vni=")
+    two_word_flags+=("-n")
+    local_nonpersistent_flags+=("--vni=")
+    flags+=("--log-format=")
+    two_word_flags+=("-F")
+    flags+=("--log-level=")
+    two_word_flags+=("-l")
+    flags+=("--use-color")
+    flags+=("--use-pager")
+    flags+=("-P")
+    flags+=("--utc")
+    flags+=("-Z")
+
+    must_have_one_flag=()
+    must_have_one_flag+=("--port-id=")
+    must_have_one_noun=()
+    noun_aliases=()
+}
+
 _vpc_switch_port_uplink()
 {
     last_command="vpc_switch_port_uplink"
@@ -1398,6 +1430,7 @@ _vpc_switch_port()
     commands+=("connect")
     commands+=("disconnect")
     commands+=("remove")
+    commands+=("set")
     commands+=("uplink")
 
     flags=()

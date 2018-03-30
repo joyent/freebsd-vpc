@@ -36,5 +36,5 @@ vpc switch port remove [flags]
 ```
 
 ### SEE ALSO
-* [vpc switch port](/command/vpc_switch_port)	 - VPC switch management
+* [vpc switch port](/command/vpc_switch_port)	 - VPC switch port management
 

@@ -1,28 +1,28 @@
 ---
 date: 2018-02-28T23:59:59Z
-title: "vpc switch port connect"
-slug: vpc_switch_port_connect
-url: /command/vpc_switch_port_connect
+title: "vpc switch port set"
+slug: vpc_switch_port_set
+url: /command/vpc_switch_port_set
 ---
-## vpc switch port connect
+## vpc switch port set
 
-connect a VPC Interface to a VPC Switch Port
+set VPC Port Information
 
 ### Synopsis
 
 
-connect a VPC Interface to a VPC Switch Port
+set VPC Port Information
 
 ```
-vpc switch port connect [flags]
+vpc switch port set [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help                  help for connect
-  -I, --interface-id string   Specify the VPC Interface ID
-      --port-id string        Specify the VPC Port ID
+  -h, --help             help for set
+      --port-id string   Specify the VPC Port ID
+  -n, --vni int          set the VNI of a given VPC Port (default -1)
 ```
 
 ### Options inherited from parent commands

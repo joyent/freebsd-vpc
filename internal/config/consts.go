@@ -56,6 +56,8 @@ const (
 	KeySWPortConnectPortID         = "switch.port.connect.port-id"
 	KeySWPortDisconnectInterfaceID = "switch.port.disconnect.interface-id"
 	KeySWPortDisconnectPortID      = "switch.port.disconnect.port-id"
+	KeySWPortSetPortID             = "switch.port.set.port-id"
+	KeySWPortSetVNI                = "switch.port.set.vni"
 	KeySWPortUplinkPortID          = "switch.port.uplink.port-id"
 	KeySWPortUplinkSwitchID        = "switch.port.uplink.switch-id"
 
