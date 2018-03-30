@@ -95,8 +95,7 @@ func (port *VPCP) GetVNI() (vpc.VNI, error) {
 		return 0, errors.Wrap(err, "unable to get the VNI of a VPC Switch Port")
 	}
 
-	// binary.LittleEndian.Uint16(uuidRaw[4:])
-	vni := vpc.VNI(binary.LittleEndian.Uint32(out))
+	vni := vpc.VNI(binary.BigEndian.Uint32(out))
 	if vni >= vpc.VNIMin || vni <= vpc.VNIMax {
 		return vpc.VNI(vni), nil
 	}
@@ -110,7 +109,7 @@ func (port *VPCP) SetVNI(vni vpc.VNI) error {
 	in := make([]byte, binary.MaxVarintLen64)
 	binary.BigEndian.PutUint32(in[0:4], uint32(vni))
 
-	if err := vpc.Ctl(port.h, vpc.Cmd(_VNISetCmd), in, nil); err != nil {
+	if err := vpc.Ctl(port.h, vpc.Cmd(_VNISetCmd), in[0:4], nil); err != nil {
 		return errors.Wrap(err, "unable to set the VNI on VPC Switch Port")
 	}
 
