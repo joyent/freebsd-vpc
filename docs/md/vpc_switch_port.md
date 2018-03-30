@@ -6,12 +6,12 @@ url: /command/vpc_switch_port
 ---
 ## vpc switch port
 
-VPC switch management
+VPC switch port management
 
 ### Synopsis
 
 
-VPC switch management
+VPC switch port management
 
 ### Options
 
@@ -35,5 +35,6 @@ VPC switch management
 * [vpc switch port connect](/command/vpc_switch_port_connect)	 - connect a VPC Interface to a VPC Switch Port
 * [vpc switch port disconnect](/command/vpc_switch_port_disconnect)	 - disconnect a VPC Interface from a VPC Switch Port
 * [vpc switch port remove](/command/vpc_switch_port_remove)	 - remove a port from a VPC switch
+* [vpc switch port set](/command/vpc_switch_port_set)	 - set VPC Port Information
 * [vpc switch port uplink](/command/vpc_switch_port_uplink)	 - Sets a given switch port as the uplink
 

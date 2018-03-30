@@ -1,27 +1,35 @@
-.TH "VPC\-SWITCH\-PORT" "8" "Feb 2018" "vpc 0.0.1" "vpc" 
+.TH "VPC\-SWITCH\-PORT\-SET" "8" "Feb 2018" "vpc 0.0.1" "vpc" 
 .nh
 .ad l
 
 
 .SH NAME
 .PP
-vpc\-switch\-port \- VPC switch port management
+vpc\-switch\-port\-set \- set VPC Port Information
 
 
 .SH SYNOPSIS
 .PP
-\fBvpc switch port [flags]\fP
+\fBvpc switch port set [flags]\fP
 
 
 .SH DESCRIPTION
 .PP
-VPC switch port management
+set VPC Port Information
 
 
 .SH OPTIONS
 .PP
 \fB\-h\fP, \fB\-\-help\fP[=false]
-    help for port
+    help for set
+
+.PP
+\fB\-\-port\-id\fP=""
+    Specify the VPC Port ID
+
+.PP
+\fB\-n\fP, \fB\-\-vni\fP=\-1
+    set the VNI of a given VPC Port
 
 
 .SH OPTIONS INHERITED FROM PARENT COMMANDS
@@ -48,4 +56,4 @@ VPC switch port management
 
 .SH SEE ALSO
 .PP
-\fBvpc\-switch(8)\fP, \fBvpc\-switch\-port\-add(8)\fP, \fBvpc\-switch\-port\-connect(8)\fP, \fBvpc\-switch\-port\-disconnect(8)\fP, \fBvpc\-switch\-port\-remove(8)\fP, \fBvpc\-switch\-port\-set(8)\fP, \fBvpc\-switch\-port\-uplink(8)\fP
+\fBvpc\-switch\-port(8)\fP

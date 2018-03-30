@@ -5,6 +5,7 @@ import (
 	"github.com/joyent/freebsd-vpc/cmd/vpc/vpcsw/port/connect"
 	"github.com/joyent/freebsd-vpc/cmd/vpc/vpcsw/port/disconnect"
 	"github.com/joyent/freebsd-vpc/cmd/vpc/vpcsw/port/remove"
+	"github.com/joyent/freebsd-vpc/cmd/vpc/vpcsw/port/set"
 	"github.com/joyent/freebsd-vpc/cmd/vpc/vpcsw/port/uplink"
 	"github.com/joyent/freebsd-vpc/internal/command"
 	"github.com/pkg/errors"
@@ -18,8 +19,8 @@ var Cmd = &command.Command{
 
 	Cobra: &cobra.Command{
 		Use:     cmdName,
-		Aliases: []string{"sw"},
-		Short:   "VPC switch management",
+		Aliases: []string{"po"},
+		Short:   "VPC switch port management",
 	},
 
 	Setup: func(self *command.Command) error {
@@ -29,6 +30,7 @@ var Cmd = &command.Command{
 			disconnect.Cmd,
 			//list.Cmd,
 			remove.Cmd,
+			set.Cmd,
 			uplink.Cmd,
 		}
 

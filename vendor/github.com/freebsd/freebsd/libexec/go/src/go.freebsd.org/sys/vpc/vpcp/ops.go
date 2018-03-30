@@ -30,6 +30,9 @@
 package vpcp
 
 import (
+	"encoding/binary"
+	"fmt"
+
 	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc"
 	"github.com/pkg/errors"
 )
@@ -56,6 +59,8 @@ const (
 
 	_ConnectCmd    _PortCmd = _PortCmd(vpc.InBit|vpc.PrivBit|vpc.MutateBit|(vpc.Cmd(vpc.ObjTypeSwitchPort)<<16)) | _PortCmd(_OpConnect)
 	_DisconnectCmd _PortCmd = _PortCmd(vpc.InBit|vpc.PrivBit|vpc.MutateBit|(vpc.Cmd(vpc.ObjTypeSwitchPort)<<16)) | _PortCmd(_OpDisconnect)
+	_VNIGetCmd     _PortCmd = _PortCmd(vpc.OutBit|(vpc.Cmd(vpc.ObjTypeSwitchPort)<<16)) | _PortCmd(_OpVNIGet)
+	_VNISetCmd     _PortCmd = _PortCmd(vpc.InBit|vpc.PrivBit|vpc.MutateBit|(vpc.Cmd(vpc.ObjTypeSwitchPort)<<16)) | _PortCmd(_OpVNISet)
 )
 
 // Connect a VPC Interface to this VPC Port.  VPC Interfaces include VMNIC, and
@@ -77,6 +82,36 @@ func (port *VPCP) Disconnect(interfaceID vpc.ID) error {
 
 	if err := vpc.Ctl(port.h, vpc.Cmd(_DisconnectCmd), interfaceID.Bytes(), nil); err != nil {
 		return errors.Wrap(err, "unable to disconnect VPC Interface from VPC Switch Port")
+	}
+
+	return nil
+}
+
+// GetVNI gets the VNI assigned to a VPC Switch Port.  A value of 0 means the
+// VPC Switch Port has no VNI assigned.
+func (port *VPCP) GetVNI() (vpc.VNI, error) {
+	out := make([]byte, binary.MaxVarintLen64)
+	if err := vpc.Ctl(port.h, vpc.Cmd(_VNIGetCmd), nil, out); err != nil {
+		return 0, errors.Wrap(err, "unable to get the VNI of a VPC Switch Port")
+	}
+
+	// binary.LittleEndian.Uint16(uuidRaw[4:])
+	vni := vpc.VNI(binary.LittleEndian.Uint32(out))
+	if vni >= vpc.VNIMin || vni <= vpc.VNIMax {
+		return vpc.VNI(vni), nil
+	}
+
+	panic(fmt.Sprintf("invariant: VNI too big for kernel interface output"))
+}
+
+// SetVNI sets the VNI on a VPC Switch Port.  A value of 0 unsets the value on a
+// VPC Port.
+func (port *VPCP) SetVNI(vni vpc.VNI) error {
+	in := make([]byte, binary.MaxVarintLen64)
+	binary.BigEndian.PutUint32(in[0:4], uint32(vni))
+
+	if err := vpc.Ctl(port.h, vpc.Cmd(_VNISetCmd), in, nil); err != nil {
+		return errors.Wrap(err, "unable to set the VNI on VPC Switch Port")
 	}
 
 	return nil
