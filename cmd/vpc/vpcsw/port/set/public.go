@@ -38,7 +38,8 @@ var Cmd = &command.Command{
 			}
 
 			portCfg := vpcp.Config{
-				ID: portID,
+				ID:        portID,
+				Writeable: true,
 			}
 			port, err := vpcp.Open(portCfg)
 			if err != nil {
