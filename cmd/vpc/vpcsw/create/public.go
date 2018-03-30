@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net"
 
-	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc"
 	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc/vpcsw"
 	"github.com/freebsd/freebsd/libexec/go/src/go.freebsd.org/sys/vpc/vpctest"
 	"github.com/joyent/freebsd-vpc/internal/command"
@@ -58,7 +57,6 @@ var Cmd = &command.Command{
 			switchCfg := vpcsw.Config{
 				ID:  id,
 				MAC: mac,
-				VNI: vpc.VNI(viper.GetInt(config.KeySWCreateVNI)),
 			}
 
 			vpcSwitch, err := vpcsw.Create(switchCfg)
@@ -103,10 +101,6 @@ var Cmd = &command.Command{
 
 		if err := flag.AddMAC(self, _KeySwitchMAC, false); err != nil {
 			return errors.Wrap(err, "unable to register MAC flag on VPC Switch create")
-		}
-
-		if err := flag.AddVNI(self, flag.VNICfg{Name: config.KeySWCreateVNI, Required: true}); err != nil {
-			return errors.Wrap(err, "unable to register VNI flag on VPC Switch create")
 		}
 
 		return nil

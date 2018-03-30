@@ -1153,8 +1153,6 @@ _vpc_switch_create()
 
     flags+=("--switch-id=")
     local_nonpersistent_flags+=("--switch-id=")
-    flags+=("--vni=")
-    local_nonpersistent_flags+=("--vni=")
     flags+=("--log-format=")
     two_word_flags+=("-F")
     flags+=("--log-level=")
@@ -1166,7 +1164,6 @@ _vpc_switch_create()
     flags+=("-Z")
 
     must_have_one_flag=()
-    must_have_one_flag+=("--vni=")
     must_have_one_noun=()
     noun_aliases=()
 }

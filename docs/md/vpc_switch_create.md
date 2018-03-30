@@ -22,7 +22,6 @@ vpc switch create [flags]
 ```
   -h, --help               help for create
       --switch-id string   Specify the VPC Switch ID
-      --vni uint           Specify the VNI
 ```
 
 ### Options inherited from parent commands
