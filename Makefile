@@ -110,17 +110,17 @@ crdb-gen-certs:
 	cockroach cert create-ca --certs-dir="$(CERT_DIR)" --ca-key="$(KEY_DIR)/ca.key"
 	cockroach cert create-client root --certs-dir="$(CERT_DIR)" --ca-key="$(KEY_DIR)/ca.key"
 
-	cockroach cert create-node 127.0.0.1 crdb01 --certs-dir="$(CERT_DIR)" --ca-key="$(KEY_DIR)/ca.key" --overwrite
+	cockroach cert create-node 127.0.0.1 localhost --certs-dir="$(CERT_DIR)" --ca-key="$(KEY_DIR)/ca.key" --overwrite
 	mkdir -p "$(DATA_DIR)/data-crdb01/certs/"
 	mv "$(CERT_DIR)/node".* "$(DATA_DIR)/data-crdb01/certs/"
 	cp "$(CERT_DIR)/ca.crt" "$(DATA_DIR)/data-crdb01/certs/"
 
-	cockroach cert create-node 127.0.0.1 crdb02 --certs-dir="$(CERT_DIR)" --ca-key="$(KEY_DIR)/ca.key" --overwrite
+	cockroach cert create-node 127.0.0.1 localhost --certs-dir="$(CERT_DIR)" --ca-key="$(KEY_DIR)/ca.key" --overwrite
 	mkdir -p "$(DATA_DIR)/data-crdb02/certs/"
 	mv "$(CERT_DIR)/node".* "$(DATA_DIR)/data-crdb02/certs/"
 	cp "$(CERT_DIR)/ca.crt" "$(DATA_DIR)/data-crdb02/certs/"
 
-	cockroach cert create-node 127.0.0.1 crdb03 --certs-dir="$(CERT_DIR)" --ca-key="$(KEY_DIR)/ca.key" --overwrite
+	cockroach cert create-node 127.0.0.1 localhost --certs-dir="$(CERT_DIR)" --ca-key="$(KEY_DIR)/ca.key" --overwrite
 	mkdir -p "$(DATA_DIR)/data-crdb03/certs/"
 	mv "$(CERT_DIR)/node".* "$(DATA_DIR)/data-crdb03/certs/"
 	cp "$(CERT_DIR)/ca.crt" "$(DATA_DIR)/data-crdb03/certs/"
