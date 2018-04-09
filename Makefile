@@ -70,6 +70,7 @@ vagrant-box:
 
 DATA_DIR=`go env GOPATH`/src/github.com/joyent/freebsd-vpc/crdb
 CERT_DIR=`go env GOPATH`/src/github.com/joyent/freebsd-vpc/crdb/certs
+VPC_CERT_DIR=$(HOME)/.cockroach-certs
 KEY_DIR=$(CERT_DIR)/keys
 
 CRDB_HOST?=127.0.0.1
@@ -123,6 +124,8 @@ crdb-gen-certs:
 	mkdir -p "$(DATA_DIR)/data-crdb03/certs/"
 	mv "$(CERT_DIR)/node".* "$(DATA_DIR)/data-crdb03/certs/"
 	cp "$(CERT_DIR)/ca.crt" "$(DATA_DIR)/data-crdb03/certs/"
+
+	cp "$(CERT_DIR)/"* "$(VPC_CERT_DIR)/"
 
 crdb-start01:
 	cockroach start \
